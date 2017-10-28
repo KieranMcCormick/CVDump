@@ -1,0 +1,26 @@
+- include_vars: secrets.yml
+
+- name: Create instance(s)
+  hosts: localhost
+  # vars:
+  #   service_account_email: unique-id@developer.gserviceaccount.com
+  #   credentials_file: /path/to/project.json
+  #   project_id: project-id
+  tasks:
+   - name: Launch instance
+     gce:
+         instance_names: prod1
+         machine_type: n1-standard-1
+         image: debian-7
+         service_account_email: "{{ service_account_email }}"
+         credentials_file: "{{ credentials_file }}"
+         project_id: "{{ project_id }}"
+
+   - name: Wait for SSH for instances
+      wait_for:
+        delay: 1
+        host: "{{ item.public_ip }}"
+        port: 22
+        state: started
+        timeout: 30
+      with_items: "{{ gce.instance_data }}"

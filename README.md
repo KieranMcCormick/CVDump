@@ -1,8 +1,40 @@
-## Cassandra DB hosted inside Vagrant VM
+# Team Poopnado
 
-### This VM is configured to use 2GB RAM
+## Main Project
 
-### How to open shell:
-1) vagrant up
-2) vagrant ssh
-3) cqlsh
+#### Get Started with Vagrant
+
+Run `vagrant up`.
+
+The site will run over HTTP (port 8080).
+
+To restart the site processes, do `vagrant ssh` and then `sudo systemctl restart sws`.
+
+NOTE: SCSS autorecompilation does not work because fsevents doesn't seem to work over shared folders.
+Restart with the above command to see style changes.
+
+NOTE: Please delete `node_modules` to avoid issues. This is not likely to work with Windows.
+
+#### Get Started in Production
+
+Make sure there is an attr.json file with the following:
+```
+{
+  "public_attr": "<fully qualified domain name without protocol>",
+  "run_list": "recipe[baseconfig]
+}
+```
+
+Run the following command:
+```
+cd service-worker-site/chef && sudo chef-client -z -j ../attr.json
+```
+
+The current node will then be provisioned with the necessary certificates and resources.
+
+PLEASE NOTE: The server must be reachable over the internet at the `public_attr` for certificate provisioning to work.
+
+The site will run over HTTPS (port 443).
+
+
+#### Have Fun 👍
