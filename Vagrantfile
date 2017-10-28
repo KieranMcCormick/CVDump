@@ -47,16 +47,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     cloudstack.security_group_names = ['CMPT 470 firewall']
   end
 
+  config.berkshelf.enabled = true
+  config.berkshelf.berksfile_path = "./chef/cookbooks/database/Berksfile"
+
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   config.vm.provision "chef_solo" do |chef|
     chef.cookbooks_path = "chef/cookbooks"
     chef.add_recipe "baseconfig"
+    chef.add_recipe "database"
     chef.run_list = [
       "recipe[baseconfig::default]",
       "recipe[baseconfig::development]",
-      "recipe[baseconfig::database]"
+      "recipe[database::default]"
     ]
   end
 

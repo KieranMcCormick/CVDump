@@ -1,5 +1,4 @@
 const { cqlInsert, cqlSelect } = require('../db')
-const Uuid = require('cassandra-driver').types.Uuid
 const _ = require('lodash')
 
 class Comments {
@@ -29,14 +28,13 @@ class Comments {
     }
     //checks if user exists ,returns iD
     create() {
-        const createQuery = 'INSERT INTO project.comments (uuid, user_id, document_id, comment, created_at) VALUES (?, ?, ?, ?, ?)'
+        const createQuery = 'INSERT INTO project.comments (uuid, user_id, document_id, comment, created_at) VALUES (UUID(), ?, ?, ?, ?)'
         return new Promise((resolve, reject) => {
             // validate user first
-            const id = Uuid.random()
-            cqlInsert(createQuery, [id, this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
+            cqlInsert(createQuery, [this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
                 if (err) {
                     console.log(err)
-                    return resolve({ params: [id, this.username, this.content, this.timeStamp], error: err })
+                    return resolve({ params: [this.username, this.content, this.timeStamp], error: err })
                 }
                 return resolve({ message: 'comment uploaded', data: result })
             })

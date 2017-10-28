@@ -93,15 +93,16 @@ export const dispatchFetchFiles = () => async (dispatch) => {
         //     type: types.FETCH_FILES_SUCCESS,
         //     payload: res.data,
         // })
+        this.setState({ docId: '5479dcaf-cce6-11e7-810c-000c291b6367' })
         dispatch({
             type: types.FETCH_FILES_SUCCESS,
             payload: [
                 {
-                    id: 1,
+                    id: '5479dcaf-cce6-11e7-810c-000c291b6367',
                     name: 'File name 1',
                 },
                 {
-                    id: 2,
+                    id: '861cf54c-cce6-11e7-810c-000c291b6367',
                     name: 'File name 2',
                 },
                 {

@@ -1,4 +1,4 @@
-const db = require('../db.js')
+const db = require('../db')
 const passport = require('passport')
 
 module.exports = (app) => {
@@ -15,7 +15,7 @@ module.exports = (app) => {
         app.post(
             '/select',
             (req, res) => {
-                db.cqlSelect('select * from users;', [], function(err, result){
+                db.sqlSelect('select * from users;', [], function(err, result){
                     if (err){
                         res.send(err)
                     }
@@ -29,11 +29,11 @@ module.exports = (app) => {
         app.post(
             '/insert',
             (req, res) => {
-                let query = 'INSERT INTO users (username, firstname, lastname, email_address, password)' +
-                        'VALUES (?, ?, ?, ?, ?);'
+                let query = 'INSERT INTO users (uuid, username, firstname, lastname, email_address, password)' +
+                        'VALUES (uuid(), ?, ?, ?, ?, ?);'
                 let params = ['tommy', 'Tom', 'Abbot', 'tom@email.com', 'password']
 
-                db.cqlSelect(query, params, function(err, result){
+                db.sqlSelect(query, params, function(err, result){
                     if (err){
                         res.send(err)
                     }
