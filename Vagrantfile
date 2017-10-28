@@ -53,8 +53,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "chef_solo" do |chef|
     chef.cookbooks_path = "chef/cookbooks"
     chef.add_recipe "baseconfig"
-    #chef.channel = "stable"
-    #chef.version = "12.10.24"
+    chef.run_list = [
+      "recipe[baseconfig::default]",
+      "recipe[baseconfig::development]"
+    ]
   end
 
 end
