@@ -1,10 +1,11 @@
 ##### Configure #####
 ruby_block "check_and_set_target" do
   block do
-    node.run_state['deployment_time'] = Time.new.strftime("%Y-%m-%d_%H:%M:%S")
+    node.run_state['deployment_time'] = Time.new.strftime("%Y-%m-%d_%H-%M-%S")
     puts "Deployment Time: #{node.run_state['deployment_time']}"
     node.run_state['source_directory'] = "#{node['project_path']}/deployments/staging"
-    node.run_state['target_directory'] = "#{node['project_path']}/deployments/#{node.normal['cookbook_name']['deployment_time']}"
+    node.run_state['target_directory'] = "#{node['project_path']}/deployments/#{node.run_state['deployment_time']}"
+    puts "Copying #{node.run_state['source_directory']} to #{node.run_state['target_directory']}"
     if ::File.directory?(node.run_state['target_directory'])
       Chef::Application.fatal!("Deployment target already exists!")
     end
