@@ -13,7 +13,7 @@ end
 
 ##### Copy staging to deployment directory #####
 execute 'copy_staging_to_target' do
-  command lazy { "cp #{node.run_state['source_directory']} #{node.run_state['target_directory']}" }
+  command lazy { "cp -r #{node.run_state['source_directory']} #{node.run_state['target_directory']}" }
 end
 
 ##### Stop Services #####
