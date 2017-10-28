@@ -1,6 +1,6 @@
 ##### Configure #####
 ruby_block "check_and_set_target" do
-  block
+  block do
     node.run_state['deployment_time'] = Time.new.strftime("%Y-%m-%d_%H:%M:%S")
     puts "Deployment Time: #{node.run_state['deployment_time']}"
     node.run_state['source_directory'] = "#{node['project_path']}/deployments/staging"
