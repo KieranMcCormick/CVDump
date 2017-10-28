@@ -35,7 +35,7 @@ end
 execute 'npm_install' do
   user node['runas_user']
   cwd "#{node['project_path']}/deployments/staging"
-  command 'NODE_ENV=production /usr/bin/npm install'
+  command '/usr/bin/npm install'
 end
 
 execute 'npm_build' do
