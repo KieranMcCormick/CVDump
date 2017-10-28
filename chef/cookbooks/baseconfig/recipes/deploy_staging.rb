@@ -14,6 +14,7 @@ end
 
 ##### Copy staging to deployment directory #####
 execute 'copy_staging_to_target' do
+  user node['runas_user']
   command lazy { "cp -r #{node.run_state['source_directory']} #{node.run_state['target_directory']}" }
 end
 
@@ -24,8 +25,8 @@ end
 
 ##### Move Symlinks #####
 link 'current_to_previous' do
-  group 'ubuntu'
-  owner 'ubuntu'
+  group node['runas_user']
+  owner node['runas_user']
   target_file "#{node['project_path']}/deployments/current"
   to lazy { node.run_state['target_directory'] }
 end
