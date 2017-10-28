@@ -1,3 +1,17 @@
+execute 'npm_install' do
+  user 'ubuntu'
+  cwd node['project_path']
+  environment "HOME" => "/home/ubuntu"
+  command '/usr/bin/npm install'
+end
+
+execute 'npm_style' do
+  user 'ubuntu'
+  cwd node['project_path']
+  environment "HOME" => "/home/ubuntu"
+  command '/usr/bin/npm run style'
+end
+
 systemd_unit 'main-project.service' do
   content <<-EOU.gsub(/^\s+/, '')
   [Unit]
@@ -19,23 +33,5 @@ systemd_unit 'main-project.service' do
   WantedBy=multi-user.target
   EOU
 
-  action [:create, :enable]
-end
-
-execute 'npm_install' do
-  user 'ubuntu'
-  cwd '/home/ubuntu/main-prokect'
-  environment "HOME" => "/home/ubuntu"
-  command '/usr/bin/npm install'
-end
-
-execute 'npm_style' do
-  user 'ubuntu'
-  cwd '/home/ubuntu/main-project'
-  environment "HOME" => "/home/ubuntu"
-  command '/usr/bin/npm run style'
-end
-
-systemd_unit 'sws.service' do
-  action [:restart]
+  action [:create, :enable, :restart]
 end

@@ -1,12 +1,7 @@
 ruby_block 'check node requirements' do
   block do
-    raise "Minimum RAM Requirement: 2GB" if node['memory']['total'] / 1024 < 2048
-  end
-end
-
-ruby_block "set-time-now" do
-  block do
-    node.normal[:cookbook_name][:deployment_time] = Time.new.strftime("%Y-%m-%d %H:%M:%S")
+    puts "Checking RAM: #{node['memory']['total']}"
+    raise "Minimum RAM Requirement: 2GB" if node['memory']['total'][0..-3].to_i / 1024 < 2000
   end
 end
 
@@ -25,10 +20,12 @@ cookbook_file "cassandra.sources.list" do
 end
 
 execute 'add repo keys' do
-  command 'curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -'
+  command 'curl -sL https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -'
 end
 
-apt_update 'update'
+execute 'apt_update' do
+  command 'apt-get update'
+end
 
 package "cassandra"
 
