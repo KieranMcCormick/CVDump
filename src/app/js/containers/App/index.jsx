@@ -1,14 +1,17 @@
 import React, { Component, } from "react"
+import CommentBox from "./comment_box"
 
 class App extends Component {
-   comment_object = {data: "test data" , date:"test date" , author:"me"};
+    
     render() {
+       
         return (
             <div className="app">
                 <header className="app-header">
                     <h1> Welcome to our resume builder </h1>
-                    <Comment comment ={comment_object}></Comment>
+                   
                 </header>
+                <CommentBox></CommentBox>
             </div>
         )
     }
