@@ -28,6 +28,10 @@ class App extends Component {
                 </div>
             )
         }
+
+class App extends Component {
+    
+    render() {
         return (
             <div className="app">
                 <MuiThemeProvider>
@@ -41,8 +45,9 @@ class App extends Component {
 
                 <header className="app-header">
                     <h1> Welcome to our resume builder </h1>
-                    <Comment comment ={comment_object}></Comment>
+                   
                 </header>
+                <CommentBox></CommentBox>
             </div>
         )
     }
