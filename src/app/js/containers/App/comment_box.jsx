@@ -12,7 +12,8 @@ class CommentBox extends Component {
 
  constructor(props) {
     super(props);
-    this.state = {fakeComments: []};
+    this.state = {fakeComments: [],
+                  newInput:""  };
     
     // remove this once we have a proper implementation to fetch comemnts from server
 
@@ -31,16 +32,22 @@ class CommentBox extends Component {
                <ul>
                  {this.displayComments}
                </ul>
-               <input class="reply" type="text"></input>
+               <input  onInput= {(e) => this.getInput(e)} class="reply" type="text"></input>
                <button onClick ={() =>this.createComment()}> Submit </button>
             </div>
         );
     }
 
+    getInput($event){
+        console.log($event.target.value);
+        this.setState({newInput :$event.target.value});
+
+    }
+
     createComment(){
         console.log("fired event");
         console.log(this.state.fakeComments);
-        var newComment = {data: "test data" , date:"just now" , author:"me" ,thread: ['9']};
+        var newComment = {data: this.state.newInput , date:"just now" , author:"me" ,thread: ['9']};
         this.state.fakeComments.push(newComment);
         var newComments = this.state.fakeComments.slice();
         this.setState({fakeComments : newComments});
