@@ -38,6 +38,11 @@ class App extends Component {
                         <Redirect path="*" to="/" />
                     </Switch>
                 </MuiThemeProvider>
+
+                <header className="app-header">
+                    <h1> Welcome to our resume builder </h1>
+                    <Comment comment ={comment_object}></Comment>
+                </header>
             </div>
         )
     }
