@@ -21,13 +21,14 @@ Make sure there is an attr.json file with the following:
 ```
 {
   "public_attr": "<fully qualified domain name without protocol>",
+  "certbot_email": "<email for certbot registration>",
   "run_list": "recipe[baseconfig]
 }
 ```
 
 Run the following command:
 ```
-cd service-worker-site/chef && sudo chef-client -z -j ../attr.json
+cd service-worker-site/chef && sudo chef-client -z -j <absolute path to directory>/attr.json
 ```
 
 The current node will then be provisioned with the necessary certificates and resources.
