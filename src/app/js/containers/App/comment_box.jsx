@@ -15,18 +15,16 @@ class CommentBox extends Component {
     this.state = {fakeComments: []};
     
     // remove this once we have a proper implementation to fetch comemnts from server
-    /*for (var i = 0 ; i <= 4 ; i ++) {
-        var comment =  {data: "test data" , date:"test date" , author:"me" ,thread: ['9']};
-        this.state.fakeComments.push(comment);
-    }*/
 
-    this.displayComments =this.state.fakeComments.map(function (entry){
-        console.log(entry);
-        return <Comment comment = {entry}/>
-        }
-    );
+    
 }
     render() {
+        console.log("rending");
+        this.displayComments =this.state.fakeComments.map(function (entry){
+                console.log(entry);
+                return <Comment comment = {entry}/>
+                 }
+        );  
         return (
             <div className="comment_container">
                <h1> Comments </h1>
