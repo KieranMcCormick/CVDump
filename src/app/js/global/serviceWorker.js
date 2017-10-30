@@ -6,18 +6,18 @@ serviceWorker.log = (message) => console.log(`[Service Worker] ${message}`)
 
 serviceWorker.isSupported = () => {
     if (!navigator.serviceWorker) {
-        serviceWorker.log("SWs not supported.")
-        throw Error("SW is not supported.")
+        serviceWorker.log('SWs not supported.')
+        throw Error('SW is not supported.')
     }
 }
 
 serviceWorker.register = () => {
     serviceWorker.isSupported()
 
-    return navigator.serviceWorker.register("sw.js")
+    return navigator.serviceWorker.register('sw.js')
         .then(() => {
             // Successful registration
-            serviceWorker.log("Hooray. Registration successful")
+            serviceWorker.log('Hooray. Registration successful')
         })
         .catch(error => {
             // Failed registration, service worker won’t be installed
@@ -33,7 +33,7 @@ serviceWorker.registerSync = tag => {
         .then(registration => {
             return registration.sync.register(tag)
                 .then(() => {
-                    serviceWorker.log("Successfully Registered Sync Task.")
+                    serviceWorker.log('Successfully Registered Sync Task.')
                 })
         })
         .then(() => {
@@ -48,7 +48,7 @@ serviceWorker.registerSync = tag => {
 serviceWorker.onMessageHandler = (handler) => {
     serviceWorker.isSupported()
 
-    navigator.serviceWorker.onmessage = ({ data, }) => {
+    navigator.serviceWorker.onmessage = ({ data }) => {
         handler(JSON.parse(data))
     }
 }

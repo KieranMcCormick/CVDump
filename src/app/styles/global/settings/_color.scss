@@ -4,10 +4,20 @@
 // ---
 $color-accessible-green: #248700;
 $color-success: $color-accessible-green;
-$color-fail: #D73A49;
+$color-fail: #F2453E;
 
-$color-light-blue: #78909c;
-$color-light-yellow: #ffe57f;
+.u-success-text {
+    color: $color-success;
+}
+
+.u-fail-text {
+    color: $color-fail;
+}
+
+$color-light-blue: #62b4f4;
+$color-dark-blue: #2286c3;
+$color-light-yellow: #ffd740;
+$color-dark-yellow: #c8a600;
 
 // Neutral
 // ---
@@ -22,7 +32,9 @@ $color-grey-15: hsl(0, 0%, 15%);
 // Token
 // ---
 $color-primary: $color-light-blue;
+$color-primary-dark: $color-dark-blue;
 $color-secondary: $color-light-yellow;
+$color-secondary-dark: $color-dark-yellow;
 
 // Typography colors
 // ---
