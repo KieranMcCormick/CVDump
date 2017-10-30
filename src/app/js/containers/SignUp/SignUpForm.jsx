@@ -57,11 +57,11 @@ class SignUpForm extends Component {
                             autoComplete={autoComplete}
                         />
                     ))}
-                    <RaisedButton type="submit" className="u-margin-v-md u-full-width">Create an account</RaisedButton>
+                    <RaisedButton type="submit" className="u-margin-v-md">Sign Up</RaisedButton>
                     <div className="u-padding-v-md">
-                        <span>Already a member?</span>
+                        <span>New to here?</span>
                         <Link to="/login" className="u-padding-h-md">
-                            Login Here
+                            Login Here!
                         </Link>
                     </div>
                 </form>
