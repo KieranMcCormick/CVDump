@@ -31,6 +31,13 @@ link 'current_to_previous' do
   to lazy { node.run_state['target_directory'] }
 end
 
+##### Make sure to remove unnecesary packages #####
+execute 'npm_prune' do
+  user node['runas_user']
+  cwd "#{node['project_path']}/deployments/current"
+  command 'NODE_ENV=production /usr/bin/npm prune'
+end
+
 ##### Start Services #####
 systemd_unit 'main-project' do
   action :start
