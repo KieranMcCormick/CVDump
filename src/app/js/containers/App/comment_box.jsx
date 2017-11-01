@@ -17,9 +17,10 @@ class CommentBox extends Component {
     
     // remove this once we have a proper implementation to fetch comemnts from server
 
-    
+    this.socket = io();
 }
     render() {
+
         console.log("rending");
         this.displayComments =this.state.fakeComments.map(function (entry){
                 console.log(entry);
@@ -51,6 +52,7 @@ class CommentBox extends Component {
         this.state.fakeComments.push(newComment);
         var newComments = this.state.fakeComments.slice();
         this.setState({fakeComments : newComments});
+        this.socket.emit('comment',newComment.data);
         
 
     }
