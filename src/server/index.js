@@ -66,12 +66,23 @@ server.listen(PORT, (err) => {
     console.log(`http://localhost:${PORT}`)
 })
 
+// name spaces
+var noteSpace = io.of('/notifications');
+var commentSpace = io.of('/comments');
 
-io.on('connection', function(socket) {
-    console.log("socket connected");
-    //we will eventually need to distingush between comments and notifications and possibily other types,
-    console.log(socket.)
-    socket.on('comment' ,function(msg){
-        console.log("we got a message");
+commentSpace.on('connection', function(socket) {
+    console.log("conneted to comments space");
+
+    socket.on('joinRoom', function(room) {
+        console.log("received join room event");
+        socket.join(room);
+    })
+
+    socket.on('comment' ,function(msg) {
+        // logic to redirect message
+        console.log(msg);
+        socket.to(msg.roomId).emit("update",msg);
     });
-})
+
+
+});

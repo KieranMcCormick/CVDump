@@ -16,9 +16,23 @@ class CommentBox extends Component {
                   newInput:""  };
     
     // remove this once we have a proper implementation to fetch comemnts from server
+    // Enter the commment socket namespace
+     this.socket = io('/comments');
 
-    this.socket = io();
 }
+    componentDidMount(){
+
+        this.socket.emit("joinRoom","myBox");
+        this.socket.on("update", (newComment) => {
+            {
+                console.log("update");
+                this.recieveComment(newComment);
+
+            }
+        });
+
+    }
+
     render() {
 
         console.log("rending");
@@ -45,6 +59,15 @@ class CommentBox extends Component {
 
     }
 
+    recieveComment(msg){
+        var newComment = {data:msg.message, date:"Just now " , author:"me" , thread:null};
+        this.state.fakeComments.push(newComment);
+        this.setState({fakeComments: this.state.fakeComments.slice()});
+        console.log("recieved comments");
+    }
+
+
+
     createComment(){
         console.log("fired event");
         console.log(this.state.fakeComments);
@@ -52,7 +75,7 @@ class CommentBox extends Component {
         this.state.fakeComments.push(newComment);
         var newComments = this.state.fakeComments.slice();
         this.setState({fakeComments : newComments});
-        this.socket.emit('comment',newComment.data);
+        this.socket.emit('comment', {message:newComment.data,roomId: "myBox" });
         
 
     }
