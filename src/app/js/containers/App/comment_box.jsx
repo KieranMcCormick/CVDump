@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import Comment from "./comments"
+import commentModel from "../../global/models/commentModel"
 
 
 
@@ -14,7 +15,7 @@ class CommentBox extends Component {
     super(props);
     this.state = {fakeComments: [],
                   newInput:""  };
-    
+
     // remove this once we have a proper implementation to fetch comemnts from server
     // Enter the commment socket namespace
      this.socket = io('/comments');
@@ -60,7 +61,7 @@ class CommentBox extends Component {
     }
 
     recieveComment(msg){
-        var newComment = {data:msg.message, date:"Just now " , author:"me" , thread:null};
+        var newComment = {data:msg.message, date:"Just now " , author:"me" };
         this.state.fakeComments.push(newComment);
         this.setState({fakeComments: this.state.fakeComments.slice()});
         console.log("recieved comments");
@@ -71,10 +72,11 @@ class CommentBox extends Component {
     createComment(){
         console.log("fired event");
         console.log(this.state.fakeComments);
-        var newComment = {data: this.state.newInput , date:"just now" , author:"me" ,thread: ['9']};
+        var newComment = {data: this.state.newInput , date:"just now" , author:"me"};
         this.state.fakeComments.push(newComment);
         var newComments = this.state.fakeComments.slice();
         this.setState({fakeComments : newComments});
+
         this.socket.emit('comment', {message:newComment.data,roomId: "myBox" });
         
 
