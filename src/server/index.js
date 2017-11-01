@@ -14,7 +14,8 @@ const PORT = process.env.PORT || 9999
 app.use(
     cookieSession({
         maxAge: 24 * 60 * 60 * 1000,   // in ms, 1 day
-        keys: [keys.cookieKey]
+        keys: [keys.cookieKey],
+        sameSite: 'lax',
     })
 )
 app.use(bodyParser.json())
@@ -27,6 +28,12 @@ if (process.env.NODE_ENV !== 'production') {
     })
     // Hot reload in development
     require('./handlers/webpack')(app)
+}
+
+if (process.env.NODE_ENV === 'production') {// Only use these in production
+    app.use('trust proxy', 'loopback')
+    app.use(require('helmet')())
+    app.use(require('compression')())
 }
 
 // routes setup
