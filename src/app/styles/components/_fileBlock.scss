@@ -1,0 +1,23 @@
+$file-dim: 180px;
+
+.c-file-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: $file-dim;
+    height: $file-dim;
+
+    border-radius: 5px;
+    background-color: $color-grey-95;
+    padding: map-get($spacing__map, md);
+    margin: map-get($spacing__map, sm);
+
+    text-decoration: none;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $color-grey-50;
+        color: #fff;
+    }
+}

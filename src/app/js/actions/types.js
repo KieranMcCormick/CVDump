@@ -8,6 +8,12 @@ export default {
     FETCH_REQUEST: '@@login/FETCH_REQUEST',
     FETCH_FAILURE: '@@login/FETCH_FAILURE',
 
-    // SIGNUP
+    // Sign up
     SIGNUP_FAILURE: '@@user/SIGNUP_FAILURE',
+
+    // File
+    FETCH_FILES_SUCCESS: '@@file/FETCH_FILES_SUCCESS',
+    FETCH_FILES_FAILURE: '@@file/FETCH_FILES_FAILURE',
+    FETCH_FILE_SUCCESS: '@@file/FETCH_FILE_SUCCESS',
+    FETCH_FILE_FAILURE: '@@file/FETCH_FILE_FAILURE',
 }

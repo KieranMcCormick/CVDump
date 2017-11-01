@@ -6,10 +6,12 @@ import PropTypes from 'prop-types'
 import { Tabs, Tab } from '../components/Tabs'
 import NotFound from '../components/NotFound'
 import Home from './Home'
-import Files from './Files'
-import Shares from './Shares'
-import Blocks from './Blocks'
-import History from './History'
+import File from '../components/File'
+import FilesView from './FilesView'
+import SharesView from './SharesView'
+import BlocksView from './BlocksView'
+import HistoryView from './HistoryView'
+import StatusBar from './StatusBar'
 import * as actions from '../actions'
 
 const routes = [
@@ -22,22 +24,22 @@ const routes = [
     {
         path: '/files',
         label: 'Files',
-        component: Files,
+        component: FilesView,
     },
     {
         path: '/shares',
         label: 'Shares',
-        component: Shares,
+        component: SharesView,
     },
     {
         path: '/blocks',
         label: 'Blocks',
-        component: Blocks,
+        component: BlocksView,
     },
     {
         path: '/history',
         label: 'History',
-        component: History,
+        component: HistoryView,
     }
 ]
 
@@ -54,6 +56,7 @@ class TabLayout extends Component {
         const index = routes.findIndex((item) => {
             return item.path === this.props.location.pathname
         })
+
         if (index !== -1) {
             this.setState({ tabIndex: index })
         }
@@ -64,11 +67,16 @@ class TabLayout extends Component {
             return <Tab key={`Nav-tab-${label}`} path={path} label={label} />
         })
     }
+
     render() {
         return (
             <div className="u-flex-column u--center-cross u-full">
-                <Tabs startIndex={this.state.tabIndex}>{this.renderTabBar()}</Tabs>
+                <StatusBar />
+                <div className="t-tab-tabbar">
+                    <Tabs startIndex={this.state.tabIndex}>{this.renderTabBar()}</Tabs>
+                </div>
                 <Switch>
+                    <Route path="/files/:id" component={File} />
                     {routes.map(({ path, component, exact, label })=> {
                         return <Route key={`routes-${label}`} path={path} component={component} exact={exact} />
                     })}
