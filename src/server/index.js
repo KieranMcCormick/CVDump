@@ -8,7 +8,8 @@ const cookieSession = require('cookie-session')
 const passport = require('passport')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
-
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 const PORT = process.env.PORT || 9999
 
 //middleware
@@ -57,10 +58,20 @@ app.get('*', (request, response) => {
     sendFile(PUBLIC_DIR, 'index.html', response);
 })
 
-app.listen(PORT, (err) => {
+server.listen(PORT, (err) => {
     if (err) {
         return console.log(err)
     }
     console.log(`[ OK ] App is listening on port: ${PORT} 👂`)
     console.log(`http://localhost:${PORT}`)
+})
+
+
+io.on('connection', function(socket) {
+    console.log("socket connected");
+    //we will eventually need to distingush between comments and notifications and possibily other types,
+    console.log(socket.)
+    socket.on('comment' ,function(msg){
+        console.log("we got a message");
+    });
 })
