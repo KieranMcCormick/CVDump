@@ -2,8 +2,14 @@
 @import "global/variables";
 @import "global/base";
 
+// Components
+@import "../js/components/Tabs/tabs";
+@import "../js/components/Loader/loader";
+
 // Containers
 @import "../js/containers/App/app";
+@import "../js/containers/Login/login";
+
 
 // Util
 @import "util/flex";

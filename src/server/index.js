@@ -1,4 +1,5 @@
 const ROOT_DIR = `${__dirname}/../..`
+const PUBLIC_DIR = `${__dirname}/../public`
 
 //node module dependency
 const express = require('express')
@@ -39,8 +40,22 @@ if (process.env.NODE_ENV === 'production') {// Only use these in production
 // routes setup
 require('./routes')(app)
 
-// Serve static content
-app.use('/', express.static(`${ROOT_DIR}/src/public`))
+// Default files
+// ---
+const sendFile = (rootDir, relPath, response) => {
+    response.sendFile(relPath, { root: rootDir })
+}
+app.get('/:filename(main.js|styles.css)', (request, response) => {
+    sendFile(PUBLIC_DIR, request.url, response)
+})
+
+app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
+    sendFile(PUBLIC_DIR, request.url, response)
+})
+
+app.get('*', (request, response) => {
+    sendFile(PUBLIC_DIR, 'index.html', response);
+})
 
 app.listen(PORT, (err) => {
     if (err) {
