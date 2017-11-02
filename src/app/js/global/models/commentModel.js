@@ -59,4 +59,4 @@ class Comment {
 }
 
 
-export default CommentModel
+export default CommentModel;
