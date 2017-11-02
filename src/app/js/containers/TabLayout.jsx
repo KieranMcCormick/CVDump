@@ -3,21 +3,21 @@ import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
-import { Tabs, Tab } from '../../components/Tabs'
-import NotFound from '../../components/NotFound'
-import Landing from '../Landing'
-import Files from '../Files'
-import Shares from '../Shares'
-import Blocks from '../Blocks'
-import History from '../History'
-import * as actions from '../../actions'
+import { Tabs, Tab } from '../components/Tabs'
+import NotFound from '../components/NotFound'
+import Home from './Home'
+import Files from './Files'
+import Shares from './Shares'
+import Blocks from './Blocks'
+import History from './History'
+import * as actions from '../actions'
 
 const routes = [
     {
         path: '/',
         label: 'Home',
         exact: true,
-        component: Landing,
+        component: Home,
     },
     {
         path: '/files',
