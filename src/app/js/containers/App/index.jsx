@@ -29,9 +29,8 @@ class App extends Component {
             )
         }
 
-class App extends Component {
     
-    render() {
+
         return (
             <div className="app">
                 <MuiThemeProvider>
@@ -42,12 +41,7 @@ class App extends Component {
                         <Redirect path="*" to="/" />
                     </Switch>
                 </MuiThemeProvider>
-
-                <header className="app-header">
-                    <h1> Welcome to our resume builder </h1>
-                   
-                </header>
-                <CommentBox></CommentBox>
+                
             </div>
         )
     }
