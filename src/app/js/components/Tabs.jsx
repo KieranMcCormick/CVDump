@@ -16,9 +16,9 @@ class Tab extends Component {
         )
         return (
             <div className={classnames} onClick={this.props.onClick}>
-                <span>
+                <label>
                     {this.props.label}
-                </span>
+                </label>
             </div>
         )
     }
