@@ -15,7 +15,8 @@ class CommentBox extends Component {
     super(props);
     this.state = {fakeComments: [],
                   newInput:"",
-                  roomName:"myBox"};
+                  roomName:"myBox",
+                  commentCount: 0};
 
     // remove this once we have a proper implementation to fetch comemnts from server
     // Enter the commment socket namespace
@@ -47,13 +48,14 @@ class CommentBox extends Component {
         );  
         return (
             <div className="comment_container">
-               <h1> Comments </h1>
+            
+               <h1> Comments ( {this.state.commentCount} ) </h1>
                <ul>
                  {this.displayComments}
                </ul>
                <input  onInput= {(e) => this.getInput(e)} class="reply" type="text"></input>
                <button onClick ={() =>this.createComment()}> Submit </button>
-                <button onClick ={ ()=>this.changeRoom()} > for testing </button>
+               
             </div>
         );
     }
@@ -71,10 +73,16 @@ class CommentBox extends Component {
         var newComment = {data:msg.message, date:"Just now " , author:"me" };
         this.state.fakeComments.push(newComment);
         this.setState({fakeComments: this.state.fakeComments.slice()});
+        this.updateCommentCount();
         console.log("recieved comments");
     }
 
 
+    updateCommentCount(){
+        this.setState({commentCount:this.state.fakeComments.length});
+        console.log("updating count");
+
+    }
 
     createComment(){
         console.log("fired event");
@@ -83,6 +91,7 @@ class CommentBox extends Component {
         this.state.fakeComments.push(newComment);
         var newComments = this.state.fakeComments.slice();
         this.setState({fakeComments : newComments});
+        this.updateCommentCount();
 
         this.socket.emit('comment', {message:newComment.data,roomId: this.state.roomName });
         
