@@ -1,3 +1,9 @@
+directory "/home/ubuntu/project/node_modules" do
+  recursive true
+  action :delete
+  only_if { ::Dir.exist?("/home/ubuntu/project/node_modules") }
+end
+
 execute 'npm_install' do
   user 'ubuntu'
   cwd node['project_path']

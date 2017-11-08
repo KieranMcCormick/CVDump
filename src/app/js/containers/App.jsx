@@ -5,7 +5,7 @@ import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import * as actions from '../actions'
-import Login from  './Login'
+import Login from './Login'
 import SignUp from './SignUp'
 import TabLayout from './TabLayout'
 import Loader from '../components/Loader'
@@ -28,10 +28,6 @@ class App extends Component {
                 </div>
             )
         }
-
-class App extends Component {
-    
-    render() {
         return (
             <div className="app">
                 <MuiThemeProvider>
@@ -42,12 +38,6 @@ class App extends Component {
                         <Redirect path="*" to="/" />
                     </Switch>
                 </MuiThemeProvider>
-
-                <header className="app-header">
-                    <h1> Welcome to our resume builder </h1>
-                   
-                </header>
-                <CommentBox></CommentBox>
             </div>
         )
     }
