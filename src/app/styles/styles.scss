@@ -3,12 +3,12 @@
 @import "global/base";
 
 // Components
-@import "components/Tabs/tabs";
-@import "components/Loader/loader";
+@import "components/tabs";
+@import "components/loader";
 
 // Containers
-@import "containers/App/app";
-@import "containers/Login/login";
+@import "containers/app";
+@import "containers/login";
 
 
 // Util

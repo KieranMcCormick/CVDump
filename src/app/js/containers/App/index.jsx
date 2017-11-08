@@ -4,11 +4,11 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import * as actions from '../../actions'
-import Login from '../Login'
-import SignUp from '../SignUp'  
-import TabLayout from '../TabLayout'
-import Loader from '../../components/Loader'
+import * as actions from '../actions'
+import Login from  './Login'
+import SignUp from './SignUp'
+import TabLayout from './TabLayout'
+import Loader from '../components/Loader'
 
 class App extends Component {
     componentDidMount() {
