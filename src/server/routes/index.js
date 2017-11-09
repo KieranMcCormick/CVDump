@@ -9,38 +9,38 @@ module.exports = (app) => {
     )
 
     if (process.env.NODE_ENV === 'development'){
-    app.post(
-        '/select',
-        (req, res) => {
-            db.cqlSelect('select * from users;', [], function(err, result){
-                if (err){
-                    res.send(err)
-                }
-                else{
-                    res.send(result)
-                }
-            })
-        }
+        app.post(
+            '/select',
+            (req, res) => {
+                db.cqlSelect('select * from users;', [], function(err, result){
+                    if (err){
+                        res.send(err)
+                    }
+                    else{
+                        res.send(result)
+                    }
+                })
+            }
 
-    )
+        )
 
-    app.post(
-        '/insert',
-        (req, res) => {
-            var query = 'INSERT INTO users (username, firstname, lastname, email_address, password)' +
+        app.post(
+            '/insert',
+            (req, res) => {
+                let query = 'INSERT INTO users (username, firstname, lastname, email_address, password)' +
                         'VALUES (?, ?, ?, ?, ?);'
-            var params = ['tommy', 'Tom', 'Abbot', 'tom@email.com', 'password']
-            
-            db.cqlSelect(query, params, function(err, result){
-                if (err){
-                    res.send(err)
-                }
-                else{
-                    res.send(result)
-                }
-            })
-        }
+                let params = ['tommy', 'Tom', 'Abbot', 'tom@email.com', 'password']
 
-    )
+                db.cqlSelect(query, params, function(err, result){
+                    if (err){
+                        res.send(err)
+                    }
+                    else{
+                        res.send(result)
+                    }
+                })
+            }
+
+        )
     }
 }

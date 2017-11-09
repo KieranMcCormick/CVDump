@@ -1,11 +1,9 @@
-const ROOT_DIR = `${__dirname}/../..`
 const PUBLIC_DIR = `${__dirname}/../public`
 
 //node module dependency
 const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
-const passport = require('passport')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
 
@@ -54,7 +52,7 @@ app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
 })
 
 app.get('*', (request, response) => {
-    sendFile(PUBLIC_DIR, 'index.html', response);
+    sendFile(PUBLIC_DIR, 'index.html', response)
 })
 
 app.listen(PORT, (err) => {

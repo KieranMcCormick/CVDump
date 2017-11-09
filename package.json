@@ -12,7 +12,8 @@
     "build:prod": "NODE_ENV=production webpack --colors --config ./config/webpack.config.js",
     "style": "node-sass src/app/styles/styles.scss src/public/styles.css",
     "style:watch": "node-sass --watch src/app/styles/styles.scss src/public/styles.css",
-    "lint": "eslint src/app/js --ext js,jsx --config .eslintrc.json --fix"
+    "lint": "eslint src --ext js,jsx --config .eslintrc.json --fix",
+    "lint:jenkins": "eslint src --ext js,jsx --config .eslintrc.json -f checkstyle -o checkstyle-result.xml"
   },
   "repository": {
     "type": "git",

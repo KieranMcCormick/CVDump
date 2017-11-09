@@ -1,4 +1,4 @@
-import axios from 'axios'
+// import axios from 'axios'
 import types from './types'
 import { push } from 'react-router-redux'
 
@@ -48,7 +48,7 @@ export const dispatchFetchUser = (redirectPath) => async (dispatch) => {
 }
 
 
-export const dispatchLogin = ({ username, password }) => async (dispatch) => {
+export const dispatchLogin = (/**{ username, password }**/) => async (dispatch) => {
     try {
         // TODO: uncomment once the auth route is ready
         // const res = await axios.post('/login', { username, password })
@@ -88,7 +88,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
     }
 }
 
-export const dispatchSignUp = ({ username, password, email }) => async (dispatch) => {
+export const dispatchSignUp = (/**{ username, password, email }**/) => async (dispatch) => {
     try {
         // uncomment once the auth route is ready
         // const res = await axios.post('/register', { username, password, email })
