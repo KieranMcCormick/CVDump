@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
-    app.use('trust proxy', 'loopback')
+    app.set('trust proxy', 'loopback')
     app.use(require('helmet')())
     app.use(require('compression')())
 }
