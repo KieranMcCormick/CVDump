@@ -9,10 +9,11 @@ class Comment extends Component {
     render() {
         return (
             <div className="comment">
-               <h1> Comment </h1>
-               <p class="comment_date"> {this.props.comment.date} </p>
-               <p class="comment_author"> By: {this.props.comment.author} </p>
-               <p class="comment_data">{this.props.comment.data} </p>
+                <div class ="comment_header">
+                  <p class="comment_author"> By: {this.props.comment.author} </p>
+                  <p class="comment_date"> {this.props.comment.date} </p>
+                </div>
+                  <p class="comment_data">{this.props.comment.data} </p>
             </div>
         );
     }
