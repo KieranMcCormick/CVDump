@@ -8,16 +8,16 @@ module.exports = (app) => {
     app.use(webpackDevMiddleware(compiler, {
         hot: true,
         stats: {
-            colors: true
+            colors: true,
         },
         watchOptions: {
             ignored: /node_modules/,
-            aggregateTimeout: 300
-        }
+            aggregateTimeout: 300,
+        },
     }))
 
     app.use(webpackHotMiddleware(compiler, {
         log: console.log,
-        path: '/__webpack_hmr'
+        path: '/__webpack_hmr',
     }))
 }

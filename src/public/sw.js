@@ -1,7 +1,7 @@
-const CACHE_NAME = 'poopnado-cache-v1'
 const DATABASE_NAME = 'poopdatabase'
 
 // vendor util scripts
+// eslint-disable-next-line
 importScripts('./vendor/sw-toolbox.js')
 
 self.log = (message) => console.log(`[Service Worker] ${message}`)
@@ -47,7 +47,7 @@ const postMessage = () => {
             return fetch('/test', {
                 method: 'POST',
                 body: JSON.stringify(records),
-                headers: {'Content-Type': 'application/json'}
+                headers: {'Content-Type': 'application/json'},
             })
         })
         .then(response => response.json())
@@ -72,19 +72,19 @@ const getAllPendingMessage = () => {
                 resolve(event.target.result)
             }
 
-            getAllRequest.onerror = (event) => {
+            getAllRequest.onerror = () => {
                 reject('Failed to get the records')
             }
         }
 
-        request.onerror = (event) => {
+        request.onerror = () => {
             reject('Failed to open storage.')
         }
 
-        request.onupgradeneeded = (event) => {
+        request.onupgradeneeded = () => {
             const db = request.result
-            const store = db.createObjectStore(DATABASE_NAME, {keyPath: "id"})
-            const index = store.createIndex("MessageIndex", "message")
+            const store = db.createObjectStore(DATABASE_NAME, {keyPath: 'id'})
+            store.createIndex('MessageIndex', 'message')
         }
     })
 }
@@ -119,7 +119,7 @@ const pushNotification = messages => {
         const title = 'Poopnado'
         const options = {
             body: message.message,
-            icon: '/assets/push.png'
+            icon: '/assets/push.png',
         }
         this.registration.showNotification(title, options)
     }, self)
