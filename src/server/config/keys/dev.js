@@ -1,3 +1,3 @@
 module.exports = {
-    cookieKey: 'flealireelwirueilwalweioraowiearlweiralwejrliowj'
+    cookieKey: 'flealireelwirueilwalweioraowiearlweiralwejrliowj',
 }

@@ -1,3 +1,2 @@
-/config/*
-/src/server/*
-/src/public/*
+main.js
+sw-toolbox.js

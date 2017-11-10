@@ -1,11 +1,9 @@
-const ROOT_DIR = `${__dirname}/../..`
 const PUBLIC_DIR = `${__dirname}/../public`
 
 //node module dependency
 const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
-const passport = require('passport')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
 var server = require('http').Server(app);
@@ -33,7 +31,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
-    app.use('trust proxy', 'loopback')
+    app.set('trust proxy', 'loopback')
     app.use(require('helmet')())
     app.use(require('compression')())
 }
@@ -55,7 +53,7 @@ app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
 })
 
 app.get('*', (request, response) => {
-    sendFile(PUBLIC_DIR, 'index.html', response);
+    sendFile(PUBLIC_DIR, 'index.html', response)
 })
 
 server.listen(PORT, (err) => {
