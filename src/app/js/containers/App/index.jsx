@@ -11,25 +11,6 @@ import TabLayout from './TabLayout'
 import Loader from '../components/Loader'
 
 class App extends Component {
-    componentDidMount() {
-        // check if the user is authenticated already
-        const originalPath = this.props.location.pathname
-        const redirectPath = originalPath === '/login' || originalPath === '/signup'
-            ? '/'
-            : originalPath
-        this.props.dispatchFetchUser(redirectPath)
-    }
-
-    render() {
-        if (this.props.user.isFetching) {
-            return (
-                <div className="u-flex-row u--center u-full">
-                    <Loader />
-                </div>
-            )
-        }
-
-class App extends Component {
     
     render() {
         return (
