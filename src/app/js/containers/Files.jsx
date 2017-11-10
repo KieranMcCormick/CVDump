@@ -4,13 +4,13 @@ import CommentBox from './App/comment_box'
 class Files extends Component {
     render() {
         return (
-         <div class="mock_doc_view">   
-            <h1>Files View</h1>
-                  
-            <div class ="comments_tab" >
-            <CommentBox></CommentBox>
+            <div className="mock_doc_view">
+                <h1>Files View</h1>
+
+                <div className ="comments_tab" >
+                    <CommentBox></CommentBox>
+                </div>
             </div>
-        </div>
         )
     }
 }
