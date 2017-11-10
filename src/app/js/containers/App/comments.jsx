@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 class Comment extends Component {
     // UI representation of a Comment box, takes in a comment object and displays the date,data, and author and length of reply thread
@@ -6,6 +7,9 @@ class Comment extends Component {
         super(props)
         this.state = {currentDate: new Date()}
     }
+
+
+    
     render() {
         return (
             <div className="comment">
@@ -18,4 +22,10 @@ class Comment extends Component {
         )
     }
 }
+
+
+Comment.propTypes = {
+    comment: PropTypes.any.isRequired
+}
+
 export default Comment

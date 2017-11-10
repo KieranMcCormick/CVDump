@@ -1,13 +1,15 @@
+const ROOT_DIR = `${__dirname}/../..`
 const PUBLIC_DIR = `${__dirname}/../public`
 
 //node module dependency
 const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
+const passport = require('passport')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
-let server = require('http').Server(app)
-let io = require('socket.io')(server)
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 const PORT = process.env.PORT || 9999
 
 //middleware
@@ -31,7 +33,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
-    app.set('trust proxy', 'loopback')
+    app.use('trust proxy', 'loopback')
     app.use(require('helmet')())
     app.use(require('compression')())
 }
@@ -53,7 +55,7 @@ app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
 })
 
 app.get('*', (request, response) => {
-    sendFile(PUBLIC_DIR, 'index.html', response)
+    sendFile(PUBLIC_DIR, 'index.html', response);
 })
 
 server.listen(PORT, (err) => {
@@ -65,22 +67,22 @@ server.listen(PORT, (err) => {
 })
 
 // name spaces
-let noteSpace = io.of('/notifications')
-let commentSpace = io.of('/comments')
+//var noteSpace = io.of('/notifications');
+var commentSpace = io.of('/comments');
 
 commentSpace.on('connection', function(socket) {
-    console.log('conneted to comments space')
+    console.log("conneted to comments space");
 
     socket.on('joinRoom', function(room) {
-        console.log('received join room event')
-        socket.join(room)
+        console.log("received join room event");
+        socket.join(room);
     })
 
     socket.on('comment' ,function(msg) {
         // logic to redirect message
-        console.log(msg)
-        socket.to(msg.roomId).emit('update',msg)
-    })
+        console.log(msg);
+        socket.to(msg.roomId).emit("update",msg);
+    });
 
 
-})
+});

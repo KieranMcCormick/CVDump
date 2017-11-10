@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Comment from './comments'
-
+const io =require('socket.io-client')
 
 
 class CommentBox extends Component {
