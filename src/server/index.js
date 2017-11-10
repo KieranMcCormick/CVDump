@@ -8,8 +8,8 @@ const cookieSession = require('cookie-session')
 const passport = require('passport')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+let server = require('http').Server(app)
+let io = require('socket.io')(server)
 const PORT = process.env.PORT || 9999
 
 //middleware
@@ -55,7 +55,7 @@ app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
 })
 
 app.get('*', (request, response) => {
-    sendFile(PUBLIC_DIR, 'index.html', response);
+    sendFile(PUBLIC_DIR, 'index.html', response)
 })
 
 server.listen(PORT, (err) => {
@@ -68,21 +68,21 @@ server.listen(PORT, (err) => {
 
 // name spaces
 //var noteSpace = io.of('/notifications');
-var commentSpace = io.of('/comments');
+let commentSpace = io.of('/comments')
 
 commentSpace.on('connection', function(socket) {
-    console.log("conneted to comments space");
+    console.log('conneted to comments space')
 
     socket.on('joinRoom', function(room) {
-        console.log("received join room event");
-        socket.join(room);
+        console.log('received join room event')
+        socket.join(room)
     })
 
     socket.on('comment' ,function(msg) {
         // logic to redirect message
-        console.log(msg);
-        socket.to(msg.roomId).emit("update",msg);
-    });
+        console.log(msg)
+        socket.to(msg.roomId).emit('update',msg)
+    })
 
 
-});
+})

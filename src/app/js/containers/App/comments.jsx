@@ -9,7 +9,7 @@ class Comment extends Component {
     }
 
 
-    
+
     render() {
         return (
             <div className="comment">
@@ -25,7 +25,7 @@ class Comment extends Component {
 
 
 Comment.propTypes = {
-    comment: PropTypes.any.isRequired
+    comment: PropTypes.any.isRequired,
 }
 
 export default Comment
