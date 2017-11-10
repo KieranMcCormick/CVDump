@@ -1,4 +1,4 @@
-const ROOT_DIR = `${__dirname}/../..`
+
 const PUBLIC_DIR = `${__dirname}/../public`
 
 //node module dependency
