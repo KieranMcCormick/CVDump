@@ -1,6 +1,5 @@
 import React, { Component } from "react"
 import Comment from "./comments"
-import commentModel from "../../global/models/commentModel"
 
 
 
@@ -84,11 +83,14 @@ class CommentBox extends Component {
 
 
     getCurrentTime(){
-        var time = new Date();
-        var hours = time.getHours();
-        var mins = time.getMinutes();
-        var period = hours > 12 ? "pm" :"am";
-        return hours - 12 +":" + mins + " " + period;
+        let time = new Date();
+        let hours = time.getHours();
+        let mins = time.getMinutes();
+        let period = hours > 12 ? "pm" :"am";
+        if (hours > 12) {
+            hours - 12
+        }
+        return hours+":" + mins + " " + period;
     }
     createComment(event){
         if(event.key == "Enter") {
