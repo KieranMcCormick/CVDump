@@ -5,67 +5,51 @@ const io =require('socket.io-client')
 
 class CommentBox extends Component {
     // UI container holding comments for a resume, allows user to make additional comments are delete their previous comments
-
-
     // get comments from server? for now we fake it
-
-
     constructor(props) {
         super(props)
         this.state = {fakeComments: [],
             newInput:'',
             roomName:'myBox',
             commentCount: 0}
-
-        // remove this once we have a proper implementation to fetch comemnts from server
         // Enter the commment socket namespace
         this.socket = io('/comments')
-
     }
+
     componentDidMount(){
-
         this.socket.emit('joinRoom',this.state.roomName)
-
         //listen to events emitted from server
         this.socket.on('update', (newComment) => {
             {
                 this.recieveComment(newComment)
             }
         })
-
     }
 
     render() {
-
         this.displayComments = this.fetchComments()
         return (
             <div className="comment_container">
-
                 <h1> Comments ( {this.state.commentCount} ) </h1>
-
-                {this.displayComments}
-
+                  {this.displayComments}
                 <textarea id="comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)} className="reply" type="text"></textarea>
-
-
             </div>
         )
     }
-
     //Makes API call to get comments from database,
     // current code only mocks an empty array of comments
     fetchComments() {
         let displayComments = this.state.fakeComments.map(function (entry,index){
             return <Comment key = {index} comment = {entry}/>
-        }
+           }
         )
         return displayComments
     }
 
     getInput($event){
         this.setState({newInput :$event.target.value})
-
     }
+
     changeRoom(){
         this.setState({roomName:'newRoom'})
     }
@@ -76,11 +60,9 @@ class CommentBox extends Component {
         this.updateCommentCount()
     }
 
-
     updateCommentCount(){
         this.setState({commentCount:this.state.fakeComments.length})
     }
-
 
     getCurrentTime(){
         let time = new Date()
@@ -92,6 +74,7 @@ class CommentBox extends Component {
         }
         return hours+':' + mins + ' ' + period
     }
+
     createComment(event){
         if(event.key == 'Enter') {
             let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:'me'}
@@ -101,7 +84,7 @@ class CommentBox extends Component {
             this.updateCommentCount()
             this.socket.emit('comment', {comment:newComment,roomId: this.state.roomName })
         }
-
     }
 }
+
 export default CommentBox

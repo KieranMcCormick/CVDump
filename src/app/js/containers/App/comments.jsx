@@ -8,21 +8,18 @@ class Comment extends Component {
         this.state = {currentDate: new Date()}
     }
 
-
-
     render() {
         return (
             <div className="comment">
-                <div className ="comment_header">
-                    <p className="comment_author"> By: {this.props.comment.author} </p>
-                    <p className="comment_date"> {this.props.comment.date} </p>
+                <div className ="comment__header">
+                    <p className="comment__author"> By: {this.props.comment.author} </p>
+                    <p className="comment__date"> {this.props.comment.date} </p>
                 </div>
-                <p className="comment_data">{this.props.comment.data} </p>
+                <p className="comment__data">{this.props.comment.data} </p>
             </div>
         )
     }
 }
-
 
 Comment.propTypes = {
     comment: PropTypes.any.isRequired,

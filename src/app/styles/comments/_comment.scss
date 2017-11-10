@@ -5,19 +5,19 @@
     margin-left:20px;
     border: 1px;
     
-  .comment_header {
+  .comment__header {
       background-color:rgba(199, 199, 201, 0.596);
       height:25px;
-    .comment_date { 
+    .comment__date { 
         margin-top: -32px;
         padding-left:100px;
      }
-    .comment_author {
+    .comment__author {
         margin-right:200px;
     }
   }
 
-  .comment_data {
+  .comment__data {
     background-color: white;
     height:140px;
     margin:0;
