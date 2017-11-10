@@ -5,7 +5,6 @@ const PUBLIC_DIR = `${__dirname}/../public`
 const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
-const passport = require('passport')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
 let server = require('http').Server(app)
