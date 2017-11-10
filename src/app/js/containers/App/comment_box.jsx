@@ -55,8 +55,8 @@ class CommentBox extends Component {
     //Makes API call to get comments from database,
     // current code only mocks an empty array of comments
     fetchComments() {
-        let displayComments = this.state.fakeComments.map(function (entry){
-            return <Comment comment = {entry}/>
+        let displayComments = this.state.fakeComments.map(function (entry,index){
+            return <Comment key = {index} comment = {entry}/>
         }
         )
         return displayComments
