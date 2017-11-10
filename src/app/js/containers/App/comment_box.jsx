@@ -31,7 +31,7 @@ class CommentBox extends Component {
         return (
             <div className="comment_container">
                 <h1> Comments ( {this.state.commentCount} ) </h1>
-                  {this.displayComments}
+            {this.displayComments}
                 <textarea id="comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)} className="reply" type="text"></textarea>
             </div>
         )
@@ -41,7 +41,7 @@ class CommentBox extends Component {
     fetchComments() {
         let displayComments = this.state.fakeComments.map(function (entry,index){
             return <Comment key = {index} comment = {entry}/>
-           }
+        }
         )
         return displayComments
     }
