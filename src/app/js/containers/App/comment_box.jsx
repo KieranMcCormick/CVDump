@@ -41,7 +41,6 @@ class CommentBox extends Component {
     render() {
 
         console.log("rending");
-
         this.displayComments =this.state.fakeComments.map(function (entry){
                 console.log(entry);
                 return <Comment comment = {entry}/>
@@ -49,6 +48,7 @@ class CommentBox extends Component {
         );  
         return (
             <div className="comment_container">
+            
                <h1> Comments ( {this.state.commentCount} ) </h1>
                <ul>
                  {this.displayComments}
