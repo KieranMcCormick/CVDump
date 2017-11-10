@@ -1,6 +1,15 @@
 .comment_container {
-    background-color:rgb(190, 190, 166);
+    background-color:rgb(230, 230, 200);
     float:right;
     padding-right:20px;
+    
+   
+    #comment_input{
+        margin-top:30px;
+        margin-left:10px;
+        margin-bottom:10px;
+        height:35px;
+        width:250px;
+    }
 }
 

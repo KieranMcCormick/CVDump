@@ -30,9 +30,7 @@ class CommentBox extends Component {
         //listen to events emitted from server
         this.socket.on("update", (newComment) => {
             {
-                console.log("update");
                 this.recieveComment(newComment);
-
             }
         });
 
@@ -40,7 +38,6 @@ class CommentBox extends Component {
 
     render() {
 
-        console.log("rending");
         this.displayComments =this.state.fakeComments.map(function (entry){
                 console.log(entry);
                 return <Comment comment = {entry}/>
@@ -50,18 +47,17 @@ class CommentBox extends Component {
             <div className="comment_container">
             
                <h1> Comments ( {this.state.commentCount} ) </h1>
-               <ul>
+              
                  {this.displayComments}
-               </ul>
-               <input  onInput= {(e) => this.getInput(e)} class="reply" type="text"></input>
-               <button onClick ={() =>this.createComment()}> Submit </button>
+               
+               <textarea id="comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)} class="reply" type="text"></textarea>
+              
                
             </div>
         );
     }
 
     getInput($event){
-        console.log($event.target.value);
         this.setState({newInput :$event.target.value});
 
     }
@@ -74,27 +70,31 @@ class CommentBox extends Component {
         this.state.fakeComments.push(newComment);
         this.setState({fakeComments: this.state.fakeComments.slice()});
         this.updateCommentCount();
-        console.log("recieved comments");
     }
 
 
     updateCommentCount(){
         this.setState({commentCount:this.state.fakeComments.length});
-        console.log("updating count");
-
     }
 
-    createComment(){
-        console.log("fired event");
-        console.log(this.state.fakeComments);
-        var newComment = {data: this.state.newInput , date:"just now" , author:"me"};
-        this.state.fakeComments.push(newComment);
-        var newComments = this.state.fakeComments.slice();
-        this.setState({fakeComments : newComments});
-        this.updateCommentCount();
 
-        this.socket.emit('comment', {message:newComment.data,roomId: this.state.roomName });
-        
+    getCurrentTime(){
+        var time = new Date();
+        var hours = time.getHours();
+        var mins = time.getMinutes();
+        var period = hours > 12 ? "pm" :"am";
+        return hours - 12 +":" + mins + " " + period;
+    }
+    createComment(event){
+        if(event.key == "Enter") {
+            console.log(this.getCurrentTime());
+            var newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:"me"};
+            this.state.fakeComments.push(newComment);
+            var newComments = this.state.fakeComments.slice();
+            this.setState({fakeComments : newComments});
+            this.updateCommentCount();
+            this.socket.emit('comment', {message:newComment.data,roomId: this.state.roomName });
+        }
 
     }
 }
