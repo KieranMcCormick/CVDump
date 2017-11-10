@@ -38,11 +38,7 @@ class CommentBox extends Component {
 
     render() {
 
-        this.displayComments =this.state.fakeComments.map(function (entry){
-                console.log(entry);
-                return <Comment comment = {entry}/>
-                 }
-        );  
+        this.displayComments = this.fetchComments();
         return (
             <div className="comment_container">
             
@@ -57,6 +53,16 @@ class CommentBox extends Component {
         );
     }
 
+    //Makes API call to get comments from database, 
+    // current code only mocks an empty array of comments
+    fetchComments() {
+        var displayComments = this.state.fakeComments.map(function (entry){
+            return <Comment comment = {entry}/>
+             }
+        );  
+        return displayComments;
+    }
+
     getInput($event){
         this.setState({newInput :$event.target.value});
 
@@ -66,8 +72,7 @@ class CommentBox extends Component {
     }
 
     recieveComment(msg){
-        var newComment = {data:msg.message, date:"Just now " , author:"me" };
-        this.state.fakeComments.push(newComment);
+        this.state.fakeComments.push(msg.comment);
         this.setState({fakeComments: this.state.fakeComments.slice()});
         this.updateCommentCount();
     }
@@ -87,13 +92,12 @@ class CommentBox extends Component {
     }
     createComment(event){
         if(event.key == "Enter") {
-            console.log(this.getCurrentTime());
             var newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:"me"};
             this.state.fakeComments.push(newComment);
             var newComments = this.state.fakeComments.slice();
             this.setState({fakeComments : newComments});
             this.updateCommentCount();
-            this.socket.emit('comment', {message:newComment.data,roomId: this.state.roomName });
+            this.socket.emit('comment', {comment:newComment,roomId: this.state.roomName });
         }
 
     }
