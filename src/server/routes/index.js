@@ -1,5 +1,5 @@
 const db = require('../db.js')
-
+const commentModel = require('../models/comment_model')
 module.exports = (app) => {
     app.post(
         '/test',
@@ -8,7 +8,19 @@ module.exports = (app) => {
         }
     )
 
+
+    app.use('/comment',commentModel)
+
+    
+      
+
+
     if (process.env.NODE_ENV === 'development'){
+
+
+        //Lets have this our main API routing? 
+       
+
         app.post(
             '/select',
             (req, res) => {
