@@ -5,6 +5,7 @@ const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
 const bodyParser  = require('body-parser')
+const logger = require('morgan')
 const keys = require('./config/keys')
 
 const PORT = process.env.PORT || 9999
@@ -18,16 +19,17 @@ app.use(
     })
 )
 app.use(bodyParser.json())
+app.use(logger('common'))
+
+require('./handlers/passport')(app)
 
 if (process.env.NODE_ENV !== 'production') {
-    // Log all incoming requests
-    app.use(function(request, response, next) {
-        console.log(`\n[ ${request.method} ] ${request.url}\n`)
-        next()
-    })
     // Hot reload in development
     require('./handlers/webpack')(app)
 }
+
+// // Insert CSRF middleware
+// app.use(require('csurf')())
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
     app.set('trust proxy', 'loopback')
@@ -36,6 +38,8 @@ if (process.env.NODE_ENV === 'production') {// Only use these in production
 }
 
 // routes setup
+app.use(require('./routes/auth'))
+app.use(require('./routes/sessions'))
 require('./routes')(app)
 
 // Default files

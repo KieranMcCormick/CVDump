@@ -60,6 +60,8 @@ systemd_unit 'main-project.service' do
   User=#{node['runas_user']}
   Group=#{node['runas_user']}
   Environment="NODE_ENV=production"
+  Environment="FQDN=#{node['public_addr']}"
+  EnvironmentFile=#{node['project_path']}/KEY_FILE
   WorkingDirectory=#{node['project_path']}/deployments/current
   ExecStart=/usr/bin/npm run start
   Restart=always
