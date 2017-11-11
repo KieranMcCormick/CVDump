@@ -6,7 +6,8 @@ const app = express()
 const cookieSession = require('cookie-session')
 const bodyParser  = require('body-parser')
 const keys = require('./config/keys')
-
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 const PORT = process.env.PORT || 9999
 
 //middleware
@@ -55,10 +56,29 @@ app.get('*', (request, response) => {
     sendFile(PUBLIC_DIR, 'index.html', response)
 })
 
-app.listen(PORT, (err) => {
+server.listen(PORT, (err) => {
     if (err) {
         return console.log(err)
     }
     console.log(`[ OK ] App is listening on port: ${PORT} 👂`)
     console.log(`http://localhost:${PORT}`)
+})
+
+let commentSpace = io.of('/comments')
+
+commentSpace.on('connection', function(socket) {
+    console.log('conneted to comments space')
+
+    socket.on('joinRoom', function(room) {
+        console.log('received join room event')
+        socket.join(room)
+    })
+
+    socket.on('comment' ,function(msg) {
+        // logic to redirect message
+        console.log(msg)
+        socket.to(msg.roomId).emit('update',msg)
+    })
+
+
 })

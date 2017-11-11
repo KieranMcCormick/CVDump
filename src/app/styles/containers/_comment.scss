@@ -1,0 +1,33 @@
+.comment {
+    height:150px;
+    width:250px;
+    margin-top:40px;
+    margin-left:20px;
+    border: 1px;
+    
+  .comment__header {
+      background-color:rgba(199, 199, 201, 0.596);
+      height:25px;
+    .comment__date { 
+        margin-top: -32px;
+        padding-left:100px;
+     }
+    .comment__author {
+        margin-right:200px;
+    }
+  }
+
+  .comment__data {
+    background-color: white;
+    height:140px;
+    margin:0;
+    border-radius: 0 0 20px 20px;
+    text-align: left;
+    padding-left:20px;
+    padding-top:5px;
+    overflow-wrap: break-word;
+    
+
+  }
+
+}
