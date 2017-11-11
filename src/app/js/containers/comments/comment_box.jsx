@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Comment from './comments'
+const axios = require('axios')
 const io =require('socket.io-client')
 
 
@@ -76,13 +77,25 @@ class CommentBox extends Component {
     }
 
     createComment(event){
+        var that = this;
         if(event.key == 'Enter') {
             let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:'me'}
-            this.state.fakeComments.push(newComment)
-            let newComments = this.state.fakeComments.slice()
-            this.setState({fakeComments : newComments})
-            this.updateCommentCount()
-            this.socket.emit('comment', {comment:newComment,roomId: this.state.roomName })
+            axios.post('/comment/create',newComment)
+            .then( function(response){
+                
+                console.log(response);
+                that.state.fakeComments.push(newComment)
+                let newComments = that.state.fakeComments.slice()
+                that.setState({fakeComments : newComments})
+                that.updateCommentCount()
+                that.socket.emit('comment', {comment:newComment,roomId: that.state.roomName })
+            })
+            .catch( function(error){
+                console.log(error);
+
+            });
+         
+           
         }
     }
 }
