@@ -7,20 +7,11 @@ module.exports = (app) => {
             res.send(req.body)
         }
     )
-
-
+    //Any api request heading towards comments is correlated with comment actions
     app.use('/comment',commentModel)
 
-    
-      
-
-
     if (process.env.NODE_ENV === 'development'){
-
-
         //Lets have this our main API routing? 
-       
-
         app.post(
             '/select',
             (req, res) => {
@@ -33,7 +24,6 @@ module.exports = (app) => {
                     }
                 })
             }
-
         )
 
         app.post(

@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/get/:documentId',(req,res) => {
     console.log('fetch comments')
-    console.log(req.params.documentId);
+    console.log(req.params.documentId)
     res.send({message:'okay'})
     return
 })
@@ -13,7 +13,7 @@ router.get('/get/:documentId',(req,res) => {
 router.post('/create',(req,res) =>{
     console.log('create comment')
     console.log(req.body)
-    res.send({comments:'okay'});
+    res.send({comments:'okay'})
     return
 })
 
