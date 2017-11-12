@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Comment from './comments'
+import Comment from './Comments'
+const axios = require('axios')
 const io =require('socket.io-client')
 
 
@@ -8,31 +9,33 @@ class CommentBox extends Component {
     // get comments from server? for now we fake it
     constructor(props) {
         super(props)
-        this.state = {fakeComments: [],
+        this.state = {
+            fakeComments: [],
             newInput:'',
             roomName:'myBox',
-            commentCount: 0}
+            commentCount: 0
+        }
         // Enter the commment socket namespace
         this.socket = io('/comments')
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.socket.emit('joinRoom',this.state.roomName)
         //listen to events emitted from server
-        this.socket.on('update', (newComment) => {
+        this.socket.on('update', (newComment) => 
             {
                 this.recieveComment(newComment)
             }
-        })
+        )
     }
 
     render() {
         this.displayComments = this.fetchComments()
         return (
-            <div className="comment_container">
+            <div className="c-comment_container">
                 <h1> Comments ( {this.state.commentCount} ) </h1>
                 {this.displayComments}
-                <textarea id="comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)} className="reply" type="text"></textarea>
+                <textarea className="c-comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)} className="reply" type="text"></textarea>
             </div>
         )
     }
@@ -41,7 +44,7 @@ class CommentBox extends Component {
     fetchComments() {
         let displayComments = this.state.fakeComments.map(function (entry,index){
             return <Comment key = {index} comment = {entry}/>
-        }
+        }   
         )
         return displayComments
     }
@@ -75,14 +78,26 @@ class CommentBox extends Component {
         return hours+':' + mins + ' ' + period
     }
 
-    createComment(event){
+    createComment(event) {
+        var that = this;
         if(event.key == 'Enter') {
             let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:'me'}
-            this.state.fakeComments.push(newComment)
-            let newComments = this.state.fakeComments.slice()
-            this.setState({fakeComments : newComments})
-            this.updateCommentCount()
-            this.socket.emit('comment', {comment:newComment,roomId: this.state.roomName })
+            axios.post('/comment/create',newComment)
+            .then( function(response) {
+                
+                console.log(response);
+                that.state.fakeComments.push(newComment)
+                let newComments = that.state.fakeComments.slice()
+                that.setState({fakeComments : newComments})
+                that.updateCommentCount()
+                that.socket.emit('comment', {comment:newComment,roomId: that.state.roomName })
+            })
+            .catch( function(error){
+                console.log(error);
+
+            });
+         
+           
         }
     }
 }

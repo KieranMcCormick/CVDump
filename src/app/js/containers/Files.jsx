@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
-import CommentBox from './comments/comment_box'
+import CommentBox from './comments/CommentBox'
 class Files extends Component {
     render() {
         return (
-            <div>Files View
-                <CommentBox></CommentBox>
+            <div>
+                Files View
+                <CommentBox/>
             </div>
-
         )
     }
 }
-
 
 export default Files
