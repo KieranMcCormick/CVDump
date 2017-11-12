@@ -76,7 +76,6 @@ commentSpace.on('connection', function(socket) {
 
     socket.on('comment' ,function(msg) {
         // logic to redirect message
-        console.log(msg)
         socket.to(msg.roomId).emit('update',msg)
     })
 
