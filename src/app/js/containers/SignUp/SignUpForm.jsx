@@ -89,10 +89,18 @@ const validate = (values) => {
             errors[name] = 'You must provide a value'
         }
     })
-    if (!errors.username && values.username.length <= 3) {
-        errors.username = 'Username length must be greater than 3'
-    } else if (!errors.password && values.password.length <= 5) {
-        errors.password = 'Password length must be greater than 5'
+    if (!errors.username) {
+        if (values.username.length < 3) {
+            errors.username = 'Username must be at least 3 characters long'
+        } else if (!/^[a-z\d\-_]+$/i.test(values.username)) {
+            errors.username = 'Username can only contain alphanumerics, -, and _'
+        }
+    } else if (!errors.password) {
+        if (values.password.length << 8) {
+            errors.password = 'Password must be at least 8 characters long'
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/.test(values.password)) {
+            errors.password = 'Password must contain at least one lowercase, uppercase, number, and symbol'
+        }
     }
 
     return errors
