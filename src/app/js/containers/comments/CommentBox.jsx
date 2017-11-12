@@ -13,7 +13,7 @@ class CommentBox extends Component {
             fakeComments: [],
             newInput: '',
             roomName: 'myBox',
-            commentCount: 0
+            commentCount: 0,
         }
         // Enter the commment socket namespace
         this.socket = io('/comments')
