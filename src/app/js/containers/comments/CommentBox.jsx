@@ -23,9 +23,9 @@ class CommentBox extends Component {
         this.socket.emit('joinRoom',this.state.roomName)
         //listen to events emitted from server
         this.socket.on('update', (newComment) =>
-            {
+        {
             this.recieveComment(newComment)
-            }
+        }
         )
     }
 
@@ -89,10 +89,10 @@ class CommentBox extends Component {
                     that.setState({fakeComments : newComments})
                     that.updateCommentCount()
                     that.socket.emit('comment', {comment:newComment,roomId: that.state.roomName })
-            })
-            .catch( function(error){
-               console.log(error)
-            });
+                })
+                .catch( function(error){
+                   console.log(error)
+                })
         }
     }
 }
