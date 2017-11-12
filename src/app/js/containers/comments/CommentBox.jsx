@@ -11,8 +11,8 @@ class CommentBox extends Component {
         super(props)
         this.state = {
             fakeComments: [],
-            newInput:'',
-            roomName:'myBox',
+            newInput: '',
+            roomName: 'myBox',
             commentCount: 0
         }
         // Enter the commment socket namespace
@@ -92,7 +92,7 @@ class CommentBox extends Component {
                     that.socket.emit('comment', {comment:newComment,roomId: that.state.roomName })
                 })
                 .catch( function(error){
-                   console.log(error)
+                    console.log(error)
                 })
         }
     }
