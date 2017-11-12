@@ -84,6 +84,7 @@ class CommentBox extends Component {
             let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:'me'}
             axios.post('/comment/create',newComment)
                 .then( function(response) {
+                    console.log(response)
                     that.state.fakeComments.push(newComment)
                     let newComments = that.state.fakeComments.slice()
                     that.setState({fakeComments : newComments})
