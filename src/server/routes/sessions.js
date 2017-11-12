@@ -23,6 +23,11 @@ router.post('/login', (req, res, next) => {
             req.login(user, (err) => {
                 if (err) { return next(err) }
                 else {
+                    res.cookie('JWT', user.generateJWT(), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: 'lax',
+                    })
                     res.json(user.publicJson())
                 }
             })
@@ -32,6 +37,7 @@ router.post('/login', (req, res, next) => {
 
 router.post('/logout', (req, res) => {
     req.logout()
+    res.clearCookie('JWT')
     res.redirect('/')
 })
 
@@ -43,6 +49,11 @@ router.post('/register', UserCreationValidation, (req, res) => {
     }
 
     User.create(matchedData(req)).then((user) => {
+        res.cookie('JWT', user.generateJWT(), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        })
         res.json(user.publicJson())
     }).catch((err) => {
         console.error(err)

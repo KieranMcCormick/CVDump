@@ -11,6 +11,7 @@ module.exports = (app) => {
             colors: true,
         },
         watchOptions: {
+            poll: true,
             ignored: /node_modules/,
             aggregateTimeout: 300,
         },

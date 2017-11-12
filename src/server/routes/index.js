@@ -1,9 +1,12 @@
 const db = require('../db.js')
+const passport = require('passport')
+
 module.exports = (app) => {
-    app.post(
+    app.get(
         '/test',
+        passport.authenticate('jwt', { session: false }),
         (req, res) => {
-            res.send(req.body)
+            res.send(req.user)
         }
     )
 

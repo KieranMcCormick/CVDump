@@ -3,13 +3,13 @@ import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { MuiThemeProvider, getMuiTheme } from 'material-ui/styles'
+import * as MuiThemeOverrides from '../global/theme'
 import * as actions from '../actions'
 import Login from './Login'
 import SignUp from './SignUp'
 import TabLayout from './TabLayout'
 import Loader from '../components/Loader'
-
 class App extends Component {
     componentDidMount() {
         // check if the user is authenticated already
@@ -17,7 +17,7 @@ class App extends Component {
         const redirectPath = originalPath === '/login' || originalPath === '/signup'
             ? '/'
             : originalPath
-        this.props.dispatchFetchUser(redirectPath)
+        this.props.dispatchFetchUser(redirectPath, originalPath)
     }
 
     render() {
@@ -30,7 +30,7 @@ class App extends Component {
         }
         return (
             <div className="app">
-                <MuiThemeProvider>
+                <MuiThemeProvider muiTheme={getMuiTheme(MuiThemeOverrides)}>
                     <Switch>
                         <Route exact path="/login" component={ Login } />
                         <Route exact path="/signup" component={ SignUp } />

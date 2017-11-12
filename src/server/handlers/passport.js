@@ -2,6 +2,8 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const LinkedInStrategy = require('passport-linkedin').Strategy
 const CASStrategy = require('passport-cas').Strategy
+const JwtStrategy = require('passport-jwt').Strategy
+
 const config = require('../config')
 const keys = require('../config/keys')
 
@@ -10,7 +12,6 @@ const {User} = require('../models/user')
 module.exports = (app) => {
     passport.serializeUser((user, done) => done(null, user.username))
     passport.deserializeUser((id, done) => {
-        // findOne is filler until have DB hooked up.
         User.findOneByUsername(id).then((user) => {
             if (!user) {
                 return done(null, false, { message: 'User Not Found'})
@@ -72,6 +73,28 @@ module.exports = (app) => {
             })
         }
     ))
+    passport.use('jwt', new JwtStrategy({
+        jwtFromRequest: (req) => {
+            if (req && req.cookies) {
+                return req.cookies['JWT']
+            }
+            return null
+        },
+        secretOrKey: keys.jwtSecret,
+        issuer: config.server.fqdn,
+        audience: config.server.fqdn,
+    }, (jwt_payload, done) => {
+        if (jwt_payload && jwt_payload.user) {
+            User.findOneByUsername(jwt_payload.user.username).then((user) => {
+                if (!user) {
+                    return done(null, false, { errorMessage: 'User Not Found' })
+                }
+                return done(null, user)
+            })
+        } else {
+            return done(null, false, { errorMessage: 'Invalid JWT' })
+        }
+    }))
 
     app.use(passport.initialize())
     app.use(passport.session())

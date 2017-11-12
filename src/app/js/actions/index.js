@@ -2,7 +2,11 @@ import axios from 'axios'
 import types from './types'
 import { push } from 'react-router-redux'
 
-export const dispatchFetchUser = (redirectPath) => async (dispatch) => {
+const axiosWithCSRF = axios.create({
+    xsrfCookieName: '_csrfToken',
+})
+
+export const dispatchFetchUser = (redirectPath, originalPath) => async (dispatch) => {
     try {
         dispatch({
             type: types.FETCH_REQUEST,
@@ -29,13 +33,15 @@ export const dispatchFetchUser = (redirectPath) => async (dispatch) => {
                 isAuthenticated: false,
             },
         })
-        dispatch(push('/login'))
+        if (originalPath !== '/login' && originalPath !== '/signup') {
+            dispatch(push('/login'))
+        }
     }
 }
 
 export const dispatchLogin = ({ username, password }) => async (dispatch) => {
     try {
-        const res = await axios.post('/login', { username, password })
+        const res = await axiosWithCSRF.post('/login', { username, password })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
@@ -60,7 +66,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
 
 export const dispatchSignUp = ({ username, password, email }) => async (dispatch) => {
     try {
-        const res = await axios.post('/register', { username, password, email })
+        const res = await axiosWithCSRF.post('/register', { username, password, email })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {

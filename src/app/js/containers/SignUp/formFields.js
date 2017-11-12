@@ -16,5 +16,11 @@ export default [
         name: 'password',
         type: 'password',
         autoComplete: 'new-password',
+    },
+    {
+        label: 'Confirm Password',
+        name: 'confirmPassword',
+        type: 'password',
+        autoComplete: 'new-password',
     }
 ]
