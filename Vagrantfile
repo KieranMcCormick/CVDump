@@ -6,11 +6,11 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.box_version = '>= 20160921.0.0'
-  
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 9999, host: 8080
+
+  # FOR development
+  # config.vm.network "forwarded_port", guest: 9999, host: 8080
+  # FOR fake_production
+  config.vm.network "forwarded_port", guest: 80, host: 8080
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -59,7 +59,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe "database"
     chef.run_list = [
       "recipe[baseconfig::default]",
-      "recipe[baseconfig::development]",
+      # FOR fake_production, switch out the development recipe for fake_production
+      "recipe[baseconfig::fake_production]",
+      # "recipe[baseconfig::development]",
       "recipe[baseconfig::fs]",
       "recipe[database::default]"
     ]

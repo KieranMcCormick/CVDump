@@ -5,16 +5,17 @@
 
 #### Get Started with Vagrant
 
+### NOTE FOR WINDOWS: Run CommandPrompt/GitBash/etc as Administrator (right click icon and Run as Administrator)
+
 Run `vagrant up`.
 
 The site will run over HTTP (port 8080).
 
-To restart the site processes, do `vagrant ssh` and then `sudo systemctl restart sws`.
+To restart the site processes, do `vagrant ssh` and then `sudo systemctl restart main-project`.
 
 NOTE: SCSS autorecompilation does not work because fsevents doesn't seem to work over shared folders.
 Restart with the above command to see style changes.
 
-NOTE: Please delete `node_modules` to avoid issues. This is not likely to work with Windows.
 
 #### Get Started in Production
 
@@ -29,15 +30,22 @@ Make sure there is an attr.json file with the following:
 
 Run the following command:
 ```
-cd service-worker-site/chef && sudo chef-client -z -j <absolute path to directory>/attr.json
+cd main-project/chef && sudo chef-client -z -j <absolute path to directory>/attr.json
 ```
 
 The current node will then be provisioned with the necessary certificates and resources.
 
 PLEASE NOTE: The server must be reachable over the internet at the `public_attr` for certificate provisioning to work.
 
+PLEASE NOTE: You will need to have a `KEY_FILE` with secrets placed in `/home/ubuntu/project` unless you override the `project_path` see the `fake_KEY_FILE` in the chef cookbook for a template.
+
 The site will run over HTTPS (port 443).
 
+#### `fake_production`
+
+There is a way you can simulate running the site in a production configuration.
+
+In the `Vagrantfile`, search for `fake_production` and configure as desired.
 
 #### Have Fun 👍
 

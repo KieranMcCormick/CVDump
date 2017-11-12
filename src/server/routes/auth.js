@@ -29,7 +29,7 @@ router.get('/auth/cas', (req, res, next) => {
                     req.session.source = 'cas'
                     res.cookie('JWT', user.generateJWT(), {
                         httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
+                        secure: process.env.NODE_ENV === 'production' && !process.env.FAKE_PROD,
                         sameSite: 'lax',
                     })
                     res.redirect('/')
@@ -99,7 +99,7 @@ router.get('/auth/linkedin/callback', (req, res, next) => {
                     req.session.source = 'linkedin'
                     res.cookie('JWT', user.generateJWT(), {
                         httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
+                        secure: process.env.NODE_ENV === 'production' && !process.env.FAKE_PROD,
                         sameSite: 'lax',
                     })
                     res.redirect('/')
