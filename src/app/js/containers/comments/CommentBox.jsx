@@ -22,9 +22,9 @@ class CommentBox extends Component {
     componentDidMount() {
         this.socket.emit('joinRoom',this.state.roomName)
         //listen to events emitted from server
-        this.socket.on('update', (newComment) => 
+        this.socket.on('update', (newComment) =>
             {
-                this.recieveComment(newComment)
+            this.recieveComment(newComment)
             }
         )
     }
@@ -35,7 +35,7 @@ class CommentBox extends Component {
             <div className="c-comment_container">
                 <h1> Comments ( {this.state.commentCount} ) </h1>
                 {this.displayComments}
-                <textarea className="c-comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)} className="reply" type="text"></textarea>
+                <textarea className="c-comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)}  type="text"></textarea>
             </div>
         )
     }
@@ -44,7 +44,7 @@ class CommentBox extends Component {
     fetchComments() {
         let displayComments = this.state.fakeComments.map(function (entry,index){
             return <Comment key = {index} comment = {entry}/>
-        }   
+        }
         )
         return displayComments
     }
@@ -79,25 +79,20 @@ class CommentBox extends Component {
     }
 
     createComment(event) {
-        var that = this;
+        let that = this
         if(event.key == 'Enter') {
             let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author:'me'}
             axios.post('/comment/create',newComment)
-            .then( function(response) {
-                
-                console.log(response);
-                that.state.fakeComments.push(newComment)
-                let newComments = that.state.fakeComments.slice()
-                that.setState({fakeComments : newComments})
-                that.updateCommentCount()
-                that.socket.emit('comment', {comment:newComment,roomId: that.state.roomName })
+                .then( function(response) {
+                    that.state.fakeComments.push(newComment)
+                    let newComments = that.state.fakeComments.slice()
+                    that.setState({fakeComments : newComments})
+                    that.updateCommentCount()
+                    that.socket.emit('comment', {comment:newComment,roomId: that.state.roomName })
             })
             .catch( function(error){
-                console.log(error);
-
+               console.log(error)
             });
-         
-           
         }
     }
 }
