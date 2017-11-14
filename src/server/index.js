@@ -41,6 +41,7 @@ if (process.env.NODE_ENV === 'production') {// Only use these in production
 // routes setup
 app.use(require('./routes/auth'))
 app.use(require('./routes/sessions'))
+app.use('/comment',require('./routes/comment_model'))
 require('./routes')(app)
 
 // Default files

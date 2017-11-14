@@ -18,11 +18,11 @@ module.exports = {
         const santized = params
         client.execute(sql, santized, { prepare: true })
             .then(function(result){
-                client.shutdown()
+                //client.shutdown()
                 callback(null, result)
             })
             .catch(function(err){
-                client.shutdown()
+                //client.shutdown()
                 callback(err, null)
             })
     },
