@@ -7,18 +7,15 @@ class Files extends Component {
         return (
             <div>
                 Files View
-                <CommentBox currentDoc ={1} currentUser ={this.props.user.info}/>
+                <CommentBox currentDoc ={1}/>
             </div>
         )
     }
 }
 
-
-
 const mapStateToProps = (state) => ({
     user: state.user,
 })
 
-
-export default connect(mapStateToProps, null)(Files)
+export default connect(mapStateToProps)(Files)
 

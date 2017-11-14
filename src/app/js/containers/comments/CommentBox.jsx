@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Comment from './Comments'
 const axios = require('axios')
 const io =require('socket.io-client')
-
-
-
 
 class CommentBox extends Component {
     // UI container holding comments for a resume, allows user to make additional comments are delete their previous comments
@@ -13,11 +11,11 @@ class CommentBox extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            fakeComments:  [],
+            fakeComments:[],
             newInput: '',
             docId: this.props.currentDoc,
             commentCount: 0,
-            currentUser: this.props.currentUser
+            currentUser: this.props.user.info.username,
         }
         // Enter the commment socket namespace
         this.socket = io('/comments')
@@ -35,15 +33,12 @@ class CommentBox extends Component {
     }
 
     render() {
-        
-        const commentsToShow = this.displayComments()
-        console.log(commentsToShow)
+        const commentsToShow = this.state.fakeComments.length > 0 ? this.displayComments()  : []
         return (
-            
             <div className="c-comment_container">
                 <h1> Comments ( {this.state.commentCount} ) </h1>
                 { commentsToShow}
-                <textarea className="c-comment_input" placeholder="Enter comment and press Enter" onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)}  type="text"></textarea>
+                <textarea className="c-comment_input" placeholder="Enter comment and press Enter"    onKeyPress ={(e) =>this.createComment(e)} onInput= {(e) => this.getInput(e)}  type="text"></textarea>
             </div>
         )
     }
@@ -52,20 +47,18 @@ class CommentBox extends Component {
     // current code only mocks an empty array of comments
     fetchComments() {
         let that = this
-        axios.get("/comment",{params:{docId:this.state.docId}})
-        .then(function(response) {
-            console.log("got response")
-            that.setState({fakeComments:response.data.comments})
-            that.updateCommentCount()
-            return
-        })
-
-        .catch(function(exception){
-            console.log(exception)
-            that.setState({fakeComments:[]})
-            that.updateCommentCount()
-            return
-        })
+        axios.get('/comment',{params:{docId:this.state.docId}})
+            .then(function(response) {
+                that.setState({fakeComments:response.data.comments})
+                that.updateCommentCount()
+                return
+            })
+            .catch(function(exception){
+                console.log(exception)
+                that.setState({fakeComments:[]})
+                that.updateCommentCount()
+                return
+            })
     }
 
     updateCommentCount(){
@@ -74,11 +67,14 @@ class CommentBox extends Component {
 
     displayComments(){
         return this.state.fakeComments.map(function (entry,index){
-             console.log(entry)
-             return <Comment key = {index} comment = {entry}/>
-         })
-     }
-    
+            return <Comment key = {index} comment = {entry}/>
+        })
+    }
+
+    getInput($event){
+        this.setState({newInput :$event.target.value})
+    }
+
     getCurrentTime(){
         let currentTime = new Date().getTime()
         return currentTime
@@ -87,7 +83,12 @@ class CommentBox extends Component {
     createComment(event) {
         let that = this
         if(event.key == 'Enter') {
-            let newComment = {content: this.state.newInput , timeStamp:this.getCurrentTime() , user_id: that.state.currentUser.username ,docId:this.state.docId}
+            let newComment = {
+                content: this.state.newInput,
+                timeStamp:this.getCurrentTime(),
+                user_id: this.state.currentUser,
+                docId:this.state.docId,
+            }
             axios.post('/comment/create',newComment)
                 .then( function(response) {
                     console.log(response)
@@ -107,13 +108,18 @@ class CommentBox extends Component {
         this.state.fakeComments.push(msg.comment)
         this.setState({fakeComments: this.state.fakeComments.slice()})
         this.updateCommentCount()
-    }    
+    }
 }
 
-
-Comment.propTypes = {
+CommentBox.propTypes = {
     currentDoc: PropTypes.string.isRequired,
-    currentUser: PropTypes.any.isRequired
+    user: PropTypes.any.isRequired,
 }
 
-export default CommentBox
+const mapStateToProps = (state) => ({
+    user: state.user,
+})
+
+
+//export default CommentBox
+export default connect(mapStateToProps)(CommentBox)

@@ -1,67 +1,58 @@
 const { cqlInsert, cqlSelect } = require('../db')
 const Uuid = require('cassandra-driver').types.Uuid
-const _ = require('underscore')
-/* user_id text,
-document_id uuid,
-comment blob,
-created_at timestamp,
-updated_at timestamp
-*/
+const _ = require('lodash')
 
 class Comments {
     constructor(props) {
         if (props) {
-            this.username = props.username ? props.username : ""
-            this.documentId = props.documentId ? props.documentId :"c4f47b81-7cfc-4536-8cd2-bbd582794b26"
-            this.timeStamp = props.timeStamp ?  new Date(props.timeStamp).toUTCString() : ""
-            this.content = props.content ? Buffer(props.content,"base64") : ""
+            this.username = props.username ? props.username : ''
+            this.documentId = props.documentId ? props.documentId : ''
+            this.timeStamp = props.timeStamp ? new Date(props.timeStamp).toUTCString() : ''
+            this.content = props.content ? Buffer(props.content, 'base64') : ''
         }
     }
     //checks if document exists
-    validateDocument(){
-        const getDocumentQuery = "SELECT title FROM project.documents WHERE uuid = ? "
-        return new Promise((resolve,reject) =>{
-            cqlSelect(getDocumentQuery,[this.documentId],(err,result)=>{
-            if(err) {
-                //console.log(err)
-                return resolve({error:err,message:"No such document"})
-            }
-            if(result){
-                console.log(result)
-                return resolve(result[0].title)
-            }
+    validateDocument() {
+        const getDocumentQuery = 'SELECT title FROM project.documents WHERE uuid = ? '
+        return new Promise((resolve, reject) => {
+            cqlSelect(getDocumentQuery, [this.documentId], (err, result) => {
+                if (err) {
+                    return resolve({ error: err, message: 'No such document' })
+                }
+                if (result) {
+                    console.log(result)
+                    return resolve(result[0].title)
+                }
+            })
         })
-    })
 
     }
     //checks if user exists ,returns iD
-    create(){
-        const createQuery = "INSERT INTO project.comments (uuid, user_id, document_id, comment, created_at) VALUES (?, ?, ?, ?, ?)"
-        return new Promise((resolve,reject) => {
+    create() {
+        const createQuery = 'INSERT INTO project.comments (uuid, user_id, document_id, comment, created_at) VALUES (?, ?, ?, ?, ?)'
+        return new Promise((resolve, reject) => {
             // validate user first
-            const id = Uuid.random();
-            cqlInsert(createQuery,[id,this.username,this.documentId,this.content,this.timeStamp],(err,result)=>{
-                if(err) {
+            const id = Uuid.random()
+            cqlInsert(createQuery, [id, this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
+                if (err) {
                     console.log(err)
-                    return resolve({params:[id,this.username,this.content,this.timeStamp],error:err})
+                    return resolve({ params: [id, this.username, this.content, this.timeStamp], error: err })
                 }
-                return resolve({message:"comment uploaded",data:result})       
-                })
+                return resolve({ message: 'comment uploaded', data: result })
+            })
         })
     }
 
     loadComments() {
-        console.log("load comments")
         let that = this
-        const fetchQuery = "SELECT user_id, comment, created_at FROM project.comments WHERE document_id = ? "
-        return new Promise( ( resolve, reject )=> {
-            cqlSelect( fetchQuery, [this.documentId], (err,success )=>{
-                if(err){
+        const fetchQuery = 'SELECT user_id, comment, created_at FROM project.comments WHERE document_id = ?'
+        return new Promise((resolve, reject) => {
+            cqlSelect(fetchQuery, [this.documentId], (err, success) => {
+                if (err) {
                     console.log(err)
-                   return resolve({message:"No comments"})
+                    return resolve({ message: 'No comments' })
                 }
-                if(success){
-                    
+                if (success) {
                     return resolve(that.parseCommentOutput(success))
                 }
             })
@@ -69,15 +60,17 @@ class Comments {
     }
 
     //Makes comments into a ready display form
-    parseCommentOutput(rows){
-        return _.map(rows,function(entries){
+    parseCommentOutput(rows) {
+        return _.map(rows, function (entries) {
             //convert blob to string
             entries.comment = entries.comment.toString('base64')
-            console.log(entries.comment)
-            return {user_id:entries.user_id,content:entries.comment,timeStamp:entries.created_at}  
+            return {
+                user_id: entries.user_id,
+                content: entries.comment,
+                timeStamp: entries.created_at,
+            }
         })
     }
-
 }
 
 module.exports = Comments

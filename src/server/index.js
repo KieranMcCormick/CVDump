@@ -86,3 +86,20 @@ commentSpace.on('connection', function(socket) {
 
 
 })
+
+let notificationSpace = io.of('/notifications')
+
+notificationSpace.on('connection',function(socket){
+    //users subscribe to this channel when they log on the first time
+    //room names will be their userIds
+    socket.on('getNotifications',function(user){
+        console.log('listening to notifications')
+        socket.join(user)
+    })
+    //Notifications should be sent to global name space and redirected to specific users
+    //fired by comment creation
+    socket.on('onRecieveNotifaction',function(msg){
+        //get target userId from msg, reply message to specific room
+        socket.to(msg.toUser).emit('notify',msg)
+    })
+})
