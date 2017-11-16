@@ -7,6 +7,8 @@ const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const logger = require('morgan')
+
+const config = require('./config')
 const keys = require('./config/keys')
 const server = require('http').Server(app)
 const PORT = process.env.PORT || 9999
@@ -20,7 +22,18 @@ if (process.env.NODE_ENV !== 'production') {
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
     app.set('trust proxy', 'loopback')
-    app.use(require('helmet')())
+    app.use(require('helmet')({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ['\'self\''],
+                styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com'],
+                imgSrc: ['\'self\'', 'https://www.gravatar.com'],
+                connectSrc: ['\'self\'', config.server.wsFqdn],
+                fontSrc: ['\'self\'', 'data:'],
+                objectSrc: ['\'none\''],
+            },
+        },
+    }))
     app.use(require('compression')())
 }
 
