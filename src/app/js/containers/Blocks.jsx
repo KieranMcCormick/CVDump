@@ -109,7 +109,7 @@ class Blocks extends Component {
 
     renderBlocks() {
         return this._blocks.map((block) =>
-            <button key={block.key} onClick={this.handleClick.bind(this, block)}>{block.name}'s button</button>
+            <button key={block.key} onClick={this.handleClick.bind(this, block)}>{block.name}{'s button'}</button>
         )
     }
     testFunc = () => {
