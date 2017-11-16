@@ -1,0 +1,20 @@
+$status-bar-height: 50px;
+
+.c-status-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: $status-bar-height;
+    background-color: $color-primary-dark;
+}
+
+.c-status-bar .c-status-bar__logo {
+    position: absolute;
+    left: 50%;
+    width: 40px;
+    height: auto;
+    margin-top: map-get($spacing__map, xs);
+    transform: translateX(-$status-bar-height/2);
+}

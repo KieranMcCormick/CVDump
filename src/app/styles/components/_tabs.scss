@@ -9,7 +9,6 @@ $tab-slider-height: 3px;
     width: 100%;
     height: $tab-bar-height;
     background-color: $color-primary;
-    margin-bottom: map-get($spacing__map, lg);
 
     a {
         flex-grow: 1;

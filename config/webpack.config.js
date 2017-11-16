@@ -11,6 +11,30 @@ let webpackConfig = {
     },
     resolve: {
         extensions: ['.js', '.jsx']
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(jsx?)$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                options: {
+                    cacheDirectory: `${__dirname}/tmp`
+                }
+            },
+            {
+                test: /\.(s?css)$/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'sass-loader'
+                ]
+            },
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'url-loader'
+            }
+        ]
     }
 }
 

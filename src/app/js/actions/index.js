@@ -33,7 +33,6 @@ export const dispatchFetchUser = (redirectPath) => async (dispatch) => {
     }
 }
 
-
 export const dispatchLogin = ({ username, password }) => async (dispatch) => {
     try {
         const res = await axios.post('/login', { username, password })
@@ -77,5 +76,54 @@ export const dispatchSignUp = ({ username, password, email }) => async (dispatch
             },
         })
         dispatch(push('/signup'))
+    }
+}
+
+export const dispatchFetchFiles = () => async (dispatch) => {
+    try {
+        // Mock data remove later
+        // const res = await axios.get('/files')
+        // dispatch({
+        //     type: types.FETCH_FILES_SUCCESS,
+        //     payload: res.data,
+        // })
+        dispatch({
+            type: types.FETCH_FILES_SUCCESS,
+            payload: [
+                {
+                    id: 1,
+                    name: 'File name 1',
+                },
+                {
+                    id: 2,
+                    name: 'File name 2',
+                },
+                {
+                    id: 3,
+                    name: 'File name 3',
+                }
+            ],
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILES_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchFetchFile = (id) => async (dispatch) => {
+    try {
+        const res = await axios.get(`/files/${id}`)
+
+        dispatch({
+            type: types.FETCH_FILE_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.data,
+        })
     }
 }

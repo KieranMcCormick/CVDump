@@ -39,4 +39,8 @@ $flex-directions: (row, column);
     .#{$flex-prefix}-#{$direction}.u--justify-start {
         justify-content: flex-start !important;
     }
+
+    .#{$flex-prefix}-#{$direction}.u--wrap {
+        flex-wrap: wrap !important;
+    }
 }
