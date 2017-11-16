@@ -5,24 +5,30 @@ class Comment extends Component {
     // UI representation of a Comment box, takes in a comment object and displays the date,data, and author and length of reply thread
     constructor(props) {
         super(props)
-        this.state = {currentDate: new Date()}
+        this.state = {currentIndex: this.props.key }
     }
 
     render() {
         return (
             <div className="c-comment">
                 <div className ="c-comment__header">
-                    <p className="c-comment__author"> By: {this.props.comment.author} </p>
-                    <p className="c-comment__date"> {this.props.comment.date} </p>
+                    <p className="c-comment__author"> {this.props.comment.user_id} </p>
+                    <p className="c-comment__date"> {this.props.comment.timeStamp.toISOString().substring(0,10)} </p>
                 </div>
-                <p className="c-comment__data">{this.props.comment.data} </p>
+                <p className="c-comment__data">{this.props.comment.content} </p>
             </div>
         )
     }
+
+    /*parseTimeRelation(index){
+        let currentTime = new Date().getTime()
+        let commentTime = this.props
+    }*/
 }
 
 Comment.propTypes = {
     comment: PropTypes.any.isRequired,
+    key: PropTypes.string.isRequired,
 }
 
 export default Comment
