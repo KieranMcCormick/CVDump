@@ -79,30 +79,80 @@ class TextEditor extends Component {
     }
 }
 
+class AppComponent extends React.Component {
+    state = {
+        numChildren: 0,
+        blocks: []
+    }
+
+    render() {
+        const children = [];
+
+        for (var i = 0; i < this.state.numChildren; i += 1) {
+            children.push(<BlockChildComponent key={i} number={i} onClick={this.testFunc} data={"test"} />);
+        };
+
+        return (
+            <BlockParentComponent addChild={this.onAddChild.bind}>
+                {children}
+            </BlockParentComponent>
+        );
+    }
+
+    onAddChild = () => {
+        this.setState({
+            numChildren: this.state.numChildren + 1
+        });
+    }
+
+    testFunc(data) {
+        alert(data)
+    }
+}
+
+const BlockParentComponent = props => (
+    <div className="card calculator">
+        <p><button onClick={props.addChild}>Add Another Child Component</button></p>
+        <div id="children-pane">
+            {props.children}
+        </div>
+    </div>
+);
+
+const BlockChildComponent = props => <button onClick={props.onClick.bind(this, props.block)}>{"Edit: " + props.block.name}</button>;
+
 class Blocks extends Component {
     constructor(props) {
         super(props)
-        autobind(this)
         this.state = {
             numChildren: 0,
+            blocks: []
         }
+    }
+    componentWillMount() {
+        this.setState({
+            numChildren: 0
+        });
+        this.getData()
     }
 
     getData() {
         const block1 = {
             name: 'name1',
-            data: '~~data1~~ data1 data1 data1',
-            key: '1'
+            data: '~~data1~~ data1 data1 data1'
         }
         const block2 = {
             name: 'name2',
-            data: 'data2 ``data2`` data2 data2',
-            key: '2'
+            data: 'data2 ``data2`` data2 data2'
         }
-        const blockArr = []
-        blockArr.push(block1)
-        blockArr.push(block2)
-        this.blocks = blockArr
+        //var blockArr = []
+        this.AddChild(block1)
+
+        this.AddChild(block2)
+        //this.state.numChildren = 2
+
+
+        //this.blocks = blockArr
     }
 
     updateData() {
@@ -114,26 +164,45 @@ class Blocks extends Component {
         this._editor.updateData(block, this)
     }
 
-    renderBlocks() {
-        return this.blocks.map((block) =>
-            <button key={block.key} onClick={this.handleClick.bind(this, block)}>{block.name}{'s button'}</button>
-        )
+    AddChild(newBlock) {
+        console.log(newBlock.name)
+        var blocks = this.state.blocks.slice()
+        console.log("slice: " + blocks)
+        blocks.push(newBlock)
+        console.log("push: " + blocks)
+
+        this.setState({ blocks: blocks })
+
+        this.setState({
+            numChildren: this.state.numChildren + 1
+        });
+        console.log("numChildren post: " + this.state.numChildren)
+
     }
-    testFunc = () => {
-        let block3 = { name: 'name3', data: '~~data3~~ data3 data3 data3' }
-        this.blocks.push(block3)
+
+    testFunc(block) {
+        alert(block.name)
     }
 
     render() {
-        this.getData()
-
+        const children = [];
+        const blockD = {
+            name: 'name' + this.state.numChildren + 1,
+            data: 'data' + (this.state.numChildren + 1) + ' ``data' + (this.state.numChildren + 1) + ' ~data' + (this.state.numChildren + 1) + '~',
+        }
+        for (var i = 0; i < this.state.numChildren; i++) {
+            children.push(<BlockChildComponent key={i} number={i} onClick={this.testFunc} block={this.state.blocks[i]} />);
+        };
         return (
             <div>
+                <p>{this.state.numChildren}</p>
+                <BlockParentComponent addChild={this.AddChild.bind(this, blockD)}>
+                    {children}
+                </BlockParentComponent>
                 <div>Blocks View</div>
-                <button onClick={this.testFunc}>+</button>
-                {this.renderBlocks()}
                 <TextEditor ref={(editor) => { this._editor = editor }} />
             </div>
+
         )
     }
 }
