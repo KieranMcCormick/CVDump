@@ -17,8 +17,6 @@ class TextEditor extends Component {
             value: createValueFromString('', 'markdown'),
             format: 'markdown',
             readOnly: false,
-            currentBlock: null,
-
         }
     }
 
@@ -51,18 +49,6 @@ class TextEditor extends Component {
         )
     }
 
-    saveData() {
-        let { value, format } = this.state
-        console.log('data: ', value.toString(format))
-        this.setState({
-            currentBlock: {
-                data: value.toString(format),
-            },
-        })
-        this._blocksComponent._currentBlock = this.state.currentBlock
-        this._blocksComponent.updateData()
-    }
-
     onChange(value: EditorValue) {
         this.setState({ value })
     }
@@ -75,17 +61,18 @@ class TextEditor extends Component {
         })
     }
 
-    updateData(block, blocksComponent) {
-        this._blocksComponent = blocksComponent
-        blocksComponent._currentBlock = block
+    updateData(block) {
+        let { value, format } = this.state
+        let oldValue = value
+        this.currentBlock = block
         this.setState({
-            currentBlock: block,
+            value: oldValue.setContentFromString(this.currentBlock.data, format),
         })
-        let oldValue = this.state.value
+    }
 
-        this.setState({
-            value: oldValue.setContentFromString(this.state.currentBlock.data, this.state.format),
-        })
+    saveData() {
+        let { value, format } = this.state
+        this.currentBlock.data = value.toString(format)
     }
 }
 
@@ -144,7 +131,7 @@ class Blocks extends Component {
     }
 
     handleClick(block) {
-        this.editorRef.updateData(block, this)
+        this.editorRef.updateData(block)
     }
 
     AddChild(newBlock) {
@@ -162,7 +149,12 @@ class Blocks extends Component {
         }
 
         for (let i = 0; i < this.state.blocks.length; i++) {
-            children.push(<BlockChildComponent key={i} number={i} onClick={this.handleClick} block={this.state.blocks[i]} />)
+            children.push(<BlockChildComponent
+                key={i}
+                number={i}
+                onClick={this.handleClick}
+                block={this.state.blocks[i]}
+            />)
         }
 
         return (
