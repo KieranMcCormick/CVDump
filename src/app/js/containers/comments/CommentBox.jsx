@@ -92,7 +92,7 @@ class CommentBox extends Component {
                 user_id: this.state.currentUser,
                 docId: this.state.docId,
             }
-            axios.post('/comment/create',newComment)
+            axios.post('/comment/create', newComment, { xsrfCookieName: '_csrfToken' })
                 .then( function(response) {
                     console.log(response)
                     that.state.fakeComments.push(newComment)

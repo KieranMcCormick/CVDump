@@ -57,7 +57,7 @@ class SignUpForm extends Component {
                             autoComplete={autoComplete}
                         />
                     ))}
-                    <RaisedButton type="submit" className="u-margin-v-md u-full-width">Create an account</RaisedButton>
+                    <RaisedButton type="submit" className="u-margin-v-md u-full-width" label="Create an account" />
                     <div className="u-padding-v-md">
                         <span>Already a member?</span>
                         <Link to="/login" className="u-padding-h-md">
@@ -95,11 +95,17 @@ const validate = (values) => {
         } else if (!/^[a-z\d\-_]+$/i.test(values.username)) {
             errors.username = 'Username can only contain alphanumerics, -, and _'
         }
-    } else if (!errors.password) {
-        if (values.password.length << 8) {
+    }
+    if (!errors.password) {
+        if (values.password.length < 8) {
             errors.password = 'Password must be at least 8 characters long'
         } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/.test(values.password)) {
             errors.password = 'Password must contain at least one lowercase, uppercase, number, and symbol'
+        }
+    }
+    if (!errors.confirmPassword) {
+        if (values.confirmPassword !== values.password) {
+            errors.confirmPassword = 'Passwords do not match'
         }
     }
 

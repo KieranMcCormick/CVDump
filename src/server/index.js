@@ -4,6 +4,7 @@ const PUBLIC_DIR = `${__dirname}/../public`
 const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
+const cookieParser = require('cookie-parser')
 const bodyParser  = require('body-parser')
 const logger = require('morgan')
 const keys = require('./config/keys')
@@ -11,26 +12,12 @@ const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const PORT = process.env.PORT || 9999
 
-//middleware
-app.use(
-    cookieSession({
-        maxAge: 24 * 60 * 60 * 1000,   // in ms, 1 day
-        keys: [keys.cookieKey],
-        sameSite: 'lax',
-    })
-)
-app.use(bodyParser.json())
 app.use(logger('common'))
-
-require('./handlers/passport')(app)
 
 if (process.env.NODE_ENV !== 'production') {
     // Hot reload in development
     require('./handlers/webpack')(app)
 }
-
-// // Insert CSRF middleware
-// app.use(require('csurf')())
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
     app.set('trust proxy', 'loopback')
@@ -38,13 +25,7 @@ if (process.env.NODE_ENV === 'production') {// Only use these in production
     app.use(require('compression')())
 }
 
-// routes setup
-app.use(require('./routes/auth'))
-app.use(require('./routes/sessions'))
-app.use('/comment',require('./routes/comment_api'))
-require('./routes')(app)
-
-// Default files
+// Static Assets
 // ---
 const sendFile = (rootDir, relPath, response) => {
     response.sendFile(relPath, { root: rootDir })
@@ -56,6 +37,32 @@ app.get('/:filename(main.js|styles.css)', (request, response) => {
 app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
     sendFile(PUBLIC_DIR, request.url, response)
 })
+
+// Bring in these middlewares after assets
+app.use(cookieParser({
+    secret: keys.cookieKey,
+}))
+app.use(
+    cookieSession({
+        maxAge: 24 * 60 * 60 * 1000,   // in ms, 1 day
+        keys: [keys.cookieKey],
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+    })
+)
+app.use(bodyParser.json())
+app.use(require('csurf')({}))
+app.use(function (req, res, next) {
+    res.cookie('_csrfToken', req.csrfToken(), { sameSite: 'lax' })
+    next()
+})
+require('./handlers/passport')(app)
+
+// routes setup
+app.use(require('./routes/auth'))
+app.use(require('./routes/sessions'))
+app.use('/comment',require('./routes/comment_api'))
+require('./routes')(app)
 
 app.get('*', (request, response) => {
     sendFile(PUBLIC_DIR, 'index.html', response)

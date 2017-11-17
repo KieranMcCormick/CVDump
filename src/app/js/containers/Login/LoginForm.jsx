@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
+import ExternalAuthButton from './ExternalAuthButton'
 import formFields from './formFields'
 
 
@@ -27,6 +28,7 @@ class LoginField extends PureComponent {
                     type={type}
                     errorText={touched && error}
                     autoComplete={autoComplete}
+                    fullWidth={true}
                 />
             </div>
         )
@@ -55,7 +57,9 @@ class LoginForm extends Component {
                             autoComplete={autoComplete}
                         />
                     ))}
-                    <RaisedButton type="submit" className="u-margin-v-md u-full-width">Login</RaisedButton>
+                    <RaisedButton type="submit" className="u-margin-v-md u-full-width" label="Login" />
+                    <ExternalAuthButton label="Login with CAS" path="/auth/cas/" color="#A6192E" labelColor="#fff" />
+                    <ExternalAuthButton label="Login with LinkedIn" path="/auth/linkedin" color="#0077B5" labelColor="#fff" />
                     <div className="u-padding-v-md">
                         <span>New to our app?</span>
                         <Link to="/signup" className="u-padding-h-md">
