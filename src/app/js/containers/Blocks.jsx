@@ -129,10 +129,7 @@ class Blocks extends Component {
             blocks: []
         }
     }
-    componentWillMount() {
-        this.setState({
-            numChildren: 0
-        });
+    componentDidMount() {
         this.getData()
     }
 
@@ -145,14 +142,9 @@ class Blocks extends Component {
             name: 'name2',
             data: 'data2 ``data2`` data2 data2'
         }
-        //var blockArr = []
         this.AddChild(block1)
 
         this.AddChild(block2)
-        //this.state.numChildren = 2
-
-
-        //this.blocks = blockArr
     }
 
     updateData() {
@@ -166,7 +158,7 @@ class Blocks extends Component {
 
     AddChild(newBlock) {
         console.log(newBlock.name)
-        var blocks = this.state.blocks.slice()
+        var blocks = this.state.blocks
         console.log("slice: " + blocks)
         blocks.push(newBlock)
         console.log("push: " + blocks)
