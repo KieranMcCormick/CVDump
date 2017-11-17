@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Comment from './Comments'
+import SocketHandler from '../../global/SocketsHandler'
 
 
 const axios = require('axios')
-const io = require('socket.io-client')
 
 class CommentBox extends Component {
     // UI container holding comments for a resume, allows user to make additional comments are delete their previous comments
@@ -21,17 +21,21 @@ class CommentBox extends Component {
             currentUser: this.props.user.info.username,
         }
         // Enter the comment socket namespace
-        this.socket = io('/comments')
+        this.socket = new SocketHandler('comments')
+
     }
 
     componentDidMount() {
-        this.socket.emit('joinRoom', this.state.docId)
+        this.socket.joinRoom(this.state.docId)
         this.fetchComments()
         //listen to events emitted from server
-        this.socket.on(
+        this.socket.listen(
             'update',
-            (newComment) => this.receiveComment(newComment)
-        )
+            (newComment) => this.receiveComment(newComment))
+    }
+
+    componentWillUnmount() {
+        this.socket.leaveRoom()
     }
 
     render() {
@@ -57,35 +61,35 @@ class CommentBox extends Component {
     // current code only mocks an empty array of comments
     fetchComments() {
         let that = this
-        axios.get('/comment',{params:{docId:this.state.docId}})
-            .then(function(response) {
-                that.setState({fakeComments:response.data.comments})
+        axios.get('/comment', { params: { docId: this.state.docId } })
+            .then(function (response) {
+                that.setState({ fakeComments: response.data.comments })
                 that.updateCommentCount()
             })
-            .catch(function(error){
+            .catch(function (error) {
                 console.error(error)
                 that.setState({ fakeComments: [] })
                 that.updateCommentCount()
             })
     }
 
-    updateCommentCount(){
+    updateCommentCount() {
         this.setState({ commentCount: this.state.fakeComments.length })
     }
 
-    displayComments(){
+    displayComments() {
         return this.state.fakeComments.map((entry, index) => {
             return <Comment key={index} comment={entry} />
         })
     }
 
-    getInput(event){
+    getInput(event) {
         this.setState({ newInput: event.target.value })
     }
 
     createComment(event) {
         const that = this
-        if(event.key === 'Enter') {
+        if (event.key === 'Enter') {
             const newComment = {
                 content: this.state.newInput,
                 timeStamp: new Date().getTime(),
@@ -93,13 +97,13 @@ class CommentBox extends Component {
                 docId: this.state.docId,
             }
             axios.post('/comment/create', newComment, { xsrfCookieName: '_csrfToken' })
-                .then( function(response) {
+                .then(function (response) {
                     console.log(response)
                     that.state.fakeComments.push(newComment)
                     const newComments = that.state.fakeComments.slice()
-                    that.setState({ fakeComments : newComments })
+                    that.setState({ fakeComments: newComments })
                     that.updateCommentCount()
-                    that.socket.emit(
+                    that.socket.emitEvent(
                         'comment',
                         {
                             comment: newComment,
@@ -107,13 +111,13 @@ class CommentBox extends Component {
                         }
                     )
                 })
-                .catch( function(error) {
+                .catch(function (error) {
                     console.error(error)
                 })
         }
     }
 
-    receiveComment(msg){
+    receiveComment(msg) {
         this.state.fakeComments.push(msg.comment)
         this.setState({ fakeComments: this.state.fakeComments.slice() })
         this.updateCommentCount()

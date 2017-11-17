@@ -8,7 +8,6 @@ import CommentBox from '../containers/comments/CommentBox'
 class File extends PureComponent {
     constructor(props) {
         super(props)
-
         this.state = {
             isLoading: true,
         }
@@ -23,7 +22,7 @@ class File extends PureComponent {
         return (
             <div className="c-file">
                 This is per file view
-                <CommentBox currentDoc="1" />
+                <CommentBox currentDoc= {this.props.match.params.id} />
             </div>
         )
     }

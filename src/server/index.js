@@ -1,15 +1,14 @@
 const PUBLIC_DIR = `${__dirname}/../public`
-
+const SocketListener = require('./handlers/socketListener')
 //node module dependency
 const express = require('express')
 const app = express()
 const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
-const bodyParser  = require('body-parser')
+const bodyParser = require('body-parser')
 const logger = require('morgan')
 const keys = require('./config/keys')
 const server = require('http').Server(app)
-const io = require('socket.io')(server)
 const PORT = process.env.PORT || 9999
 
 app.use(logger('common'))
@@ -61,7 +60,7 @@ require('./handlers/passport')(app)
 // routes setup
 app.use(require('./routes/auth'))
 app.use(require('./routes/sessions'))
-app.use('/comment',require('./routes/comment_api'))
+app.use('/comment', require('./routes/comment_api'))
 require('./routes')(app)
 
 app.get('*', (request, response) => {
@@ -74,39 +73,5 @@ server.listen(PORT, (err) => {
     }
     console.log(`[ OK ] App is listening on port: ${PORT} 👂`)
     console.log(`http://localhost:${PORT}`)
-})
-
-let commentSpace = io.of('/comments')
-
-commentSpace.on('connection', function(socket) {
-    console.log('conneted to comments space')
-
-    socket.on('joinRoom', function(room) {
-        console.log('received join room event')
-        socket.join(room)
-    })
-
-    socket.on('comment' ,function(msg) {
-        // logic to redirect message
-        socket.to(msg.roomId).emit('update',msg)
-    })
-
-
-})
-
-let notificationSpace = io.of('/notifications')
-
-notificationSpace.on('connection',function(socket){
-    //users subscribe to this channel when they log on the first time
-    //room names will be their userIds
-    socket.on('getNotifications',function(user){
-        console.log('listening to notifications')
-        socket.join(user)
-    })
-    //Notifications should be sent to global name space and redirected to specific users
-    //fired by comment creation
-    socket.on('onRecieveNotifaction',function(msg){
-        //get target userId from msg, reply message to specific room
-        socket.to(msg.toUser).emit('notify',msg)
-    })
+    new SocketListener(server)
 })
