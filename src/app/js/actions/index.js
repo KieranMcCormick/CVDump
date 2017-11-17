@@ -64,9 +64,9 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
     }
 }
 
-export const dispatchSignUp = ({ username, password, email }) => async (dispatch) => {
+export const dispatchSignUp = ({ username, email, password, confirmPassword }) => async (dispatch) => {
     try {
-        const res = await axiosWithCSRF.post('/register', { username, password, email })
+        const res = await axiosWithCSRF.post('/register', { username, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
