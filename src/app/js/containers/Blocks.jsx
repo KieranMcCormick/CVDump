@@ -79,43 +79,10 @@ class TextEditor extends Component {
     }
 }
 
-class AppComponent extends React.Component {
-    state = {
-        numChildren: 0,
-        blocks: []
-    }
-
-    render() {
-        const children = [];
-
-        for (var i = 0; i < this.state.numChildren; i += 1) {
-            children.push(<BlockChildComponent key={i} number={i} onClick={this.testFunc} data={"test"} />);
-        };
-
-        return (
-            <BlockParentComponent addChild={this.onAddChild.bind}>
-                {children}
-            </BlockParentComponent>
-        );
-    }
-
-    onAddChild = () => {
-        this.setState({
-            numChildren: this.state.numChildren + 1
-        });
-    }
-
-    testFunc(data) {
-        alert(data)
-    }
-}
-
 const BlockParentComponent = props => (
-    <div className="card calculator">
-        <p><button onClick={props.addChild}>Add Another Child Component</button></p>
-        <div id="children-pane">
-            {props.children}
-        </div>
+    <div>
+        <button onClick={props.addChild}>+</button>
+        {props.children}
     </div>
 );
 
@@ -126,7 +93,6 @@ class Blocks extends Component {
         super(props)
         autobind(this)
         this.state = {
-            numChildren: 0,
             blocks: []
         }
     }
@@ -145,7 +111,6 @@ class Blocks extends Component {
             data: 'data2 ``data2`` data2 data2'
         }
         this.AddChild(block1)
-
         this.AddChild(block2)
     }
 
@@ -154,33 +119,22 @@ class Blocks extends Component {
     }
 
     handleClick(block) {
-        console.log('data:', block)
         this.editorRef.updateData(block, this)
     }
+
 
     AddChild(newBlock) {
         var blocks = this.state.blocks
         blocks.push(newBlock)
-
-        this.setState({
-            blocks: blocks
-        })
-
-        this.state.numChildren = this.state.numChildren + 1
-
-    }
-
-    testFunc(block) {
-        console.log(block.name)
-        console.log(block.data)
+        this.setState({ blocks: blocks })
     }
 
     render() {
         const children = [];
 
         const blockD = {
-            name: 'name' + (this.state.numChildren + 1),
-            data: 'data' + (this.state.numChildren + 1) + ' ``data' + (this.state.numChildren + 1) + ' ~data' + (this.state.numChildren + 1) + '~',
+            name: 'new block',
+            data: '',
         }
         for (var i = 0; i < this.state.blocks.length; i++) {
             children.push(<BlockChildComponent key={i} number={i} onClick={this.handleClick} block={this.state.blocks[i]} />);
@@ -195,10 +149,8 @@ class Blocks extends Component {
                 <div>Blocks View</div>
                 {this.editor}
             </div>
-
         )
     }
 }
-
 
 export default Blocks
