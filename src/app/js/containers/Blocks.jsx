@@ -151,7 +151,6 @@ class Blocks extends Component {
         for (let i = 0; i < this.state.blocks.length; i++) {
             children.push(<BlockChildComponent
                 key={i}
-                number={i}
                 onClick={this.handleClick}
                 block={this.state.blocks[i]}
             />)
