@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import RichTextEditor, { createValueFromString, EditorValue } from 'react-rte'
+import RichTextEditor, { createEmptyValue, EditorValue } from 'react-rte'
 import PropTypes from 'prop-types'
 
 
@@ -12,7 +12,7 @@ class TextEditor extends Component {
         this.updateData = this.updateData.bind(this)
 
         this.state = {
-            value: RichTextEditor.createEmptyValue(),
+            value: createEmptyValue(),
             format: 'markdown',
             readOnly: false,
         }
