@@ -1,13 +1,18 @@
 import React, { Component } from 'react'
 import RichTextEditor from 'react-rte'
-import autobind from 'class-autobind'
+import PropTypes from 'prop-types'
 import { createValueFromString } from 'react-rte'
 import { EditorValue } from 'react-rte'
+
 
 class TextEditor extends Component {
     constructor(props) {
         super(props)
-        autobind(this)
+        this.saveData = this.saveData.bind(this)
+        this.onChange = this.onChange.bind(this)
+        this.onChangeSource = this.onChangeSource.bind(this)
+        this.updateData = this.updateData.bind(this)
+
         this.state = {
             value: createValueFromString('', 'markdown'),
             format: 'markdown',
@@ -25,7 +30,7 @@ class TextEditor extends Component {
                 <div>
                     <RichTextEditor
                         value={value}
-                        onChange={this._onChange}
+                        onChange={this.onChange}
                         placeholder="Tell a story"
                         readOnly={this.state.readOnly}
                     />
@@ -35,30 +40,34 @@ class TextEditor extends Component {
                     <textarea
                         placeholder="Editor Source"
                         value={value.toString(format)}
-                        onChange={this._onChangeSource}
+                        onChange={this.onChangeSource}
                     />
                 </div>
                 <div>
                     <span>Save...working?:</span>
-                    <button onClick={this._saveData}>Save</button>
+                    <button onClick={this.saveData}>Save</button>
                 </div>
             </div>
         )
     }
 
-    _saveData() {
+    saveData() {
         let { value, format } = this.state
         console.log('data: ', value.toString(format))
-        this.state.currentBlock.data = value.toString(format)
+        this.setState({
+            currentBlock: {
+                data: value.toString(format),
+            },
+        })
         this._blocksComponent._currentBlock = this.state.currentBlock
         this._blocksComponent.updateData()
     }
 
-    _onChange(value: EditorValue) {
+    onChange(value: EditorValue) {
         this.setState({ value })
     }
 
-    _onChangeSource(event: Object) {
+    onChangeSource(event: Object) {
         let source = event.target.value
         let oldValue = this.state.value
         this.setState({
@@ -69,8 +78,9 @@ class TextEditor extends Component {
     updateData(block, blocksComponent) {
         this._blocksComponent = blocksComponent
         blocksComponent._currentBlock = block
-        this.state.currentBlock = block
-
+        this.setState({
+            currentBlock: block,
+        })
         let oldValue = this.state.value
 
         this.setState({
@@ -84,16 +94,31 @@ const BlockParentComponent = props => (
         <button onClick={props.addChild}>+</button>
         {props.children}
     </div>
-);
+)
 
-const BlockChildComponent = props => <button onClick={props.onClick.bind(this, props.block)}>{"Edit: " + props.block.name}</button>;
+BlockParentComponent.propTypes = {
+    addChild: PropTypes.func.isRequired,
+    children: PropTypes.array.isRequired,
+}
+
+const BlockChildComponent = props => <button onClick={props.onClick.bind(this, props.block)}>{'Edit: ' + props.block.name}</button>
+
+BlockChildComponent.propTypes = {
+    onClick: PropTypes.func.isRequired,
+    block: PropTypes.object.isRequired,
+}
+
 
 class Blocks extends Component {
     constructor(props) {
         super(props)
-        autobind(this)
+        this.getData = this.getData.bind(this)
+        this.updateData = this.updateData.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.AddChild = this.AddChild.bind(this)
+
         this.state = {
-            blocks: []
+            blocks: [],
         }
     }
     componentDidMount() {
@@ -104,11 +129,11 @@ class Blocks extends Component {
     getData() {
         const block1 = {
             name: 'name1',
-            data: '~~data1~~ data1 data1 data1'
+            data: '~~data1~~ data1 data1 data1',
         }
         const block2 = {
             name: 'name2',
-            data: 'data2 ``data2`` data2 data2'
+            data: 'data2 ``data2`` data2 data2',
         }
         this.AddChild(block1)
         this.AddChild(block2)
@@ -122,28 +147,27 @@ class Blocks extends Component {
         this.editorRef.updateData(block, this)
     }
 
-
     AddChild(newBlock) {
-        var blocks = this.state.blocks
+        let blocks = this.state.blocks
         blocks.push(newBlock)
         this.setState({ blocks: blocks })
     }
 
     render() {
-        const children = [];
+        const children = []
 
-        const blockD = {
+        const tmpBlock = {
             name: 'new block',
             data: '',
         }
-        for (var i = 0; i < this.state.blocks.length; i++) {
-            children.push(<BlockChildComponent key={i} number={i} onClick={this.handleClick} block={this.state.blocks[i]} />);
-        };
 
+        for (let i = 0; i < this.state.blocks.length; i++) {
+            children.push(<BlockChildComponent key={i} number={i} onClick={this.handleClick} block={this.state.blocks[i]} />)
+        }
 
         return (
             <div>
-                <BlockParentComponent addChild={this.AddChild.bind(this, blockD)}>
+                <BlockParentComponent addChild={this.AddChild.bind(this, tmpBlock)}>
                     {children}
                 </BlockParentComponent>
                 <div>Blocks View</div>
