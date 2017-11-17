@@ -124,6 +124,7 @@ const BlockChildComponent = props => <button onClick={props.onClick.bind(this, p
 class Blocks extends Component {
     constructor(props) {
         super(props)
+        autobind(this)
         this.state = {
             numChildren: 0,
             blocks: []
@@ -131,6 +132,7 @@ class Blocks extends Component {
     }
     componentDidMount() {
         this.getData()
+        this.editor = <TextEditor ref={(editor) => { this.editorRef = editor }} />
     }
 
     getData() {
@@ -153,46 +155,45 @@ class Blocks extends Component {
 
     handleClick(block) {
         console.log('data:', block)
-        this._editor.updateData(block, this)
+        this.editorRef.updateData(block, this)
     }
 
     AddChild(newBlock) {
-        console.log(newBlock.name)
         var blocks = this.state.blocks
-        console.log("slice: " + blocks)
         blocks.push(newBlock)
-        console.log("push: " + blocks)
-
-        this.setState({ blocks: blocks })
 
         this.setState({
-            numChildren: this.state.numChildren + 1
-        });
-        console.log("numChildren post: " + this.state.numChildren)
+            blocks: blocks
+        })
+
+        this.state.numChildren = this.state.numChildren + 1
 
     }
 
     testFunc(block) {
-        alert(block.name)
+        console.log(block.name)
+        console.log(block.data)
     }
 
     render() {
         const children = [];
+
         const blockD = {
-            name: 'name' + this.state.numChildren + 1,
+            name: 'name' + (this.state.numChildren + 1),
             data: 'data' + (this.state.numChildren + 1) + ' ``data' + (this.state.numChildren + 1) + ' ~data' + (this.state.numChildren + 1) + '~',
         }
-        for (var i = 0; i < this.state.numChildren; i++) {
-            children.push(<BlockChildComponent key={i} number={i} onClick={this.testFunc} block={this.state.blocks[i]} />);
+        for (var i = 0; i < this.state.blocks.length; i++) {
+            children.push(<BlockChildComponent key={i} number={i} onClick={this.handleClick} block={this.state.blocks[i]} />);
         };
+
+
         return (
             <div>
-                <p>{this.state.numChildren}</p>
                 <BlockParentComponent addChild={this.AddChild.bind(this, blockD)}>
                     {children}
                 </BlockParentComponent>
                 <div>Blocks View</div>
-                <TextEditor ref={(editor) => { this._editor = editor }} />
+                {this.editor}
             </div>
 
         )
