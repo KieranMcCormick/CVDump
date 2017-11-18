@@ -12,7 +12,7 @@ class Comments {
     }
     //checks if document exists
     validateDocument() {
-        const getDocumentQuery = 'SELECT title FROM project.documents WHERE uuid = ? '
+        const getDocumentQuery = 'SELECT title FROM documents WHERE uuid = ? '
         return new Promise((resolve, reject) => {
             sqlSelect(getDocumentQuery, [this.documentId], (err, result) => {
                 if (err) {
@@ -28,7 +28,7 @@ class Comments {
     }
     //checks if user exists ,returns iD
     create() {
-        const createQuery = 'INSERT INTO project.comments (uuid, user_id, document_id, comment, created_at) VALUES (UUID(), ?, ?, ?, ?)'
+        const createQuery = 'INSERT INTO comments (uuid, user_id, document_id, comment, created_at) VALUES (UUID(), ?, ?, ?, ?)'
         return new Promise((resolve, reject) => {
             // validate user first
             sqlInsert(createQuery, [this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
@@ -43,7 +43,7 @@ class Comments {
 
     loadComments() {
         let that = this
-        const fetchQuery = 'SELECT user_id, comment, created_at FROM project.comments WHERE document_id = ?'
+        const fetchQuery = 'SELECT user_id, comment, created_at FROM comments WHERE document_id = ?'
         return new Promise((resolve, reject) => {
             sqlSelect(fetchQuery, [this.documentId], (err, success) => {
                 if (err) {

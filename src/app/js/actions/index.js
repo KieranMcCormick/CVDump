@@ -87,28 +87,11 @@ export const dispatchSignUp = ({ username, email, password, confirmPassword }) =
 
 export const dispatchFetchFiles = () => async (dispatch) => {
     try {
-        // Mock data remove later
-        // const res = await axios.get('/files')
-        // dispatch({
-        //     type: types.FETCH_FILES_SUCCESS,
-        //     payload: res.data,
-        // })
+
+        const res = await axiosWithCSRF.get('/file/userfiles')
         dispatch({
             type: types.FETCH_FILES_SUCCESS,
-            payload: [
-                {
-                    id: '5479dcaf-cce6-11e7-810c-000c291b6367',
-                    name: 'File name 1',
-                },
-                {
-                    id: '861cf54c-cce6-11e7-810c-000c291b6367',
-                    name: 'File name 2',
-                },
-                {
-                    id: 3,
-                    name: 'File name 3',
-                }
-            ],
+            payload: res.data,
         })
     } catch (error) {
         dispatch({

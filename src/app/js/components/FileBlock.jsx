@@ -21,7 +21,7 @@ class FileBlock extends PureComponent {
 }
 
 FileBlock.propTypes = {
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     name: PropTypes.string,
     isAdd: PropTypes.bool,
 }
