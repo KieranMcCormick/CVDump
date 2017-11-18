@@ -41,21 +41,13 @@ export const dispatchFetchUser = (redirectPath, originalPath) => async (dispatch
 
 export const dispatchLogin = ({ username, password }) => async (dispatch) => {
     try {
-        /* const res = await axiosWithCSRF.post('/login', { username, password })
+        const res = await axiosWithCSRF.post('/login', { username, password })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
                 isFetching: false,
                 isAuthenticated: true,
                 info: res.data,
-            },
-        }) */
-        dispatch({
-            type: types.LOGIN_SUCCESS,
-            payload: {
-                isFetching: false,
-                isAuthenticated: true,
-                info: { username: 'asdfadf' },
             },
         })
         dispatch(push('/'))
