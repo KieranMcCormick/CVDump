@@ -61,6 +61,7 @@ require('./handlers/passport')(app)
 app.use(require('./routes/auth'))
 app.use(require('./routes/sessions'))
 app.use('/comment', require('./routes/comment_api'))
+app.use('/file', require('./routes/files_api'))
 require('./routes')(app)
 
 app.get('*', (request, response) => {
