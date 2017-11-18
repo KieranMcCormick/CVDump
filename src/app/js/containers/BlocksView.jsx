@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import RichTextEditor, { createEmptyValue, EditorValue } from 'react-rte'
+import RichTextEditor, { createEmptyValue } from 'react-rte'
 import PropTypes from 'prop-types'
 
 class TextEditor extends Component {
