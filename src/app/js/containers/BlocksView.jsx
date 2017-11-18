@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import RichTextEditor, { createEmptyValue, EditorValue } from 'react-rte'
 import PropTypes from 'prop-types'
 
-
 class TextEditor extends Component {
     constructor(props) {
         super(props)
@@ -10,7 +9,6 @@ class TextEditor extends Component {
         this.onChange = this.onChange.bind(this)
         this.onChangeSource = this.onChangeSource.bind(this)
         this.updateData = this.updateData.bind(this)
-
         this.state = {
             value: createEmptyValue(),
             format: 'markdown',
@@ -61,10 +59,9 @@ class TextEditor extends Component {
 
     updateData(block) {
         let { value, format } = this.state
-        let oldValue = value
         this.currentBlock = block
         this.setState({
-            value: oldValue.setContentFromString(this.currentBlock.data, format),
+            value: value.setContentFromString(this.currentBlock.data, format),
         })
     }
 
