@@ -3,9 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Comment from './Comments'
 import SocketHandler from '../../global/SocketsHandler'
-
-
-const axios = require('axios')
+import axios from 'axios'
 
 class CommentBox extends Component {
     // UI container holding comments for a resume, allows user to make additional comments are delete their previous comments

@@ -1,6 +1,6 @@
 const io = require('socket.io-client')
 const commentNameSpace = io('/comments')
-const notifcationSpace = io('/comments')
+const notifcationSpace = io('/notifications')
 
 class SocketHandler {
 
