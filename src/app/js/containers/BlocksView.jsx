@@ -82,10 +82,12 @@ BlockParentComponent.propTypes = {
     children: PropTypes.array.isRequired,
 }
 
-const BlockChildComponent = props =>
+const BlockChildComponent = props => (
     <button onClick={props.onClick.bind(this, props.block)}>
         {'Edit: ' + props.block.name}
     </button>
+)
+
 
 BlockChildComponent.propTypes = {
     onClick: PropTypes.func.isRequired,
@@ -142,11 +144,13 @@ class Blocks extends Component {
         }
 
         const children = this.state.blocks.map((block, index) =>
-            <BlockChildComponent
-                key={index}
-                onClick={this.handleClick}
-                block={block}
-            />
+            (
+                <BlockChildComponent
+                    key={index}
+                    onClick={this.handleClick}
+                    block={block}
+                />
+            )
         )
 
         return (
