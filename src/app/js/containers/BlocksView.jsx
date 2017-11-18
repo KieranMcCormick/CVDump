@@ -38,7 +38,7 @@ class TextEditor extends Component {
                     />
                 </div>
                 <div>
-                    <span>Save...working?:</span>
+                    <span>Save:</span>
                     <button onClick={this.saveData}>Save</button>
                 </div>
             </div>
