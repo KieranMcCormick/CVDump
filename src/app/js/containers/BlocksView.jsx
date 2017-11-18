@@ -138,20 +138,18 @@ class Blocks extends Component {
     }
 
     render() {
-        const children = []
-
         const tmpBlock = {
             name: 'new block',
             data: '',
         }
 
-        for (let i = 0; i < this.state.blocks.length; i++) {
-            children.push(<BlockChildComponent
-                key={i}
+        const children = this.state.blocks.map((block, index) =>
+            <BlockChildComponent
+                key={index}
                 onClick={this.handleClick}
-                block={this.state.blocks[i]}
-            />)
-        }
+                block={block}
+            />
+        )
 
         return (
             <div>
