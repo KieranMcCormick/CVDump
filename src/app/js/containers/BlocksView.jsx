@@ -155,10 +155,10 @@ class Blocks extends Component {
 
         return (
             <div>
+                <div>Blocks View</div>
                 <BlockParentComponent addChild={this.AddChild.bind(this, tmpBlock)}>
                     {children}
                 </BlockParentComponent>
-                <div>Blocks View</div>
                 <TextEditor ref={(editor) => { this.editorRef = editor }} />
             </div>
         )
