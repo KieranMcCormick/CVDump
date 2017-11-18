@@ -50,8 +50,8 @@ class TextEditor extends Component {
     }
 
     onChangeSource(event: Object) {
-        let source = event.target.value
-        let oldValue = this.state.value
+        const source = event.target.value
+        const oldValue = this.state.value
         this.setState({
             value: oldValue.setContentFromString(source, this.state.format),
         })
