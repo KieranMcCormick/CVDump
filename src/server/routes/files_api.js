@@ -1,17 +1,42 @@
 const express = require('express')
 const router  = express.Router()
 const { Document } = require('../models/document')
+const requireLogin = require('../middlewares/requireLogin')
 
+router.use(requireLogin)
 
-router.get('/userfiles', (req, res) => {
+/**
+ * returns the collection of files base on user session
+ */
+router.get('/', (req, res) => {
     const user_id = req.user.user_id
     if( user_id ){
-        Document.LoadDocumentsByUserid(user_id).then((result, err) => {
+        Document.LoadDocumentsByUserId(user_id).then((result, err) => {
             if (err){
                 console.error(err)
                 res.send({ message : 'Something went wrong loading files' })
             }
             else{
+                res.send(result)
+            }
+        }).catch((exception) => {
+            console.error(exception)
+            res.send({ message : 'Something went wrong loading files' })
+        })
+    }
+})
+
+/**
+ * returns file with `id` for the user
+ */
+router.get('/:id', (req, res) => {
+    const user_id = req.user.user_id
+    if (user_id) {
+        Document.LoadDocumentsByUserId(user_id).then((result, err) => {
+            if (err){
+                console.error(err)
+                res.send({ message : 'Something went wrong loading files' })
+            } else {
                 res.send(result)
             }
         }).catch((exception) => {

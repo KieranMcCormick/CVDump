@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import CommentBox from '../containers/comments/CommentBox'
+import Loader from './Loader'
 
 
 class File extends PureComponent {
@@ -14,15 +15,19 @@ class File extends PureComponent {
     }
 
     componentDidMount() {
-        // TODO: Uncomment for markdown integration
-        // this.props.dispatchFetchFile(this.props.match.params)
+        this.props.dispatchFetchFile(this.props.match.params.id, () => {
+            this.setState({ isLoading: false })
+        })
     }
 
     render() {
+        if (this.state.isLoading) {
+            return <Loader />
+        }
         return (
             <div className="c-file">
                 This is per file view
-                <CommentBox currentDoc= {this.props.match.params.id} />
+                <CommentBox docId={this.props.match.params.id} />
             </div>
         )
     }
