@@ -44,11 +44,11 @@ class TextEditor extends Component {
         )
     }
 
-    onChange(value: EditorValue) {
+    onChange(value) {
         this.setState({ value })
     }
 
-    onChangeSource(event: Object) {
+    onChangeSource(event) {
         const source = event.target.value
         const oldValue = this.state.value
         this.setState({
@@ -98,7 +98,7 @@ class Blocks extends Component {
         this.getData = this.getData.bind(this)
         this.updateData = this.updateData.bind(this)
         this.handleClick = this.handleClick.bind(this)
-        this.AddChild = this.AddChild.bind(this)
+        this.addChild = this.addChild.bind(this)
 
         this.state = {
             blocks: [],
@@ -117,8 +117,8 @@ class Blocks extends Component {
             name: 'name2',
             data: 'data2 ``data2`` data2 data2',
         }
-        this.AddChild(block1)
-        this.AddChild(block2)
+        this.addChild(block1)
+        this.addChild(block2)
     }
 
     updateData() {
@@ -129,7 +129,7 @@ class Blocks extends Component {
         this.editorRef.updateData(block)
     }
 
-    AddChild(newBlock) {
+    addChild(newBlock) {
         let blocks = this.state.blocks
         blocks.push(newBlock)
         this.setState({ blocks: blocks })
@@ -152,7 +152,7 @@ class Blocks extends Component {
         return (
             <div>
                 <div>Blocks View</div>
-                <BlockParentComponent addChild={this.AddChild.bind(this, tmpBlock)}>
+                <BlockParentComponent addChild={this.addChild.bind(this, tmpBlock)}>
                     {children}
                 </BlockParentComponent>
                 <TextEditor ref={(editor) => { this.editorRef = editor }} />
