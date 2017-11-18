@@ -83,7 +83,10 @@ BlockParentComponent.propTypes = {
     children: PropTypes.array.isRequired,
 }
 
-const BlockChildComponent = props => <button onClick={props.onClick.bind(this, props.block)}>{'Edit: ' + props.block.name}</button>
+const BlockChildComponent = props =>
+    <button onClick={props.onClick.bind(this, props.block)}>
+        {'Edit: ' + props.block.name}
+    </button>
 
 BlockChildComponent.propTypes = {
     onClick: PropTypes.func.isRequired,
