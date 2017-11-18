@@ -29,7 +29,6 @@ class TextEditor extends Component {
                         readOnly={this.state.readOnly}
                     />
                 </div>
-
                 <div>
                     <textarea
                         placeholder="Editor Source"
@@ -92,7 +91,6 @@ BlockChildComponent.propTypes = {
     onClick: PropTypes.func.isRequired,
     block: PropTypes.object.isRequired,
 }
-
 
 class Blocks extends Component {
     constructor(props) {
