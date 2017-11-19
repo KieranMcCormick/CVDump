@@ -5,21 +5,22 @@ const { check } = require('express-validator/check')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 
-const { cqlInsert, cqlSelect } = require('../db')
+const { sqlInsert, sqlSelect } = require('../db')
 const config = require('../config')
 const keys = require('../config/keys')
 
 const BCRYPT_HASHING_ROUNDS = 10
 
-const FIND_USER_BY_EMAIL_CQL       = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM project.users WHERE email_address = ? LIMIT 1'
-const FIND_USER_BY_USERNAME_CQL    = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM project.users WHERE username = ? LIMIT 1'
-const FIND_USER_BY_CAS_ID_CQL      = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM project.users WHERE cas_id = ? LIMIT 1 ALLOW FILTERING'
-const FIND_USER_BY_LINKEDIN_ID_CQL = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM project.users WHERE linked_in = ? LIMIT 1 ALLOW FILTERING'
-const UPSERT_USER_CQL              = 'UPDATE project.users SET password = ?, email_address = ?, firstname = ?, lastname = ?, cas_id = ?, linkedin_id = ? WHERE username = ?'
-const UPDATE_PROFILE_CQL           = 'UPDATE project.users SET email_address = ?, firstname = ?, lastname = ? WHERE username = ?'
-const UPDATE_CAS_ID_CQL            = 'UPDATE project.users SET cas_id = ? WHERE username = ?'
-const UPDATE_LINKEDIN_IN_CQL       = 'UPDATE project.users SET linkedin_id = ? WHERE username = ?'
-const UPDATE_PASSWORD_CQL          = 'UPDATE project.users SET password = ? WHERE username = ?'
+const FIND_USER_BY_EMAIL_SQL       = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE email_address = ? LIMIT 1'
+const FIND_USER_BY_USERNAME_SQL    = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE username = ? LIMIT 1'
+const FIND_USER_BY_CAS_ID_SQL      = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE cas_id = ? LIMIT 1 ALLOW FILTERING'
+const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linked_in = ? LIMIT 1 ALLOW FILTERING'
+const INSERT_USER_SQL              = 'INSERT INTO users (uuid, password, email_address, firstname, lastname, cas_id, linkedin_id, username) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)'
+//const UPSERT_USER_SQL              = 'UPDATE users SET password = ?, email_address = ?, firstname = ?, lastname = ?, cas_id = ?, linkedin_id = ? WHERE username = ?'
+const UPDATE_PROFILE_SQL           = 'UPDATE users SET email_address = ?, firstname = ?, lastname = ? WHERE username = ?'
+const UPDATE_CAS_ID_SQL            = 'UPDATE users SET cas_id = ? WHERE username = ?'
+const UPDATE_LINKEDIN_IN_SQL       = 'UPDATE users SET linkedin_id = ? WHERE username = ?'
+const UPDATE_PASSWORD_SQL          = 'UPDATE users SET password = ? WHERE username = ?'
 
 const UserUpdatePasswordValidation = [
     check('password', 'must contain at least one lowercase, uppercase, number, and symbol')
@@ -114,16 +115,17 @@ class User {
         })
     }
 
-    // This is used for CQL so DO NOT CHANGE THE ORDER without
-    // changing the prepared query UPSERT_USER_CQL.
+    // This is used for SQL so DO NOT CHANGE THE ORDER without
+    // changing the prepared query UPSERT_USER_SQL.
     // username is the primary key and hence used in the WHERE clause
-    cqlValueArray() {
+    SQLValueArray() {
         return [ this.password, this.email_address, this.firstname, this.lastname, this.cas_id, this.linkedin_id, this.username ]
     }
 
+    //need seperate update function ?
     save() {
         return new Promise((resolve, reject) => {
-            cqlInsert(UPSERT_USER_CQL, this.cqlValueArray(), (err, result) => {
+            sqlInsert(INSERT_USER_SQL, this.SQLValueArray(), (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
@@ -150,7 +152,7 @@ class User {
                 }
                 this.setPassword(props.password).then((success) => {
                     if (success) {
-                        cqlInsert(UPDATE_PASSWORD_CQL, [ this.password, this.username ], (err, result) => {
+                        sqlInsert(UPDATE_PASSWORD_SQL, [ this.password, this.username ], (err, result) => {
                             if (err) {
                                 console.error(err)
                                 return reject(new Error('Database Error'))
@@ -170,7 +172,7 @@ class User {
 
     updateCASID(cas_id) {
         return new Promise((resolve, reject) => {
-            cqlInsert(UPDATE_CAS_ID_CQL, [ cas_id, this.username ], (err, result) => {
+            sqlInsert(UPDATE_CAS_ID_SQL, [ cas_id, this.username ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
@@ -186,7 +188,7 @@ class User {
 
     updateLinkedinID(linkedin_id) {
         return new Promise((resolve, reject) => {
-            cqlInsert(UPDATE_LINKEDIN_IN_CQL, [ linkedin_id, this.username ], (err, result) => {
+            sqlInsert(UPDATE_LINKEDIN_IN_SQL, [ linkedin_id, this.username ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
@@ -203,7 +205,7 @@ class User {
     updateProfile(props) {
         props = this.mapFrontEndFieldsToDB(props)
         return new Promise((resolve, reject) => {
-            cqlInsert(UPDATE_PROFILE_CQL, [ props.email_address, props.firstname, props.lastname, this.username ], (err, result) => {
+            sqlInsert(UPDATE_PROFILE_SQL, [ props.email_address, props.firstname, props.lastname, this.username ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
@@ -221,7 +223,7 @@ class User {
 
     static findOneByEmail(email_address) {
         return new Promise((resolve, reject) => {
-            cqlSelect(FIND_USER_BY_EMAIL_CQL, [ email_address ], (err, users) => {
+            sqlSelect(FIND_USER_BY_EMAIL_SQL, [ email_address ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
                 if (users.length < 1) { return resolve(null) }
                 if (users.length > 1) {
@@ -235,7 +237,7 @@ class User {
 
     static findOneByUsername(username) {
         return new Promise((resolve, reject) => {
-            cqlSelect(FIND_USER_BY_USERNAME_CQL, [ username ], (err, users) => {
+            sqlSelect(FIND_USER_BY_USERNAME_SQL, [ username ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
                 if (users.length < 1) { return resolve(null) }
                 else if (users.length > 1) {
@@ -249,7 +251,7 @@ class User {
 
     static findOneByCASID(cas_id) {
         return new Promise((resolve, reject) => {
-            cqlSelect(FIND_USER_BY_CAS_ID_CQL, [ cas_id ], (err, users) => {
+            sqlSelect(FIND_USER_BY_CAS_ID_SQL, [ cas_id ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
                 if (users.length < 1) { return resolve(null) }
                 else if (users.length > 1) {
@@ -263,7 +265,7 @@ class User {
 
     static findOneByLinkedInID(linkedin_id) {
         return new Promise((resolve, reject) => {
-            cqlSelect(FIND_USER_BY_LINKEDIN_ID_CQL, [ linkedin_id ], (err, users) => {
+            sqlSelect(FIND_USER_BY_LINKEDIN_ID_SQL, [ linkedin_id ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
                 if (users.length < 1) { return resolve(null) }
                 else if (users.length > 1) {
