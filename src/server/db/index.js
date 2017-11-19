@@ -19,7 +19,9 @@ module.exports = {
         const sanitized = sqlstring.format(sql, params)
         pool.getConnection(function(err, connection){
 
-            //console.log(sanitized)
+            if (err){
+                callback(err, null)
+            }
 
             connection.query(sanitized, function(error, results){
                 connection.release()
@@ -30,9 +32,6 @@ module.exports = {
                 }
             })
 
-            if (err){
-                callback(err, null)
-            }
         })
     },
 
@@ -41,6 +40,10 @@ module.exports = {
         const sanitized = sqlstring.format(sql, params)
         pool.getConnection(function(err, connection){
 
+            if (err){
+                callback(err, null)
+            }
+
             connection.query(sanitized, function(error, results){
                 connection.release()
                 callback(null, results)
@@ -50,9 +53,6 @@ module.exports = {
                 }
             })
 
-            if (err){
-                callback(err, null)
-            }
         })
     },
 
@@ -61,6 +61,10 @@ module.exports = {
         const sanitized = sqlstring.format(sql, params)
         pool.getConnection(function(err, connection){
 
+            if (err){
+                callback(err, null)
+            }
+
             connection.query(sanitized, function(error, results){
                 connection.release()
                 callback(null, results)
@@ -69,10 +73,6 @@ module.exports = {
                     callback(err, null)
                 }
             })
-
-            if (err){
-                callback(err, null)
-            }
         })
     },
 
@@ -82,7 +82,10 @@ module.exports = {
 
         pool.getConnection(function(err, connection){
 
-            console.log(sanitized)
+            if (err){
+                callback(err, null)
+            }
+
             connection.query(sanitized, function(error, results){
                 connection.release()
 
@@ -93,9 +96,6 @@ module.exports = {
                 }
             })
 
-            if (err){
-                callback(err, null)
-            }
         })
     },
 
