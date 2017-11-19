@@ -1,4 +1,4 @@
-const { cqlInsert, cqlSelect } = require('../db')
+const { sqlInsert, sqlSelect } = require('../db')
 const _ = require('lodash')
 
 class Comments {
@@ -14,7 +14,7 @@ class Comments {
     validateDocument() {
         const getDocumentQuery = 'SELECT title FROM project.documents WHERE uuid = ? '
         return new Promise((resolve, reject) => {
-            cqlSelect(getDocumentQuery, [this.documentId], (err, result) => {
+            sqlSelect(getDocumentQuery, [this.documentId], (err, result) => {
                 if (err) {
                     return resolve({ error: err, message: 'No such document' })
                 }
@@ -31,7 +31,7 @@ class Comments {
         const createQuery = 'INSERT INTO project.comments (uuid, user_id, document_id, comment, created_at) VALUES (UUID(), ?, ?, ?, ?)'
         return new Promise((resolve, reject) => {
             // validate user first
-            cqlInsert(createQuery, [this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
+            sqlInsert(createQuery, [this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
                 if (err) {
                     console.log(err)
                     return resolve({ params: [this.username, this.content, this.timeStamp], error: err })
@@ -45,7 +45,7 @@ class Comments {
         let that = this
         const fetchQuery = 'SELECT user_id, comment, created_at FROM project.comments WHERE document_id = ?'
         return new Promise((resolve, reject) => {
-            cqlSelect(fetchQuery, [this.documentId], (err, success) => {
+            sqlSelect(fetchQuery, [this.documentId], (err, success) => {
                 if (err) {
                     console.log(err)
                     return resolve({ message: 'No comments' })
