@@ -22,16 +22,17 @@ module.exports = {
             if (err){
                 callback(err, null)
             }
-
-            connection.query(sanitized, function(error, results){
-                connection.release()
-                callback(null, results)
-
-                if (error) {
-                    callback(err, null)
-                }
-            })
-
+            else {
+                connection.query(sanitized, function(error, results){
+                    connection.release()
+                    if (error) {
+                        callback(error, null)
+                    }
+                    else {
+                        callback(null, results)
+                    }
+                })
+            }
         })
     },
 
@@ -43,16 +44,17 @@ module.exports = {
             if (err){
                 callback(err, null)
             }
-
-            connection.query(sanitized, function(error, results){
-                connection.release()
-                callback(null, results)
-
-                if (error) {
-                    callback(err, null)
-                }
-            })
-
+            else {
+                connection.query(sanitized, function(error, results){
+                    connection.release()
+                    if (error) {
+                        callback(error, null)
+                    }
+                    else {
+                        callback(null, results)
+                    }
+                })
+            }
         })
     },
 
@@ -64,15 +66,17 @@ module.exports = {
             if (err){
                 callback(err, null)
             }
-
-            connection.query(sanitized, function(error, results){
-                connection.release()
-                callback(null, results)
-
-                if (error) {
-                    callback(err, null)
-                }
-            })
+            else {
+                connection.query(sanitized, function(error, results){
+                    connection.release()
+                    if (error) {
+                        callback(error, null)
+                    }
+                    else {
+                        callback(null, results)
+                    }
+                })
+            }
         })
     },
 
@@ -85,17 +89,17 @@ module.exports = {
             if (err){
                 callback(err, null)
             }
-
-            connection.query(sanitized, function(error, results){
-                connection.release()
-
-                callback(null, results)
-
-                if (error) {
-                    callback(err, null)
-                }
-            })
-
+            else {
+                connection.query(sanitized, function(error, results){
+                    connection.release()
+                    if (error) {
+                        callback(error, null)
+                    }
+                    else {
+                        callback(null, results)
+                    }
+                })
+            }
         })
     },
 
