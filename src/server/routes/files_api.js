@@ -1,6 +1,6 @@
 const express = require('express')
 const router  = express.Router()
-const fs      = require('../fs/fs.js')  
+const fs      = require('../fs/fs.js')
 
 router.get('/savepdf/:doc_id?', (req, res, next) => {
 
@@ -8,7 +8,7 @@ router.get('/savepdf/:doc_id?', (req, res, next) => {
     //const curr_user = idk
 
     if(doc_id){
-        //autheticate user before returning file   
+        //autheticate user before returning file
         next()
     }
     else{

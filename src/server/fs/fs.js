@@ -23,7 +23,7 @@ module.exports = {
 
     generatePDF: function() {
         // might need to change charset
-        const filename = rand.generate(6) + '.pdf'; 
+        const filename = rand.generate(6) + '.pdf';
         const options = {
             length: 1,
             charset: '123',
