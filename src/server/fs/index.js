@@ -2,7 +2,7 @@
 const rand  = require('randomstring')
 const mdpdf = require('markdown-pdf')
 const fs    = require('fs')
-const db    = require('./db.js')
+const db    = require('../db')
 
 //path to where file system is located
 const fs_path = '/home/ubuntu/files/'

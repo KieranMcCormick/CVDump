@@ -3,6 +3,7 @@ const router = express.Router()
 const Comments = require('../models/comments')
 
 router.get('/', (req, res) => {
+    console.log(req.params)
     new Comments({ documentId: req.params.docId }).loadComments().then((result, err) => {
         if (err) {
             res.send({ message: 'cant find comments' })

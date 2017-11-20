@@ -28,6 +28,7 @@ router.post('/login', (req, res, next) => {
                         secure: process.env.NODE_ENV === 'production',
                         sameSite: 'lax',
                     })
+                    console.log(user.publicJson())
                     res.json(user.publicJson())
                 }
             })

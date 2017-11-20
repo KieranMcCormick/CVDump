@@ -1,6 +1,6 @@
 const express = require('express')
 const router  = express.Router()
-const fs      = require('../fs/fs.js')
+const fs      = require('../fs')
 
 router.get('/savepdf/:doc_id?', (req, res, next) => {
 
