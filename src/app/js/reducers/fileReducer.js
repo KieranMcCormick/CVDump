@@ -5,10 +5,10 @@ const initState = []
 
 export default (state = initState, action) => {
     switch (action.type) {
-        case types.FETCH_FILES_SUCCESS:
-            return [
-                ...action.payload
-            ]
+        case types.FETCH_FILES_SUCCESS: {
+            const files = [...action.payload.files]
+            return files
+        }
         case types.FETCH_FILES_FAILURE:
             return []
         case types.FETCH_FILE_SUCCESS: {

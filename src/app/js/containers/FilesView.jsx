@@ -23,13 +23,12 @@ class Files extends Component {
     }
 
     renderFiles() {
-        console.log(this.props.files)
-        return this.props.files.map(({ name, id }) => {
+        return this.props.files.map(({ title, doc_id }) => {
             return (
                 <FileBlock
-                    key={`file-block-${name}`}
-                    id={id}
-                    name={name}
+                    key={`file-block-${title}`}
+                    id={doc_id}
+                    name={title}
                 />
             )
         })

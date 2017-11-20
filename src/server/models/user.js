@@ -11,10 +11,10 @@ const keys = require('../config/keys')
 
 const BCRYPT_HASHING_ROUNDS = 10
 
-const FIND_USER_BY_EMAIL_SQL       = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE email_address = ? LIMIT 1'
-const FIND_USER_BY_USERNAME_SQL    = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE username = ? LIMIT 1'
-const FIND_USER_BY_CAS_ID_SQL      = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE cas_id = ? LIMIT 1 ALLOW FILTERING'
-const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linked_in = ? LIMIT 1 ALLOW FILTERING'
+const FIND_USER_BY_EMAIL_SQL       = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE email_address = ? LIMIT 1'
+const FIND_USER_BY_USERNAME_SQL    = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE username = ? LIMIT 1'
+const FIND_USER_BY_CAS_ID_SQL      = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE cas_id = ? LIMIT 1 ALLOW FILTERING'
+const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linked_in = ? LIMIT 1 ALLOW FILTERING'
 const INSERT_USER_SQL              = 'INSERT INTO users (uuid, password, email_address, firstname, lastname, cas_id, linkedin_id, username) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)'
 //const UPSERT_USER_SQL              = 'UPDATE users SET password = ?, email_address = ?, firstname = ?, lastname = ?, cas_id = ?, linkedin_id = ? WHERE username = ?'
 const UPDATE_PROFILE_SQL           = 'UPDATE users SET email_address = ?, firstname = ?, lastname = ? WHERE username = ?'
@@ -49,6 +49,7 @@ const UserCreationValidation = _.concat(UserUpdateProfileValidation, UserUpdateP
 class User {
     constructor(props) {
         if (props) {
+            this.user_id = props.uuid
             this.username = props.username
             this.password = props.password
             this.email_address = props.email_address
@@ -61,6 +62,7 @@ class User {
 
     publicJson() {
         return {
+            user_id: this.user_id,
             username: this.username,
             email: this.email_address,
             firstname: this.firstname,
