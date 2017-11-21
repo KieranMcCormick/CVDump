@@ -1,31 +1,71 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
-import { Logo } from '../global/icon'
+import { Logo, Avatar } from '../global/icon'
+import * as actions from '../actions'
+import PathLink from '../components/PathLink'
+import { Paper, Menu, MenuItem } from 'material-ui'
+import { getDisplayName } from '../global/common'
 
 
 class StatusBar extends PureComponent {
-    renderTitle() {
-        return (
-            <div>
-                {this.props.location.pathname}
-            </div>
-        )
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            showMenu: false,
+        }
     }
 
     renderLogo() {
         return (
-            <div className="c-status-bar__logo">
+            <Link className="c-status-bar__logo" to="/">
                 <Logo style={{width: '50px', height: 'auto'}} />
-            </div>
+            </Link>
         )
+    }
+
+    renderMenu() {
+        if (this.state.showMenu) {
+            const style= {
+                display: 'inline-block',
+                fontSize: '16px',
+                position: 'absolute',
+                top: 'var(--status-bar-height)',
+                right: '10px',
+                zIndex: '100',
+            }
+            return (
+                <Paper style={style}>
+                    <Menu>
+                        <MenuItem
+                            containerElement={<Link to="/profile" />}
+                            primaryText="Profile"
+                        />
+                        <MenuItem primaryText="Sign out" onClick={this.props.dispatchLogOut}/>
+                    </Menu>
+                </Paper>
+            )
+        }
     }
 
     renderUser() {
         return (
-            <div className="c-status__user">
-                <label>{this.props.user.info.firstname || this.props.user.info.email.split('@')[0]}</label>
+            <div
+                className="c-status-bar__user"
+                onClick={() => {this.setState({ showMenu: !this.state.showMenu })}}
+            >
+                <Avatar
+                    url={this.props.user.info.avatarUrl}
+                    style={{ width: 40, height: 'auto'}}
+                />
+                <label className="u-margin-h-md">{getDisplayName()}</label>
+                <i className="material-icons">
+                    expand_more
+                </i>
+                {this.renderMenu()}
             </div>
         )
     }
@@ -33,7 +73,7 @@ class StatusBar extends PureComponent {
     render() {
         return (
             <div className="c-status-bar">
-                {this.renderTitle()}
+                <PathLink pathname={this.props.location.pathname}/>
                 {this.renderLogo()}
                 {this.renderUser()}
             </div>
@@ -44,11 +84,16 @@ class StatusBar extends PureComponent {
 StatusBar.propTypes = {
     user: PropTypes.shape({
         isAuthenticated: PropTypes.bool.isRequired,
-        info: PropTypes.object.isRequired,
+        info: PropTypes.shape({
+            username: PropTypes.string,
+            email: PropTypes.string.isRequired,
+            avatarUrl: PropTypes.string.isRequired,
+        }).isRequired,
     }),
     location: PropTypes.shape({
         pathname: PropTypes.string.isRequired,
     }),
+    dispatchLogOut: PropTypes.func.isRequired,
 }
 
 
@@ -57,4 +102,4 @@ const mapStateToProps = ({ user }) => ({
 })
 
 
-export default withRouter(connect(mapStateToProps)(StatusBar))
+export default withRouter(connect(mapStateToProps, actions)(StatusBar))

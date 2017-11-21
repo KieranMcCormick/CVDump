@@ -1,20 +1,36 @@
-$status-bar-height: 50px;
-
 .c-status-bar {
+    --status-bar-height: 50px;
+
     position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    min-height: $status-bar-height;
+    height: var(--status-bar-height);
     background-color: $color-primary-dark;
 }
 
 .c-status-bar .c-status-bar__logo {
+    --logoWidth: 20px;
+
     position: absolute;
-    left: 50%;
-    width: 40px;
+    left: calc(50% - var(--logoWidth));
+    width: var(--logoWidth);
     height: auto;
     margin-top: map-get($spacing__map, xs);
-    transform: translateX(-$status-bar-height/2);
+    transform: translateX(-var(--status-bar-height)/2);
+}
+
+.c-status-bar .c-status-bar__user {
+    display: flex;
+    align-items: center;
+
+    &:hover,
+    label:hover {
+        cursor: pointer;
+    }
+
+    * {
+        margin: 0 map-get($spacing__map, xs);
+    }
 }

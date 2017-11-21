@@ -19,9 +19,13 @@ class Login extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.props.dispatchClearFormError()
+    }
+
     render() {
         const { isAuthenticated } = this.props.user
-        const errorMessage = this.props.user.errorMessage || this.state.user.errorMessage
+        const errorMessage = this.props.formMessage.errorMessage || this.state.user.errorMessage
 
         return (
             <div className="u-flex-column u--center-cross u-full">
@@ -36,10 +40,13 @@ class Login extends Component {
 
 Login.propTypes = {
     dispatchLogin: PropTypes.func.isRequired,
+    dispatchClearFormError: PropTypes.func.isRequired,
     form: PropTypes.object,
     user: PropTypes.shape({
         isAuthenticated: PropTypes.bool,
-        errorMessage: PropTypes.string,
+    }).isRequired,
+    formMessage: PropTypes.shape({
+        errorMessage: PropTypes.string.isRequired,
     }).isRequired,
     location: PropTypes.shape({
         search: PropTypes.string.isRequired,
@@ -49,6 +56,7 @@ Login.propTypes = {
 const mapStateToProps = (state) => ({
     form: state.form.loginForm,
     user: state.user,
+    formMessage: state.app.form,
 })
 
 export default connect(mapStateToProps, actions)(Login)
