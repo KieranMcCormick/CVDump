@@ -101,39 +101,21 @@ export const dispatchFetchFiles = () => async (dispatch) => {
     }
 }
 
+//THIS SHOULD BE CHANGED TO SHARED FILES ENDPOINT
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
-        // Mock data remove later
-        // const res = await axios.get(`/files/${id}`)
 
-        // dispatch({
-        //     type: types.FETCH_FILE_SUCCESS,
-        //     payload: res.data,
-        // })
+        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
+        const comment = await axios.get(`/comment/${id}`)
+        //const pdf = await axios.get(`/files/pdf/${id}`)
 
-        // Unfinished, uncomment code above when done.
-        // Expected return object
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
             payload: {
                 doc_id: id,
-                title: 'File Name Here',
                 version: 1,
-                comments: [
-                    {
-                        content: 'test test comment',
-                        created_at: 1511002354744,
-                        userId: '',
-                        doc_id: id,
-                    },
-                    {
-                        content: 'second comment',
-                        created_at: 1511002364744,
-                        userId: '',
-                        doc_id: id,
-                    }
-                ],
-                blocks: [
+                comments: comment.data,
+                blocks: [ //after changed to shared page this should not be here
                     '__markdown__ *format*'
                 ],
             },
@@ -151,12 +133,8 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
 
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
-        // TODO: remove later, use mock data for now
-        // const res = axiosWithCSRF.post('/comment/new', comment)
-        // dispatch({
-        //     type: types.CREATE_COMMENT_SUCCESS,
-        //     payload: res.data,
-        // })
+
+        axiosWithCSRF.post('/comment/create', comment)
         dispatch({
             type: types.CREATE_COMMENT_SUCCESS,
             payload: {
@@ -185,3 +163,52 @@ export const dispatchReceiveComment = (comment) => ({
         comment,
     },
 })
+
+export const dispatchCreateFile = () => async (dispatch) => {
+    try {
+        const res = await axios.get('/files/create')
+
+        dispatch({
+            type: types.FETCH_FILE_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
+
+//         dispatch({
+//             type: types.FETCH_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.FETCH_FILE_FAILURE,
+//             payload: error.data,
+//         })
+//     }
+// }
+
+// export const dispatchGetPdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/file/pdf/${id}')
+
+//         dispatch({
+//             type: types.FETCH_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.FETCH_FILE_FAILURE,
+//             payload: error.data,
+//         })
+//     }
+// }
+
