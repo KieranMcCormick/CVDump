@@ -18,7 +18,30 @@ router.get('/', (req, res) => {
 })
 
 router.post('/create', (req, res) => {
-    //let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author: that.state.currentUser.username ,docId:that.state.currentDoc}
+    
+   if(!req.body.targetUser || !req.body.type || !req.body.documentId ) {
+       res.send({message:"Missing user and document ID"})
+   }
+
+   new Notifications ({
+        targetUser: req.body.targetUser,
+        documentId: req.body.documentId,
+        timeStamp : new Date().toISOString().slice(0, 19).replace('T', ' '),
+        type: req.body.type,
+    })
+    .create().then((result,err) => {
+
+        if(result){
+            console.log(result)
+            res.send({message:"notification created"})
+        }
+
+        if(err) {
+            console.log(err)
+            res.send({message:"fail to notify user"})
+        }
+
+    })
    
 })
 
