@@ -60,7 +60,7 @@ class Notifications {
                     return reject({ message: 'No such user' })
                 }
 
-                if (success) {
+                if (success[0]) {
                     console.log(success)
                     let uuid = success[0].uuid
                     sqlSelect(fetchNotificationQuery, [uuid], (err, result) => {
@@ -69,15 +69,28 @@ class Notifications {
                         }
                         if(result){
                             console.log(result)
-                            return resolve({notifications:result})
+                            return resolve({notifications:that.parseOutput(result)})
                         }
                     })
+                } else {
+                    return reject(new Error('Internal Server Error'))
                 }
             })
         })
     }
 
-    //Makes comments into a ready display form
+    parseOutput(rows) {
+        let that= this
+        return _.map(rows, function (entries) {
+            //convert blob to string
+            return {
+                email: that.email,
+                type: entries.type,
+                timeStamp: entries.created_at,
+                document_id:entries.document_id,
+            }
+        })
+    }
 }
 
 module.exports = Notifications

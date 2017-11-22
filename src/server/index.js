@@ -64,10 +64,10 @@ app.use(
 )
 app.use(bodyParser.json())
 //app.use(require('csurf')({}))
-app.use(function (req, res, next) {
-    //res.cookie('_csrfToken', req.csrfToken(), { sameSite: 'lax' })
+/*app.use(function (req, res, next) {
+    res.cookie('_csrfToken', req.csrfToken(), { sameSite: 'lax' })
     next()
-})
+})*/
 require('./handlers/passport')(app)
 
 // routes setup
@@ -75,7 +75,7 @@ app.use(require('./routes/auth'))
 app.use(require('./routes/sessions'))
 app.use('/comment', require('./routes/comment_api'))
 app.use('/notifications',require('./routes/notification_api'))
-app.use('/file', require('./routes/files_api'))
+app.use('/files', require('./routes/files_api'))
 require('./routes')(app)
 
 app.get('*', (request, response) => {

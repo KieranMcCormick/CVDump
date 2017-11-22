@@ -18,6 +18,9 @@ router.get('/load', (req, res) => {
             res.send({message:"no notifications"})
         }
     })
+    .catch((exception) =>{
+        res.send({message:"There is no such user"})
+    })
    
 })
 
@@ -45,6 +48,9 @@ router.post('/create', (req, res) => {
             res.send({message:"fail to notify user"})
         }
 
+    })
+    .catch((exception) =>{
+        res.send({message:"There is no such user"})
     })
    
 })
