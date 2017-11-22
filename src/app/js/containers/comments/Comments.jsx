@@ -5,15 +5,14 @@ class Comment extends Component {
     // UI representation of a Comment box, takes in a comment object and displays the date,data, and author and length of reply thread
     constructor(props) {
         super(props)
-        this.state = {currentIndex: this.props.key }
     }
 
     render() {
         return (
             <div className="c-comment">
                 <div className ="c-comment__header">
-                    <p className="c-comment__author"> {this.props.comment.user_id} </p>
-                    <p className="c-comment__date"> {new Date(this.props.comment.timeStamp.toISOString().substring(0,10))} </p>
+                    <p className="c-comment__author"> {this.props.comment.userId} </p>
+                    <p className="c-comment__date"> {this.props.comment.created_at} </p>
                 </div>
                 <p className="c-comment__data">{this.props.comment.content} </p>
             </div>
@@ -22,9 +21,11 @@ class Comment extends Component {
 }
 
 Comment.propTypes = {
-    // TODO: use .shape
-    comment: PropTypes.any.isRequired,
-    key: PropTypes.string.isRequired,
+    comment: PropTypes.shape({
+        content: PropTypes.string.isRequired,
+        userId: PropTypes.string.isRequired,
+        created_at: PropTypes.number.isRequired,
+    }).isRequired,
 }
 
 export default Comment

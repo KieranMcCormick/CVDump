@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import * as actions from '../../actions'
 import Comment from './Comments'
-import SocketHandler from '../../global/SocketsHandler'
-import axios from 'axios'
+import SocketHandler from '../../global/socketsHandler'
+
 
 class CommentBox extends Component {
     // UI container holding comments for a resume, allows user to make additional comments are delete their previous comments
@@ -11,125 +12,94 @@ class CommentBox extends Component {
     constructor(props) {
         super(props)
 
+        const index = this.props.files.findIndex((file) => (file.doc_id === this.props.docId), this)
         this.state = {
-            fakeComments: [],
-            newInput: '',
-            docId: this.props.currentDoc,
-            commentCount: 0,
-            currentUser: this.props.user.info.username,
+            index,
+            comments: (this.props.files[index] && this.props.files[index].comments) || [],
         }
-        // Enter the comment socket namespace
-        this.socket = new SocketHandler('comments')
 
+        this.createComment = this.createComment.bind(this)
+        this.onClickHandler = this.onClickHandler.bind(this)
     }
 
     componentDidMount() {
-        this.socket.joinRoom(this.state.docId)
-        this.fetchComments()
-        //listen to events emitted from server
-        this.socket.listen(
+        SocketHandler.joinRoom('comments', this.props.docId)
+        SocketHandler.listen(
+            'comments',
             'update',
-            (newComment) => this.receiveComment(newComment))
+            (newComment) => this.props.dispatchReceiveComment(newComment)
+        )
     }
 
     componentWillUnmount() {
-        this.socket.leaveRoom()
+        SocketHandler.leaveRoom('comments', this.props.docId)
+    }
+
+    componentWillReceiveProps({ files }) {
+        const { comments, index } = this.state
+        if (files[index].comments && comments.length < files[index].comments.length) {
+            this.setState({
+                comments: files[index].comments,
+            })
+        }
+    }
+
+    onClickHandler(comment) {
+        this.createComment(comment)
+        this.textArea.value = ''
     }
 
     render() {
-        const commentsToShow = this.state.fakeComments.length > 0
-            ? this.displayComments()
-            : []
         return (
             <div className="c-comment__container">
-                <h1> Comments ( {this.state.commentCount} ) </h1>
-                {commentsToShow}
+                <h1> Comments ( {this.state.comments.length} ) </h1>
+                {this.displayComments()}
                 <textarea
                     type="text"
                     className="c-comment__input"
-                    placeholder="Enter comment and press Enter"
-                    onKeyPress={(e) => this.createComment(e)}
-                    onInput={(e) => this.getInput(e)}
+                    placeholder="Enter comment"
+                    ref={(input) => this.textArea = input}
                 />
+                <button onClick={this.onClickHandler}>Send</button>
             </div>
         )
     }
 
-    //Makes API call to get comments from database,
-    // current code only mocks an empty array of comments
-    fetchComments() {
-        let that = this
-        axios.get('/comment', { params: { docId: this.state.docId } })
-            .then(function (response) {
-                that.setState({ fakeComments: response.data.comments })
-                that.updateCommentCount()
-            })
-            .catch(function (error) {
-                console.error(error)
-                that.setState({ fakeComments: [] })
-                that.updateCommentCount()
-            })
-    }
-
-    updateCommentCount() {
-        this.setState({ commentCount: this.state.fakeComments.length })
-    }
-
     displayComments() {
-        return this.state.fakeComments.map((entry, index) => {
-            return <Comment key={index} comment={entry} />
+        return this.state.comments.map((comment, index) => {
+            return <Comment key={`file-comment-${index}`} comment={comment} />
         })
     }
 
-    getInput(event) {
-        this.setState({ newInput: event.target.value })
-    }
-
-    createComment(event) {
-        const that = this
-        if (event.key === 'Enter') {
-            const newComment = {
-                content: this.state.newInput,
-                timeStamp: new Date().getTime(),
-                user_id: this.state.currentUser,
-                docId: this.state.docId,
-            }
-            axios.post('/comment/create', newComment, { xsrfCookieName: '_csrfToken' })
-                .then(function (response) {
-                    console.log(response)
-                    that.state.fakeComments.push(newComment)
-                    const newComments = that.state.fakeComments.slice()
-                    that.setState({ fakeComments: newComments })
-                    that.updateCommentCount()
-                    that.socket.emitEvent(
-                        'comment',
-                        {
-                            comment: newComment,
-                            roomId: that.state.docId,
-                        }
-                    )
-                })
-                .catch(function (error) {
-                    console.error(error)
-                })
-        }
-    }
-
-    receiveComment(msg) {
-        this.state.fakeComments.push(msg.comment)
-        this.setState({ fakeComments: this.state.fakeComments.slice() })
-        this.updateCommentCount()
+    createComment() {
+        this.props.dispatchCreateComment({
+            content: this.textArea.value,
+            createdAt: new Date().getTime(),
+            userId: this.props.user.info.username,
+            docId: this.props.docId,
+        })
     }
 }
 
 CommentBox.propTypes = {
-    currentDoc: PropTypes.string.isRequired,
-    user: PropTypes.any.isRequired,
+    docId: PropTypes.string.isRequired,
+    user: PropTypes.shape({
+        info: PropTypes.shape({
+            username: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
+    files: PropTypes.arrayOf(PropTypes.shape({
+        doc_id: PropTypes.string.isRequired,
+        comments: PropTypes.array,
+    })).isRequired,
+    dispatchCreateComment: PropTypes.func.isRequired,
+    dispatchReceiveComment: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
+    files: state.app.files,
     user: state.user,
 })
 
 
-export default connect(mapStateToProps)(CommentBox)
+export default connect(mapStateToProps, actions)(CommentBox)

@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Comments = require('../models/comments')
+const requireLogin = require('../middlewares/requireLogin')
+
+router.use(requireLogin)
 
 router.get('/', (req, res) => {
     new Comments({ documentId: req.params.docId }).loadComments().then((result, err) => {
