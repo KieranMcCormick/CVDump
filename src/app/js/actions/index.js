@@ -101,22 +101,35 @@ export const dispatchFetchFiles = () => async (dispatch) => {
     }
 }
 
-//THIS SHOULD BE CHANGED TO SHARED FILES ENDPOINT
-export const dispatchFetchFile = (id, callback) => async (dispatch) => {
+
+// export const dispatchFetchFileWithVersion = () => async(dispatch) => {
+//     try {
+
+//     } catch (error) {
+
+//     }
+// }
+
+// collections
+export const dispatchFetchSharedFiles = (id, callback) => async (dispatch) => {
     try {
 
         //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
-        const comment = await axios.get(`/comment/${id}`)
-        //const pdf = await axios.get(`/files/pdf/${id}`)
-
+        // const comment = await axios.get(`/comment/${id}`)
+        // const res = await axios.get(`/shared`)
+        // dispatch({
+        //     type: types.FETCH_FILES_SUCCESS,
+        //     payload: res.data,
+        // })
         dispatch({
-            type: types.FETCH_FILE_SUCCESS,
+            type: types.FETCH_FILES_SUCCESS,
             payload: {
-                doc_id: id,
-                version: 1,
-                comments: comment.data,
-                blocks: [ //after changed to shared page this should not be here
-                    '__markdown__ *format*'
+                files: [
+                    {
+                        userId: 'sdfdsf',
+                        doc_id: 'asdasd',
+                        title: 'File title',
+                    }
                 ],
             },
         })
@@ -131,10 +144,103 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
 }
 
 
+// single file
+export const dispatchFetchSharedFile = (id) => async (dispatch) => {
+    try {
+
+        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
+        const comment = await axios.get(`/comment/${id}`)
+        const pdf = await axios.get(`/files/pdf/${id}`)
+
+        dispatch({
+            // TODO: CHANGE THE ACTION TYPE
+            type: types.FETCH_FILE_SUCCESS,
+            payload: {
+                comments: comment.data,
+                pdf: pdf.data,
+            },
+        })
+    } catch (error) {
+        dispatch({
+            // TODO: CHANGE THE ACTION TYPE
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+
+export const dispatchFetchFile = (id, callback) => async (dispatch) => {
+    try {
+        // const doc = await axios.get(`/files/${id}`)
+        // const availableBlocks = await axios.get(`/blocks`)
+
+        dispatch({
+            type: types.FETCH_FILE_SUCCESS,
+            payload: {
+                // version: doc.data.version,
+                version: 12,
+
+                // blocks: doc.data.blocks,
+                blocks: [
+                    {
+                        blockOrder: 1,
+                        summary: '# Resume 1 __hello__',
+                    },
+                    {
+                        blockOrder: 2,
+                        summary: '__markdown__ **format** 1. 23123 2. 123123',
+                    }
+                ],
+
+                // availableBlocks: availableBlocks.data
+                // array of strings
+                availableBlocks: [
+                    '__markdown__ **format** 1. 23123 2. 123123',
+                    '**format**  1. 23123 2. 123123',
+                    '# HEADER 1 **format**  1. 23123 2. 123123'
+                ],
+            },
+        })
+        callback()
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.data,
+        })
+        callback()
+    }
+}
+
+export const dispatchSelectFile = (id) => ({
+    type: types.SELECT_FILE,
+    payload: id,
+})
+
+export const dispatchAddBlockToSelectedFile = (value) => ({
+    type: types.ADD_BLOCK_TO_SELECTED_FILE,
+    payload: value,
+})
+
+export const dispatchRemoveBlockFromSelectedFile = (blockOrder) => ({
+    type: types.REMOVE_BLOCK_FROM_SELECTED_FILE,
+    payload: blockOrder,
+})
+
+export const dispatchMoveBlockFromSelectedFile = (blockOrder, delta) => ({
+    type: types.MOVE_BLOCK_FROM_SELECTED_FILE,
+    payload: {
+        blockOrder,
+        delta,
+    },
+})
+
+
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
 
-        axiosWithCSRF.post('/comment/create', comment)
+        await axiosWithCSRF.post('/comment/create', comment)
+
         dispatch({
             type: types.CREATE_COMMENT_SUCCESS,
             payload: {

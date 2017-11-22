@@ -4,6 +4,7 @@ import { reducer as formReducer } from 'redux-form'
 import userReducer from './userReducer'
 import signUpReducer from './signUpReducer'
 import fileReducer from './fileReducer'
+import selectedFileReducer from './selectedFileReducer'
 
 export const initialState = {}
 
@@ -11,6 +12,7 @@ export const initialState = {}
 const appReducer = combineReducers({
     signup: signUpReducer,
     files: fileReducer,
+    selectedFile: selectedFileReducer,
 })
 
 // combined reducer

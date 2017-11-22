@@ -1,0 +1,18 @@
+.c-file-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+.c-file-content {
+    width: 60%;
+    padding: map-get($spacing__map, sm);
+}
+
+.c-file-blocks {
+    width: 40%;
+    padding: map-get($spacing__map, sm);
+}
+
+
