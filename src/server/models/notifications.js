@@ -52,7 +52,7 @@ class Notifications {
     load() {
         let that = this
         const fetchNotificationQuery = 'SELECT user_id, type, created_at, document_id FROM notifications WHERE user_id = ?'
-        
+        console.log(this);
         return new Promise((resolve, reject) => {
             sqlSelect(fetchUserQuery, [this.email], (err, success) => {
                 if (err) {
@@ -61,6 +61,7 @@ class Notifications {
                 }
 
                 if (success) {
+                    console.log(success)
                     let uuid = success[0].uuid
                     sqlSelect(fetchNotificationQuery, [uuid], (err, result) => {
                         if(err) {

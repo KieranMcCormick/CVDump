@@ -3,13 +3,21 @@ const router = express.Router()
 const Notifications= require('../models/notifications')
 
 router.get('/load', (req, res) => {
-    if(validateJson(req.params) ) {
+    if(validateJson(req.query) ) {
         res.send({message:"Missing user and document ID"})
     }
     new Notifications({
-        email:req.params.email
+        email:req.query.email
     })
-    console.log(req.params.email)
+    .load().then( (result,err) =>{
+        if(result){
+            res.send({notifications:result})
+        }
+
+        if(err){
+            res.send({message:"no notifications"})
+        }
+    })
    
 })
 
