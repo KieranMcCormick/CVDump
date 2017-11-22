@@ -2,29 +2,25 @@ const express = require('express')
 const router = express.Router()
 const Notifications= require('../models/notifications')
 
-router.get('/', (req, res) => {
-    new Notifications({ documentId: req.params.docId }).loadComments().then((result, err) => {
-        if (err) {
-            res.send({ message: 'cant find comments' })
-        }
-        if (result) {
-            res.send({ comments: result })
-        }
+router.get('/load', (req, res) => {
+    if(validateJson(req.params) ) {
+        res.send({message:"Missing user and document ID"})
+    }
+    new Notifications({
+        email:req.params.email
     })
-        .catch((exception) => {
-            console.log(exception)
-            res.send({ message: 'something went wrong fetching comments' })
-        })
+    console.log(req.params.email)
+   
 })
 
 router.post('/create', (req, res) => {
     
-   if(!req.body.targetUser || !req.body.type || !req.body.documentId ) {
+   if(!validateJson(req.body) ) {
        res.send({message:"Missing user and document ID"})
    }
 
    new Notifications ({
-        targetUser: req.body.targetUser,
+        email: req.body.email,
         documentId: req.body.documentId,
         timeStamp : new Date().toISOString().slice(0, 19).replace('T', ' '),
         type: req.body.type,
@@ -50,14 +46,11 @@ router.post('/delete',(req,res) => {
 });
 
 function validateJson(reqData) {
-    if (!reqData) {
+    if(!reqData.email || !reqData.type || !reqData.documentId ) {
         return false
-    }
-    if (!reqData.content || !reqData.user_id || !reqData.docId) {
-        return false
+       
     } else {
         return true
     }
-
 }
 module.exports = router

@@ -1,10 +1,10 @@
 const { sqlInsert, sqlSelect } = require('../db')
 const _ = require('lodash')
-const fetchUserQuery = 'SELECT uuid FROM users WHERE username = ?'
+const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
 class Notifications {
     constructor(props) {
         if (props) {
-            this.targetUser = props.targetUser ? props.targetUser : null
+            this.email = props.email ? props.email : null
             this.documentId = props.documentId ? props.documentId : null
             this.timeStamp = props.timeStamp ? props.timeStamp : ''
             this.type = props.type ? props.type : "system"
@@ -24,21 +24,21 @@ class Notifications {
        
         return new Promise((resolve, reject) => {
             // notifications has to have userid, docid and a type of notification
-            if( !this.targetUser || !this.documentId || !this.type) {
+            if( !this.email || !this.documentId || !this.type) {
                 return reject({message:"Missing userID and docID"})
             }
 
-            sqlSelect(fetchUserQuery, [this.targetUser], (err, success) => {
+            sqlSelect(fetchUserQuery, [this.email], (err, success) => {
                     if (err) {
                         console.log(err)
-                        return reject({ message: 'No such user' })
+                        return resolve({ message: 'No such user' })
                     }
                     if (success) {
                         let uuid = success[0].uuid
                         sqlInsert(createQuery, [uuid, this.documentId, this.type,this.timeStamp], (err, result) => {
                             if (err) {
                                 console.log(err)
-                                return resolve({ params: [this.targetUser, this.documentId, ,this.type, this.timeStamp], error: err })
+                                return resolve({ params: [this.email, this.documentId, ,this.type, this.timeStamp], error: err })
                             }
                             return resolve({ message: 'comment uploaded', data: result })
                         })
@@ -54,7 +54,7 @@ class Notifications {
         const fetchNotificationQuery = 'SELECT user_id, type, created_at, document_id FROM notifications WHERE user_id = ?'
         
         return new Promise((resolve, reject) => {
-            sqlSelect(fetchUserQuery, [this.targetUser], (err, success) => {
+            sqlSelect(fetchUserQuery, [this.email], (err, success) => {
                 if (err) {
                     console.log(err)
                     return reject({ message: 'No such user' })
