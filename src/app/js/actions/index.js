@@ -53,6 +53,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
                 info: res.data,
             },
         })
+
         dispatch(push('/'))
     } catch (error) {
         dispatch({
@@ -60,19 +61,16 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
+                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
-        })
-        dispatch({
-            type: types.FORM_ERROR,
-            payload: error.response.data.errorMessage || 'Unknown Error',
         })
         dispatch(push('/login'))
     }
 }
 
-export const dispatchSignUp = ({ username, firstname, lastname, email, password, confirmPassword }) => async (dispatch) => {
+export const dispatchSignUp = ({ username, email, password, confirmPassword }) => async (dispatch) => {
     try {
-        const res = await axiosWithCSRF.post('/register', { username, firstname, lastname, email, password, confirmPassword })
+        const res = await axiosWithCSRF.post('/register', { username, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
@@ -82,16 +80,14 @@ export const dispatchSignUp = ({ username, firstname, lastname, email, password,
         dispatch(push('/'))
     } catch (error) {
         dispatch({
-            type: types.FORM_ERROR,
-            payload: error.response.data.errorMessage,
+            type: types.SIGNUP_FAILURE,
+            payload: {
+                errorMessage: error.response.data.errorMessage,
+            },
         })
         dispatch(push('/signup'))
     }
 }
-
-export const dispatchClearFormError = () => ({
-    type: types.FORM_ERROR_CLEAR,
-})
 
 export const dispatchFetchFiles = () => async (dispatch) => {
     try {
@@ -164,12 +160,14 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 
         //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
         const comment = await axios.get(`/comment/${id}`)
-        const pdf = await axios.get(`/files/pdf/${id}`)
+        //const pdf = await axios.get(`/files/pdf/${id}`)
 
         dispatch({
             // TODO: CHANGE THE ACTION TYPE
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
+                doc_id: id,
+                version: 1,
                 comments: comment.data,
                 pdf: pdf.data,
             },
@@ -230,33 +228,11 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     }
 }
 
-export const dispatchSelectFile = (id) => ({
-    type: types.SELECT_FILE,
-    payload: id,
-})
-
-export const dispatchAddBlockToSelectedFile = (value) => ({
-    type: types.ADD_BLOCK_TO_SELECTED_FILE,
-    payload: value,
-})
-
-export const dispatchRemoveBlockFromSelectedFile = (blockOrder) => ({
-    type: types.REMOVE_BLOCK_FROM_SELECTED_FILE,
-    payload: blockOrder,
-})
-
-export const dispatchMoveBlockFromSelectedFile = (blockOrder, delta) => ({
-    type: types.MOVE_BLOCK_FROM_SELECTED_FILE,
-    payload: {
-        blockOrder,
-        delta,
-    },
-})
 
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
 
-        await axiosWithCSRF.post('/comment/create', comment)
+        axiosWithCSRF.post('/comment/create', comment)
 
         dispatch({
             type: types.CREATE_COMMENT_SUCCESS,
@@ -265,6 +241,7 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             },
         })
+        
         SocketHandler.emitEvent(
             'comments',
             'comment',
@@ -273,10 +250,13 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             }
         )
+        //if target user is inside the room, we dont need to create notification
+        
     } catch (error) {
         console.error(error)
     }
 }
+
 
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
@@ -302,9 +282,19 @@ export const dispatchCreateFile = () => async (dispatch) => {
     }
 }
 
+
+
+
+
+      
 export const dispatchLogOut = () => async (dispatch) => {
     try {
         await axiosWithCSRF.post('/logout')
+
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
 
         dispatch({
             type: types.LOGOUT,
@@ -393,6 +383,101 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
     }
 }
 
+export const dispatchFetchNotifications = (userEmail) => async (dispatch) => {
+    try {
+        let path = '/notifications/load?email=' +userEmail
+        const newAlerts =  await axios.get(path)
+        dispatch({
+            type: types.FETCH_NOTIFICATION_SUCCESS,
+            payload: newAlerts.data.notifications,
+        })
+        
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload:[],
+        })
+    }
+}
+
+//Fired when user receives a notification
+export const dispatchReceiveNotification = (msg) => ({
+    type: types.RECEIVE_NOTIFICATION,
+    payload: {
+        newNotice:msg,
+    },
+})
+
+export const dispatchSendNotification = (data) => async (dispatch) =>{
+    try {
+        //Store notification in db
+        let success = await axiosWithCSRF.post(
+            '/notifications/create', 
+            {sender:data.sender,
+             documentId: data.docId,
+             timeStamp:data.createdAt,
+             type:data.type,}
+             )
+         
+         SocketHandler.emitEvent(
+             'notifications',
+             'getNotifications',
+
+              {target:success.data.target,
+                type:data.type,
+                timeStamp:data.createdAt,
+                sender:data.sender,
+                documentId:data.docId,
+                content:data.content,
+                uuid:success.data.uuid,
+               }
+        )
+        
+        dispatch({
+            type: types.SEND_NOTIFICATION_SUCCESS,
+            payload: {
+                newNotice:"msg",
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+//Deletes notification from db
+export const dispatchResolveNotification = (id) => async(dispatch) =>{
+    try {
+        //call delete on server
+        let success = await axiosWithCSRF.post('/notifications/delete',{id:id})
+        //update state by removing notification from old state
+        dispatch({
+            type: types.RESOLVE_NOTIFICATION,
+            payload: {
+                removed:id,
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
+
+//         dispatch({
+//             type: types.FETCH_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.FETCH_FILE_FAILURE,
+//             payload: error.data,
+//         })
+//     }
+// }
+
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
 //         const res = await axios.get('/file/pdf/${id}')
@@ -408,3 +493,4 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
 //         })
 //     }
 // }
+

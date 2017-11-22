@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
-import _ from 'lodash'
+import CommentBox from '../containers/comments/CommentBox'
 import Loader from './Loader'
 import { FlatButton, TextField } from 'material-ui'
 import EditableBlock from './EditableBlock'
@@ -13,10 +13,8 @@ import classNames from 'classnames'
 class File extends PureComponent {
     constructor(props) {
         super(props)
-
         this.state = {
             isLoading: true,
-            isEditing: false,
         }
     }
 
@@ -133,7 +131,11 @@ class File extends PureComponent {
 }
 
 File.propTypes = {
-    // dispatchSavePdf: PropTypes.func.isRequired,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            id: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
     dispatchFetchFile: PropTypes.func.isRequired,
     selectedFile: PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -150,7 +152,7 @@ File.propTypes = {
 }
 
 const mapStateToProps = ({ app }) => ({
-    selectedFile: app.selectedFile,
+    files: app.files,
 })
 
 

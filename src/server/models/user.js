@@ -13,46 +13,31 @@ const BCRYPT_HASHING_ROUNDS = 10
 
 const FIND_USER_BY_EMAIL_SQL       = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE email_address = ? LIMIT 1'
 const FIND_USER_BY_USERNAME_SQL    = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE username = ? LIMIT 1'
-const FIND_USER_BY_CAS_ID_SQL      = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE cas_id = ? LIMIT 1'
-const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linked_in = ? LIMIT 1'
+const FIND_USER_BY_CAS_ID_SQL      = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE cas_id = ? LIMIT 1 ALLOW FILTERING'
+const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linked_in = ? LIMIT 1 ALLOW FILTERING'
 const INSERT_USER_SQL              = 'INSERT INTO users (uuid, password, email_address, firstname, lastname, cas_id, linkedin_id, username) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)'
 //const UPSERT_USER_SQL              = 'UPDATE users SET password = ?, email_address = ?, firstname = ?, lastname = ?, cas_id = ?, linkedin_id = ? WHERE username = ?'
-const UPDATE_PROFILE_SQL           = 'UPDATE users SET email_address = ?, firstname = ?, lastname = ? WHERE uuid = ?'
-const UPDATE_CAS_ID_SQL            = 'UPDATE users SET cas_id = ? WHERE uuid = ?'
-const UPDATE_LINKEDIN_IN_SQL       = 'UPDATE users SET linkedin_id = ? WHERE uuid = ?'
-const UPDATE_PASSWORD_SQL          = 'UPDATE users SET password = ? WHERE uuid = ?'
+const UPDATE_PROFILE_SQL           = 'UPDATE users SET email_address = ?, firstname = ?, lastname = ? WHERE username = ?'
+const UPDATE_CAS_ID_SQL            = 'UPDATE users SET cas_id = ? WHERE username = ?'
+const UPDATE_LINKEDIN_IN_SQL       = 'UPDATE users SET linkedin_id = ? WHERE username = ?'
+const UPDATE_PASSWORD_SQL          = 'UPDATE users SET password = ? WHERE username = ?'
 
-const UserCreatePasswordValidation = [
+const UserUpdatePasswordValidation = [
     check('password', 'must contain at least one lowercase, uppercase, number, and symbol')
         .matches(/[a-z]/).matches(/[A-Z]/).matches(/\d/).matches(/\W/)
         .isLength({min: 8}).withMessage('must be at least 8 characters long'),
-    check('confirmPassword', 'must be present and match Password').exists() // Can't seem to match against other param with express-validator
+    check('confirmPassword', 'must be present and match Password') // Can't seem to match against other param with express-validator
 ]
-
-const UserUpdatePasswordValidation = _.concat(UserCreatePasswordValidation, [
-    check('currentPassword', 'must be present').exists()
-])
 
 const UserUpdateProfileValidation = [
     check('email').isEmail().withMessage('must be a valid Email').trim() //.normalizeEmail()
-        .custom((value, { req }) => {
-            if (req &&
-                req.user &&
-                req.user.email_address === value) { // if is unchanged
-                return true
-            }
-            return User.findOneByEmail(value).then((user) => {
-                if (user) { // another user
-                    throw new Error('must be a valid Email')
-                }
-                return true
-            })
-        }),
-    check('firstname').trim().escape(), // Have these to whitelist in the params
-    check('lastname').trim().escape()
+        .custom(value => { return User.findOneByEmail(value).then((user) => {
+            if (user) { throw new Error('must be a valid Email') }
+            return true
+        })})
 ]
 
-const UserCreationValidation = _.concat(UserUpdateProfileValidation, UserCreatePasswordValidation, [
+const UserCreationValidation = _.concat(UserUpdateProfileValidation, UserUpdatePasswordValidation, [
     check('username').matches(/^[a-z\d\-_]+$/i).withMessage('can only contain alphanumerics, -, and _')
         .isLength({min: 3}).withMessage('must be at least 3 characters long')
         .custom(value => { return User.findOneByUsername(value).then((user) => {
@@ -64,7 +49,7 @@ const UserCreationValidation = _.concat(UserUpdateProfileValidation, UserCreateP
 class User {
     constructor(props) {
         if (props) {
-            this.uuid = props.uuid
+            this.user_id = props.uuid
             this.username = props.username
             this.password = props.password
             this.email_address = props.email_address
@@ -77,12 +62,12 @@ class User {
 
     publicJson() {
         return {
-            userId: this.uuid,
+            user_id: this.user_id,
             username: this.username,
             email: this.email_address,
             firstname: this.firstname,
             lastname: this.lastname,
-            avatarUrl: this.avatarURL(),
+            avatar_url: this.avatarURL(),
         }
     }
 
@@ -136,17 +121,10 @@ class User {
     // changing the prepared query UPSERT_USER_SQL.
     // username is the primary key and hence used in the WHERE clause
     SQLValueArray() {
-        return [
-            this.password,
-            this.email_address,
-            this.firstname,
-            this.lastname,
-            this.cas_id,
-            this.linkedin_id,
-            this.username
-        ]
+        return [ this.password, this.email_address, this.firstname, this.lastname, this.cas_id, this.linkedin_id, this.username ]
     }
 
+    //need seperate update function ?
     save() {
         return new Promise((resolve, reject) => {
             sqlInsert(INSERT_USER_SQL, this.SQLValueArray(), (err, result) => {
@@ -154,7 +132,7 @@ class User {
                     console.error(err)
                     return reject(new Error('Database Error'))
                 }
-                if (!result) {
+                if (!result/** || result**/) { // Check valid result ... ?
                     return reject(new Error('Unknown Error'))
                 }
                 return resolve(this)
@@ -176,15 +154,12 @@ class User {
                 }
                 this.setPassword(props.password).then((success) => {
                     if (success) {
-                        sqlInsert(UPDATE_PASSWORD_SQL, [
-                            this.password,
-                            this.uuid
-                        ], (err, result) => {
+                        sqlInsert(UPDATE_PASSWORD_SQL, [ this.password, this.username ], (err, result) => {
                             if (err) {
                                 console.error(err)
                                 return reject(new Error('Database Error'))
                             }
-                            if (!result) {
+                            if (!result/** || result**/) { // Check valid result ... ?
                                 return reject(new Error('Unknown Error'))
                             }
                             return resolve(this)
@@ -199,12 +174,12 @@ class User {
 
     updateCASID(cas_id) {
         return new Promise((resolve, reject) => {
-            sqlInsert(UPDATE_CAS_ID_SQL, [ cas_id, this.uuid ], (err, result) => {
+            sqlInsert(UPDATE_CAS_ID_SQL, [ cas_id, this.username ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
                 }
-                if (!result) {
+                if (!result/** || result**/) { // Check valid result ... ?
                     return reject(new Error('Unknown Error'))
                 }
                 this.cas_id = cas_id
@@ -215,12 +190,12 @@ class User {
 
     updateLinkedinID(linkedin_id) {
         return new Promise((resolve, reject) => {
-            sqlInsert(UPDATE_LINKEDIN_IN_SQL, [ linkedin_id, this.uuid ], (err, result) => {
+            sqlInsert(UPDATE_LINKEDIN_IN_SQL, [ linkedin_id, this.username ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
                 }
-                if (!result) {
+                if (!result/** || result**/) { // Check valid result ... ?
                     return reject(new Error('Unknown Error'))
                 }
                 this.linkedin_id = linkedin_id
@@ -230,19 +205,14 @@ class User {
     }
 
     updateProfile(props) {
-        props = User.mapFrontEndFieldsToDB(props)
+        props = this.mapFrontEndFieldsToDB(props)
         return new Promise((resolve, reject) => {
-            sqlInsert(UPDATE_PROFILE_SQL, [
-                props.email_address,
-                props.firstname,
-                props.lastname,
-                this.uuid
-            ], (err, result) => {
+            sqlInsert(UPDATE_PROFILE_SQL, [ props.email_address, props.firstname, props.lastname, this.username ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
                 }
-                if (!result) {
+                if (!result/** || result**/) { // Check valid result ... ?
                     return reject(new Error('Unknown Error'))
                 }
                 this.email_address = props.email_address
@@ -359,9 +329,4 @@ class User {
     }
 }
 
-module.exports = {
-    User,
-    UserCreationValidation,
-    UserUpdatePasswordValidation,
-    UserUpdateProfileValidation,
-}
+module.exports = { User, UserCreationValidation, UserUpdatePasswordValidation, UserUpdateProfileValidation }

@@ -1,13 +1,47 @@
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import { reduxForm, Field } from 'redux-form'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import LoginField from '../../components/FormField'
+import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
 import ExternalAuthButton from './ExternalAuthButton'
 import formFields from './formFields'
 
+
+/**
+ * Login Field
+ * @param {*} label: label for the input
+ * @param {*} input: event handlers
+ * @param {*} type: input element's type
+ * @param {*} autoComplete: input element's attribute
+ * @param {*} meta: meta info of the input field from redux-form
+ */
+class LoginField extends PureComponent {
+    render() {
+        const { input, label, type, autoComplete, meta: { touched, error } } = this.props
+        return (
+            <div className="u-flex-row u--center u-margin-v-sm">
+                <TextField
+                    {...input}
+                    floatingLabelText={label}
+                    type={type}
+                    errorText={touched && error}
+                    autoComplete={autoComplete}
+                    fullWidth={true}
+                />
+            </div>
+        )
+    }
+}
+
+LoginField.propTypes = {
+    label: PropTypes.string.isRequired,
+    input: PropTypes.object.isRequired,
+    type: PropTypes.string.isRequired,
+    autoComplete: PropTypes.string.isRequired,
+    meta: PropTypes.object,
+}
 
 class LoginForm extends Component {
     render() {

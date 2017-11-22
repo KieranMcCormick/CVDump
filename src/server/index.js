@@ -7,8 +7,6 @@ const cookieSession = require('cookie-session')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const logger = require('morgan')
-
-const config = require('./config')
 const keys = require('./config/keys')
 const server = require('http').Server(app)
 const PORT = process.env.PORT || 9999
@@ -22,18 +20,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 if (process.env.NODE_ENV === 'production') {// Only use these in production
     app.set('trust proxy', 'loopback')
-    app.use(require('helmet')({
-        contentSecurityPolicy: {
-            directives: {
-                defaultSrc: ['\'self\''],
-                styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com'],
-                imgSrc: ['\'self\'', 'data:', 'https://www.gravatar.com'],
-                connectSrc: ['\'self\'', config.server.wsFqdn],
-                fontSrc: ['\'self\'', 'data:', 'https://fonts.gstatic.com'],
-                objectSrc: ['\'none\''],
-            },
-        },
-    }))
+    app.use(require('helmet')())
     app.use(require('compression')())
 }
 
@@ -63,14 +50,19 @@ app.use(
     })
 )
 app.use(bodyParser.json())
-app.use(require('csurf')({}))
-app.use(function (req, res, next) {
+//app.use(require('csurf')({}))
+/*app.use(function (req, res, next) {
     res.cookie('_csrfToken', req.csrfToken(), { sameSite: 'lax' })
     next()
-})
+})*/
 require('./handlers/passport')(app)
 
 // routes setup
+app.use(require('./routes/auth'))
+app.use(require('./routes/sessions'))
+app.use('/comment', require('./routes/comment_api'))
+app.use('/notifications',require('./routes/notification_api'))
+app.use('/files', require('./routes/files_api'))
 require('./routes')(app)
 
 app.get('*', (request, response) => {

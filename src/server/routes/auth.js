@@ -26,7 +26,6 @@ router.get('/auth/cas', (req, res, next) => {
                         return next(err)
                     }
                 } else {
-                    req.session.source = 'cas'
                     res.cookie('JWT', user.generateJWT(), {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production',
@@ -37,35 +36,6 @@ router.get('/auth/cas', (req, res, next) => {
             })
         }
     })(req, res, next)
-})
-
-router.get('/connect/cas', passport.authorize('cas-connect', {
-    failureRedirect: '/profile',
-}), (req, res) => {
-    if (req.user && req.account) {
-        req.user.updateCASID(req.account).then(() => {
-            res.redirect(`/profile?successMessage=${encodeURIComponent('Successfully linked to CAS')}`)
-        }).catch((error) => {
-            res.redirect(`/profile?errorMessage=${encodeURIComponent(error.message)}`)
-        })
-    } else {
-        res.redirect('/')
-    }
-})
-
-router.delete('/connect/cas', (req, res, next) => {
-    if (req.user) {
-        if (!req.user.cas_id) {
-            return res.status(400).json({ errorMessage: 'Not linked to CAS' })
-        }
-        req.user.updateCASID(null).then(() => {
-            res.json({ message: 'Successfully unlinked from CAS' })
-        }).catch((error) => {
-            res.status(500).json({ errorMessage: error.message })
-        })
-    } else {
-        res.sendStatus(403)
-    }
 })
 
 router.get('/auth/linkedin', passport.authenticate('linkedin', {
@@ -95,7 +65,6 @@ router.get('/auth/linkedin/callback', (req, res, next) => {
                         return next(err)
                     }
                 } else {
-                    req.session.source = 'linkedin'
                     res.cookie('JWT', user.generateJWT(), {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production',
@@ -106,39 +75,6 @@ router.get('/auth/linkedin/callback', (req, res, next) => {
             })
         }
     })(req, res, next)
-})
-
-router.get('/connect/linkedin', passport.authorize('linkedin-connect', {
-    failureRedirect: '/profile',
-}))
-
-router.get('/connect/linkedin/callback', passport.authorize('linkedin-connect', {
-    failureRedirect: '/profile',
-}), (req, res, next) => {
-    if (req.user && req.account) {
-        req.user.updatedLinkedinID(req.account.id).then(() => {
-            res.redirect(`/profile?successMessage=${encodeURIComponent('Successfully connected to LinkedIn')}`)
-        }).catch((error) => {
-            res.redirect(`/profile?errorMessage=${encodeURIComponent(error.message)}`)
-        })
-    } else {
-        res.redirect('/')
-    }
-})
-
-router.delete('/connect/linkedin', (req, res, next) => {
-    if (req.user) {
-        if (!req.user.linkedin_id) {
-            return res.status(400).json({ errorMessage: 'Not linked to LinkedIn' })
-        }
-        req.user.updatedLinkedinID(null).then(() => {
-            res.json({ message: 'Successfully unlinked from LinkedIn' })
-        }).catch((error) => {
-            res.status(500).json({ errorMessage: error.message })
-        })
-    } else {
-        res.sendStatus(403)
-    }
 })
 
 module.exports = router

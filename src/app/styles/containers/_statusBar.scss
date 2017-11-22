@@ -1,6 +1,7 @@
 .c-status-bar {
     --status-bar-height: 60px;
 
+.c-status-bar {
     position: relative;
     display: flex;
     align-items: center;
@@ -34,3 +35,13 @@
         margin: 0 map-get($spacing__map, xs);
     }
 }
+
+
+.c-status-bar__notification_count{
+    position: relative;
+    margin-right:100px;
+}
+
+
+
+

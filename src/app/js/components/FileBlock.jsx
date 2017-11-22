@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import * as actions from '../actions'
 
 
 class FileBlock extends PureComponent {
@@ -30,7 +28,6 @@ FileBlock.propTypes = {
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
     isAdd: PropTypes.bool,
-    dispatchSelectFile: PropTypes.func.isRequired,
 }
 
 FileBlock.defaultProps = {
@@ -38,4 +35,4 @@ FileBlock.defaultProps = {
     isAdd: false,
 }
 
-export default connect(null, actions)(FileBlock)
+export default FileBlock

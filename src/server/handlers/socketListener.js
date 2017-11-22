@@ -1,5 +1,4 @@
 const logger = (message) => {console.log(`[Socket] ${message}`)}
-
 class SocketListener {
     constructor(server) {
         this.io = require('socket.io')(server)
@@ -17,10 +16,14 @@ class SocketListener {
 
     comments_listener() {
         this.commentSpace.on('connection', function (socket) {
-            logger('Connect to comments space')
+            
             socket.on('joinRoom', function (room) {
-                logger(`Join room event room id: ${room}`)
-                socket.join(room)
+                logger(`join room event room id: ${room}`)
+                if(room) {
+                    logger('Connect to comments space')
+                    socket.join(room)
+                }
+                
             })
 
             socket.on('leaveRoom', function (room) {
@@ -32,6 +35,7 @@ class SocketListener {
                 logger(`Add a comment to file:${msg.roomId}`)
                 // Sends to all clients in 'roomId' room except sender
                 socket.to(msg.roomId).emit('update', msg.comment)
+                // check if user is in Room, if not in room fire notification chain, else skip notification
             })
 
             socket.on('error', function (err) {
@@ -45,19 +49,44 @@ class SocketListener {
         this.notificationSpace.on('connection', function (socket) {
             //users subscribe to this channel when they log on the first time
             //room names will be their userIds
-            socket.on('getNotifications', function (user) {
+
+            socket.on('joinRoom', function (room) {
+                if(room) {
+                    logger('Connect to notification space')
+                    socket.join(room)
+                }
+               
+            })
+                
+            socket.on('leaveRoom', function (room) {
+                socket.leave(room)
+            })
+
+            socket.on('getNotifications', function (msg) {
                 logger('Listen to notifications')
-                socket.join(user)
+                //get file Owner from docId
+                console.log(msg)
+                let type = msg.type
+                let owner = '';
+                switch(type){
+                    case "comment":
+                       // socket.to(msg.target).emit('notify',msg)
+                       socket.to(msg.target).emit('notify',msg)
+                        return
+                    default:
+                       console.log("no such notification type")
+                       return
+                    
+                }
+                
+
             })
 
             //Notifications should be sent to global name space and redirected to specific users
             //fired by comment creation
-            socket.on('onReceiveNotification', function (msg) {
-                //get target userId from msg, reply message to specific room
-                socket.to(msg.toUser).emit('notify', msg)
-            })
         })
     }
+
 }
 
 module.exports = SocketListener

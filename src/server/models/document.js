@@ -33,6 +33,7 @@ class Document {
         return [ this.title, this.user_id, this.version ]
     }
 
+
     save() {
         return new Promise((resolve, reject) => {
 
@@ -123,11 +124,30 @@ class Document {
             })
         })
     }
+    
+
+<<<<<<< HEAD
+    static getDocOwner(doc_id) {
+        return new Promise((resolve, reject) => {
+            sqlSelect(FIND_DOC_OWNER, [ doc_id ], (err, result) => {
+                if (err) {
+                    console.error(err)
+                    return reject(new Error('Database Error'))
+                }
+                if (!result/** || result**/) { // Check valid result ... ?
+                    return reject(new Error('Unknown Error'))
+                }
+                return resolve(this)
+            })
+        })
+    }
 
     //validate not already saved and user permitted to save
     // static VaildateDocument(doc_id){
     // }
 
+=======
+>>>>>>>  work in progress to get notifications to work
 }
 
 

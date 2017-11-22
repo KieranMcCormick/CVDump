@@ -6,20 +6,14 @@ import SignUpForm from './SignUpForm'
 import { Logo } from '../../global/icon'
 
 class SignUp extends Component {
-    componentWillUnmount() {
-        this.props.dispatchClearFormError()
-    }
-
     render() {
-        const { errorMessage } = this.props.formMessage
+        const { signUpFail, errorMessage } = this.props.signup
         return (
             <div className="u-flex-column u--center-cross u-full">
                 <Logo style={{width: '150px', height: 'auto'}} />
                 <h2>Please fill the form to register</h2>
-                {errorMessage && <span className="u-fail-text">{errorMessage}</span>}
-                <SignUpForm
-                    onSignUpSubmit={() => this.props.dispatchSignUp(this.props.form.values)}
-                />
+                {signUpFail && <span className="u-fail-text">{errorMessage}</span>}
+                <SignUpForm onSignUpSubmit={() => this.props.dispatchSignUp(this.props.form.values)} />
             </div>
         )
     }
@@ -27,11 +21,11 @@ class SignUp extends Component {
 
 SignUp.propTypes = {
     dispatchSignUp: PropTypes.func.isRequired,
-    dispatchClearFormError: PropTypes.func.isRequired,
     form: PropTypes.object,
-    formMessage: PropTypes.shape({
+    signup: PropTypes.shape({
+        signUpFail: PropTypes.bool.isRequired,
         errorMessage: PropTypes.string.isRequired,
-    }).isRequired,
+    }),
 }
 
 SignUp.defaultProps = {
@@ -40,7 +34,7 @@ SignUp.defaultProps = {
 
 const mapStateToProps = (state) => ({
     form: state.form.signUpForm,
-    formMessage: state.app.form,
+    signup: state.app.signup,
 })
 
 export default connect(mapStateToProps, actions)(SignUp)
