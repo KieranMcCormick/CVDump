@@ -36,6 +36,7 @@
     "lodash": "^4.17.4",
     "markdown-pdf": "^8.0.0",
     "material-ui": "^0.19.4",
+    "moment": "^2.19.2",
     "morgan": "^1.9.0",
     "mysql": "^2.15.0",
     "passport": "^0.4.0",

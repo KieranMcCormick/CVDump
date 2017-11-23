@@ -11,8 +11,8 @@ class Comment extends Component {
         return (
             <div className="c-comment">
                 <div className ="c-comment__header">
-                    <p className="c-comment__author"> {this.props.comment.userId} </p>
-                    <p className="c-comment__date"> {this.props.comment.created_at} </p>
+                    <p className="c-comment__author"> {this.props.comment.username} </p>
+                    <p className="c-comment__date"> {this.props.comment.createdAt} </p>
                 </div>
                 <p className="c-comment__data">{this.props.comment.content} </p>
             </div>
@@ -23,8 +23,8 @@ class Comment extends Component {
 Comment.propTypes = {
     comment: PropTypes.shape({
         content: PropTypes.string.isRequired,
-        userId: PropTypes.string.isRequired,
-        created_at: PropTypes.number.isRequired,
+        username: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
     }).isRequired,
 }
 

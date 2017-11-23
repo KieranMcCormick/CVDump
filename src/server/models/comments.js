@@ -1,13 +1,27 @@
 const { sqlInsert, sqlSelect } = require('../db')
 const _ = require('lodash')
 
+
+//Makes comments into a ready display form
+const parseCommentOutput = (rows) => {
+    return _.map(rows, function (entries) {
+        //convert blob to string
+        return {
+            username: entries.username,
+            content: entries.comment,
+            createdAt: entries.created_at,
+        }
+    })
+}
+
 class Comments {
     constructor(props) {
         if (props) {
-            this.username = props.username ? props.username : ''
-            this.documentId = props.documentId ? props.documentId : ''
-            this.timeStamp = props.timeStamp ? new Date(props.timeStamp).toUTCString() : ''
-            this.content = props.content ? Buffer(props.content, 'base64') : ''
+            this.username   = props.username
+            this.userId     = props.userId
+            this.documentId = props.documentId
+            this.timeStamp  = props.timeStamp
+            this.content    = props.content ? props.content : ''
         }
     }
     //checks if document exists
@@ -31,7 +45,7 @@ class Comments {
         const createQuery = 'INSERT INTO comments (uuid, user_id, document_id, comment, created_at) VALUES (UUID(), ?, ?, ?, ?)'
         return new Promise((resolve, reject) => {
             // validate user first
-            sqlInsert(createQuery, [this.username, this.documentId, this.content, this.timeStamp], (err, result) => {
+            sqlInsert(createQuery, [this.userId, this.documentId, this.content, this.timeStamp], (err, result) => {
                 if (err) {
                     console.log(err)
                     return resolve({ params: [this.username, this.content, this.timeStamp], error: err })
@@ -41,34 +55,21 @@ class Comments {
         })
     }
 
-    loadComments() {
-        let that = this
-        const fetchQuery = 'SELECT user_id, comment, created_at FROM comments WHERE document_id = ?'
+    static loadComments(docId) {
+        const fetchQuery = 'SELECT t.username, c.comment, c.created_at FROM comments c JOIN users t ON t.uuid = c.user_id WHERE c.document_id = ? order by c.created_at asc'
         return new Promise((resolve, reject) => {
-            sqlSelect(fetchQuery, [this.documentId], (err, success) => {
+            sqlSelect(fetchQuery, [docId], (err, success) => {
                 if (err) {
                     console.log(err)
                     return resolve({ message: 'No comments' })
                 }
-                if (success) {
-                    return resolve(that.parseCommentOutput(success))
+                else {
+                    return resolve(parseCommentOutput(success))
                 }
             })
         })
     }
 
-    //Makes comments into a ready display form
-    parseCommentOutput(rows) {
-        return _.map(rows, function (entries) {
-            //convert blob to string
-            entries.comment = entries.comment.toString('base64')
-            return {
-                user_id: entries.user_id,
-                content: entries.comment,
-                timeStamp: entries.created_at,
-            }
-        })
-    }
 }
 
-module.exports = Comments
+module.exports =  Comments

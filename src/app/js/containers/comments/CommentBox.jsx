@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import * as actions from '../../actions'
 import Comment from './Comments'
 import SocketHandler from '../../global/socketsHandler'
+import moment from 'moment'
 
 
 class CommentBox extends Component {
@@ -74,8 +75,8 @@ class CommentBox extends Component {
     createComment() {
         this.props.dispatchCreateComment({
             content: this.textArea.value,
-            createdAt: new Date().getTime(),
-            userId: this.props.user.info.username,
+            createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
+            username: this.props.user.info.username,
             docId: this.props.docId,
         })
     }

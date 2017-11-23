@@ -5,13 +5,14 @@ const requireLogin = require('../middlewares/requireLogin')
 
 router.use(requireLogin)
 
-router.get('/', (req, res) => {
-    new Comments({ documentId: req.params.docId }).loadComments().then((result, err) => {
+router.get('/:docId', (req, res) => {
+    const docId = req.params.docId
+    Comments.loadComments(docId).then((result, err) => {
         if (err) {
             res.send({ message: 'cant find comments' })
         }
         if (result) {
-            res.send({ comments: result })
+            res.send(result)
         }
     })
         .catch((exception) => {
@@ -24,20 +25,23 @@ router.post('/create', (req, res) => {
     //let newComment = {data: this.state.newInput , date:this.getCurrentTime() , author: that.state.currentUser.username ,docId:that.state.currentDoc}
     if (validateJson(req.body)) {
         let newComment = new Comments({
-            username: req.body.user_id,
+            username: req.body.username,
+            userId: req.user.user_id,
             documentId: req.body.docId,
             content: req.body.content,
-            timeStamp: req.body.timeStamp,
+            timeStamp: req.body.createdAt,
         })
         newComment.validateDocument().then((result, err) => {
             if (err) {
                 res.send({ message: 'there is no such document' })
-            } else {
+            }
+            else {
                 newComment.create().then((err, result) => {
                     if (err) {
                         res.send(err)
                     }
-                    res.send({ message: 'comment created', data: result })
+                    console.log('created comments')
+                    res.send({ createdAt: 'comment created', data: result })
                 })
             }
         })
@@ -51,10 +55,7 @@ router.post('/create', (req, res) => {
 })
 
 function validateJson(reqData) {
-    if (!reqData) {
-        return false
-    }
-    if (!reqData.content || !reqData.user_id || !reqData.docId) {
+    if (!reqData.content || !reqData.username || !reqData.docId) {
         return false
     } else {
         return true
