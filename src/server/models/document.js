@@ -33,6 +33,7 @@ class Document {
         return [ this.title, this.user_id, this.version ]
     }
 
+
     save() {
         return new Promise((resolve, reject) => {
 
@@ -112,6 +113,22 @@ class Document {
     static UpdateDocumentFilepath(doc_id, filepath, filename){
         return new Promise((resolve, reject) => {
             sqlUpdate(UPDATE_FILEPATH, [ doc_id, filepath, filename ], (err, result) => {
+                if (err) {
+                    console.error(err)
+                    return reject(new Error('Database Error'))
+                }
+                if (!result/** || result**/) { // Check valid result ... ?
+                    return reject(new Error('Unknown Error'))
+                }
+                return resolve(this)
+            })
+        })
+    }
+    
+
+    static getDocOwner(doc_id) {
+        return new Promise((resolve, reject) => {
+            sqlSelect(FIND_DOC_OWNER, [ doc_id ], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))

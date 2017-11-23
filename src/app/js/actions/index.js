@@ -53,6 +53,12 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
                 info: res.data,
             },
         })
+
+        SocketHandler.joinRoom(
+            "notifications",
+             username,
+            )
+
         dispatch(push('/'))
     } catch (error) {
         dispatch({
@@ -256,7 +262,7 @@ export const dispatchMoveBlockFromSelectedFile = (blockOrder, delta) => ({
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
 
-        await axiosWithCSRF.post('/comment/create', comment)
+        axiosWithCSRF.post('/comment/create', comment)
 
         dispatch({
             type: types.CREATE_COMMENT_SUCCESS,
@@ -265,6 +271,7 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             },
         })
+        
         SocketHandler.emitEvent(
             'comments',
             'comment',
@@ -273,6 +280,20 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             }
         )
+
+        //if target user is inside the room, we dont need to create notification
+        SocketHandler.emitEvent(
+            'notifications',
+            'getNotifications',
+            { sender:comment.username,
+              type:'comments',
+              data: {
+                  docId:comment.docId,
+                  content:comment.content,
+                  timeStamp:comment.createdAt,
+             }
+            })
+
     } catch (error) {
         console.error(error)
     }
@@ -302,9 +323,18 @@ export const dispatchCreateFile = () => async (dispatch) => {
     }
 }
 
+
+
+
+
 export const dispatchLogOut = () => async (dispatch) => {
     try {
         await axiosWithCSRF.post('/logout')
+
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
 
         dispatch({
             type: types.LOGOUT,
@@ -393,6 +423,17 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
     }
 }
 
+
+//Fired when user receives a notification
+export const dispatchSpawnNotification = (type,msg) => ({
+    type: types.SPAWN_NOTIFICATION,
+    payload: {
+        type: type,
+        sender:msg.sender,
+        docId:msg.docId,
+        snapShot:msg.message,
+    },
+})
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
 //         const res = await axios.get('/file/pdf/${id}')

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import * as actions from '../../actions'
 import Comment from './Comments'
 import SocketHandler from '../../global/socketsHandler'
+import NotificationHandler from '../../global/notificationHandler'
 import moment from 'moment'
 import RaisedButton from 'material-ui/RaisedButton'
 
@@ -19,7 +20,7 @@ class CommentBox extends Component {
     }
 
     componentDidMount() {
-        SocketHandler.joinRoom('comments', this.props.docId)
+        SocketHandler.joinRoom('comments', this.props.docId,this.props.username)
         SocketHandler.listen(
             'comments',
             'update',
@@ -82,6 +83,12 @@ class CommentBox extends Component {
             username: this.props.user.info.username,
             docId: this.props.docId,
         })
+       /* NotificationHandler.createNotification(
+            "comment",
+             {newComment:this.textArea.value,
+              sender: this.props.user.info.username,
+              }
+            )*/
     }
 }
 
