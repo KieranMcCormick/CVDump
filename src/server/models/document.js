@@ -2,30 +2,30 @@
 const { sqlInsert, sqlSelect, sqlUpdate } = require('../db')
 
 const CREATE_DOC_SQL = 'INSERT INTO documents (uuid, created_at, title, user_id, version) VALUES (UUID(), NOW(), ?, ?, ?)'
-const FIND_RECENT_BY_USERID = 'SELECT uuid, user_id, title, created_at FROM documents where user_id = ? AND version = 1'
+const FIND_RECENT_BY_USERID = 'SELECT uuid, user_id, title, created_at FROM documents where user_id = ?'
 //const FIND_RECENT_BY_USERID_DOCID = 'SELECT uuid, user_id, title, created_at, comments, blocks FROM documents where user_id = ? AND uuid = ? AND version = 1'
 //const FIND_FILEPATH = 'SELECT filepath, filename from documents where uuid = ?'
 const FIND_FILEPATH_BY_DOCID = 'SELECT filepath, filename from documents where uuid = ?'
-//const FIND_DOCUMENT_BLOCKS = 'SELECT block_id FROM document_blocks dbs JOIN documents d ON d.uuid = dbs.document_id '
 const UPDATE_FILEPATH = 'UPDATE documents SET filepath = ? WHERE uuid = ?'
+const UPDATE_TITLE_BY_DOC_ID = 'UPDATE documents set title = ? WHERE uuid = ?'
+
 
 class Document {
     constructor(props) {
         if (props) {
-            this.doc_id  = props.uuid
-            this.title   = props.title ? props.title : 'untitled'
-            this.user_id = props.user_id
-            //TODO change to non default val
-            this.version = 1
+            this.doc_id   = props.uuid
+            this.title    = props.title ? props.title : 'untitled'
+            this.user_id  = props.user_id
+            this.version  = props.version
         }
     }
 
     docJson() {
         return {
-            title  : this.title,
-            doc_id : this.doc_id,
-            user_id: this.user_id,
-            version: this.version,
+            title    : this.title,
+            doc_id   : this.doc_id,
+            user_id  : this.user_id,
+            version  : this.version,
         }
     }
 
@@ -90,6 +90,15 @@ class Document {
     //     })
     // }
 
+    static UpdateTitleByDocid(doc_id) {
+        return new Promise((resolve, reject) => {
+            sqlSelect(UPDATE_TITLE_BY_DOC_ID, [ doc_id ], (err, res) => {
+                if (err) { console.error(err); return resolve(null) }
+                resolve(res)
+            })
+        })
+    }
+
     static FindFilepathByDocid(doc_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_FILEPATH_BY_DOCID, [ doc_id ], (err, documents) => {
@@ -114,6 +123,10 @@ class Document {
             })
         })
     }
+
+    //validate not already saved and user permitted to save
+    // static VaildateDocument(doc_id){
+    // }
 
 }
 
