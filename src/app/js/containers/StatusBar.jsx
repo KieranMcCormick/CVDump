@@ -25,7 +25,7 @@ class StatusBar extends PureComponent {
     renderUser() {
         return (
             <div className="c-status__user">
-                <label>{this.props.user.info.firstname}</label>
+                <label>{this.props.user.info.firstname || this.props.user.info.email.split('@')[0]}</label>
             </div>
         )
     }

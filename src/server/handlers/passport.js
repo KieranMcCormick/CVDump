@@ -41,6 +41,26 @@ module.exports = (app) => {
             }
         }
     ))
+    passport.use('cas-connect', new CASStrategy(
+        {
+            version: 'CAS3.0',
+            ssoBaseURL: 'https://cas.sfu.ca/cas',
+            serverBaseURL: `${config.server.fqdn}/auth/cas/connect`,
+            validateURL: '/serviceValidate',
+        },
+        (login, done) => {
+            if (login && login.user) {
+                const cas_id = login.user.replace(/@\w*\.?sfu.ca/, '')
+                if (cas_id) {
+                    done(null, cas_id)
+                } else {
+                    done(null, false, { errorMessage: 'Invalid Authentication' })
+                }
+            } else {
+                done(null, false, { errorMessage: 'Invalid Authentication' })
+            }
+        }
+    ))
     passport.use('linkedin', new LinkedInStrategy(
         {
             consumerKey: keys.linkedinKey,
@@ -58,6 +78,21 @@ module.exports = (app) => {
                     done(null, user)
                 })
             } else { // safety
+                done(null, false, { errorMessage: 'Invalid Authentication'})
+            }
+        }
+    ))
+    passport.use('linkedin-connect', new LinkedInStrategy(
+        {
+            consumerKey: keys.linkedinKey,
+            consumerSecret: keys.linkedinSecret,
+            callbackURL: `${config.server.fqdn}/auth/linkedin/connect_callback`,
+            profileFields: ['id', 'first-name', 'last-name', 'email-address'],
+        },
+        (token, tokenSecret, profile, done) => {
+            if (profile && profile.id) {
+                done(null, profile)
+            } else {
                 done(null, false, { errorMessage: 'Invalid Authentication'})
             }
         }

@@ -2,15 +2,22 @@ const db = require('../db')
 const passport = require('passport')
 
 module.exports = (app) => {
-    app.get(
-        '/test',
-        passport.authenticate('jwt', { session: false }),
-        (req, res) => {
-            res.send(req.user)
-        }
-    )
+    app.use('/comment', require('./comment_api'))
+    app.use('/files', require('./files_api'))
+    app.use(require('./auth'))
+    app.use(require('./sessions'))
+    app.use('/users', require('./users'))
 
-    if (process.env.NODE_ENV === 'development'){
+    // Development Testing Routes
+    if (process.env.NODE_ENV === 'development') {
+        app.get(
+            '/test',
+            passport.authenticate('jwt', { session: false }),
+            (req, res) => {
+                res.send(req.user)
+            }
+        )
+
         //Lets have this our main API routing?
         app.post(
             '/select',

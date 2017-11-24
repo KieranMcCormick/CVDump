@@ -9,7 +9,7 @@ const {User, UserCreationValidation} = require('../models/user')
 
 router.get('/currentUser', (req, res) => {
     if (req.user) {
-        res.json(req.user.publicJson())
+        res.json(_.merge(req.user.publicJson(), { source: req.session.source || 'unknown' }))
     } else {
         res.sendStatus(403)
     }
@@ -23,12 +23,15 @@ router.post('/login', (req, res, next) => {
             req.login(user, (err) => {
                 if (err) { return next(err) }
                 else {
+                    req.session.source = 'pw'
                     res.cookie('JWT', user.generateJWT(), {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production',
                         sameSite: 'lax',
                     })
-                    res.json(user.publicJson())
+                    res.json(_.merge(req.user.publicJson(), {
+                        source: req.session.source || 'unknown',
+                    }))
                 }
             })
         }
@@ -45,7 +48,11 @@ router.post('/register', UserCreationValidation, (req, res) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-        return res.status(422).json({ errorMessage:  _.map(errors.mapped(), (value, key) => `${_.upperFirst(key)} ${value.msg}`).join('. ') })
+        return res.status(422).json({
+            errorMessage: _.map(errors.mapped(),
+                (value, key) => `${_.upperFirst(key)} ${value.msg}`
+            ).join('. '),
+        })
     }
 
     User.create(matchedData(req)).then((user) => {

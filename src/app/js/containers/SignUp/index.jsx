@@ -13,7 +13,9 @@ class SignUp extends Component {
                 <Logo style={{width: '150px', height: 'auto'}} />
                 <h2>Please fill the form to register</h2>
                 {signUpFail && <span className="u-fail-text">{errorMessage}</span>}
-                <SignUpForm onSignUpSubmit={() => this.props.dispatchSignUp(this.props.form.values)} />
+                <SignUpForm
+                    onSignUpSubmit={() => this.props.dispatchSignUp(this.props.form.values)}
+                />
             </div>
         )
     }
