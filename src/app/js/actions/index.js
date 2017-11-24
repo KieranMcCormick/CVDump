@@ -121,32 +121,12 @@ export const dispatchFetchFiles = () => async (dispatch) => {
 export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
     try {
 
-        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
-        // const res = await axios.get('/shared')
-        // dispatch({
-        //     type: types.FETCH_SHARES_SUCCESS,
-        //     payload: res.data,
-        // })
+        const res = await axios.get('/shared')
 
-        // mocking the data here
-        const res = await axios.get('/files')
         dispatch({
             type: types.FETCH_SHARES_SUCCESS,
             payload: res.data,
         })
-        // expected objects
-        // dispatch({
-        //     type: types.FETCH_SHARES_SUCCESS,
-        //     payload: {
-        //         files: [
-        //             {
-        //                 user_id: 'userId',
-        //                 doc_id: 'asdasd',
-        //                 title: 'asdeasdasdasdasda',
-        //             }
-        //         ],
-        //     },
-        // })
         callback()
     } catch (error) {
         dispatch({
@@ -162,12 +142,10 @@ export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
 export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
     try {
 
-        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
         const comment = await axios.get(`/comment/${id}`)
         const pdf = await axios.get(`/files/pdf/${id}`)
 
         dispatch({
-            // TODO: CHANGE THE ACTION TYPE
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
                 comments: comment.data,
@@ -177,8 +155,7 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
         callback()
     } catch (error) {
         dispatch({
-            // TODO: CHANGE THE ACTION TYPE
-            type: types.FETCH_FILE_FAILURE,
+            type: types.FETCH_SHARE_FILE_FAILURE,
             payload: error.response.data,
         })
         callback()
@@ -188,39 +165,12 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
-        // this could be triggered during a new document creation
-        // const doc = id
-        //     ? await axios.get(`/files/${id}`)
-        //     : {
-        //         data: {
-        //             version: 0,
-        //             title: '',
-        //             blocks: [],
-        //         },
-        //     }
-        // const availableBlocks = await axios.get('/blocks')
 
+        const doc = await axios.get(`/files/${id}`)
+        // const availableBlocks = await axios.get(`/blocks`)
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
-            payload: {
-                // not sure if version is needed anymore, remove if not
-                // version: doc.data.version,
-                // title: doc.data.title,
-                // blocks: doc.data.blocks,
-                title: '',
-                blocks: [],
-                // availableBlocks: availableBlocks.data,
-                availableBlocks: [
-                    {
-                        block_id: 'asdfasdfasdf',
-                        summary: '1. 23123 2. 123123',
-                    },
-                    {
-                        block_id: 'asdfasdfasdf',
-                        summary: '__markdown__ **format** 1. 23123 2. 123123',
-                    }
-                ],
-            },
+            payload: doc.data,
         })
         callback()
     } catch (error) {
@@ -295,24 +245,15 @@ export const dispatchOnClickCreateFile = () => ({
     type: types.CREATING_NEW_FILE,
 })
 
-export const dispatchCreateFile = ({ title /* , blocks, created_at */ }, callback) => async (dispatch) => {
+export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => async (dispatch) => {
     try {
         // returns the id of the newly created document
-        // const res = await axios.post('/files/create', { title, blocks, created_at })
+        const res = await axiosWithCSRF.post('/files/create/', { title, blocks, created_at })
 
-        // dispatch({
-        //     type: types.CREATE_FILE_SUCCESS,
-        //     payload: res.data,
-        // })
         dispatch({
             type: types.CREATE_FILE_SUCCESS,
-            payload: {
-                title,
-            },
+            payload: res.data,
         })
-
-        // dispatch.push(`/files/${res.data.id}`)
-        dispatch(push('sdfsdfsdfsdfsdfsdf'))
 
         callback('File created')
     } catch (error) {
@@ -331,6 +272,8 @@ export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispat
         //     type: types.UPDATE_FILE_SUCCESS,
         //     payload: res.data,
         // })
+        await axiosWithCSRF.post(`/files/savepdf/${id}`, { id, title, blocks })
+
         dispatch({
             type: types.UPDATE_FILE_SUCCESS,
             payload: {
@@ -424,7 +367,7 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
 
 export const dispatchSavePdf = (id) => async (dispatch) => {
     try {
-        //5479dcaf-cce6-11e7-810c-000c291b6367
+
         const res = await axios.get(`/files/savepdf/${id}`)
 
         dispatch({
@@ -439,18 +382,18 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
     }
 }
 
-// export const dispatchGetPdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/file/pdf/${id}')
+export const dispatchGetPdf = (id) => async (dispatch) => {
+    try {
+        const res = await axios.get(`/file/pdf/${id}`)
 
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.response.data,
-//         })
-//     }
-// }
+        dispatch({
+            type: types.FETCH_FILE_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.response.data,
+        })
+    }
+}
