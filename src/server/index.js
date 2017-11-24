@@ -13,9 +13,11 @@ const keys = require('./config/keys')
 const server = require('http').Server(app)
 const PORT = process.env.PORT || 9999
 
-app.use(logger('common'))
+if (process.env.NODE_ENV !== 'test') {
+    app.use(logger('common'))
+}
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
     // Hot reload in development
     require('./handlers/webpack')(app)
 }
@@ -85,3 +87,5 @@ server.listen(PORT, (err) => {
     console.log(`http://localhost:${PORT}`)
     new SocketListener(server)
 })
+
+module.exports = server
