@@ -27,9 +27,9 @@ if (process.env.NODE_ENV === 'production') {// Only use these in production
             directives: {
                 defaultSrc: ['\'self\''],
                 styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com'],
-                imgSrc: ['\'self\'', 'https://www.gravatar.com'],
+                imgSrc: ['\'self\'', 'data:', 'https://www.gravatar.com'],
                 connectSrc: ['\'self\'', config.server.wsFqdn],
-                fontSrc: ['\'self\'', 'data:'],
+                fontSrc: ['\'self\'', 'data:', 'https://fonts.gstatic.com'],
                 objectSrc: ['\'none\''],
             },
         },
