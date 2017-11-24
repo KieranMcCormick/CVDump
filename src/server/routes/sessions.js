@@ -56,6 +56,7 @@ router.post('/register', UserCreationValidation, (req, res) => {
     }
 
     User.create(matchedData(req)).then((user) => {
+        res.login(user)
         res.cookie('JWT', user.generateJWT(), {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
