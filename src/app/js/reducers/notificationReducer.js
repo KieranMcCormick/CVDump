@@ -16,7 +16,10 @@ export default (state = initState, action) => {
                 ...state,
                 ...action.payload,
             }
-        case types.SPAWN_NOTIFICATION:
+        //when notification comes this way, update the global notifications array    
+        case types.RECEIVE_NOTIFICATION:
+            console.log("RECEIVED NOTIFICATION");
+            console.log(state);
             return {
                 ...state,
                 ...action.payload,

@@ -11,15 +11,28 @@ NotificationHandler.createNotification = (type,data) => {
     }
     switch (type) {
         case "comment":
-            options.body = data.newComment
-            title = newComment +' from' + data.sender
-            let commentNotify = new Notification(title,options)
-            setTimeout(commentNotify.close.bind(commentNotify),5000)
-            return
+         
+            options.body = data.content
+            title = 'new Comment from' +  data.target 
+            if(Notification.prototype.permission == "granted") {
+                //fire notification
+                let commentNotify = new Notification(title,options)
+                setTimeout(commentNotify.close.bind(commentNotify),3000)
+            } else {
+                Notification.requestPermission(function(permission) {
+                    if(permission == "granted"){
+                        let commentNotify = new Notification(title,options)
+                        setTimeout(commentNotify.close.bind(commentNotify),3000)
+                    } else {
+                        return
+                    }
+                })
+            }
+          
         default:
             options.body ="new notification"
             let defaultNotify = new Notification(title,options)
-            setTimeout(defaultNotify.close.bind(defaultNotify),3000)
+           
     }
 
 } 

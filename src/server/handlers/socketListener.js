@@ -1,5 +1,4 @@
 const logger = (message) => {console.log(`[Socket] ${message}`)}
-const Document = require('../models/document')
 class SocketListener {
     constructor(server) {
         this.io = require('socket.io')(server)
@@ -18,15 +17,11 @@ class SocketListener {
     comments_listener() {
         this.commentSpace.on('connection', function (socket) {
             logger('Connect to comments space')
-            let newUser = room.user
-            let newRoom = room.roomId
             socket.on('joinRoom', function (room) {
-                logger(`${newUser} room event room id: ${newRoom}`)
+                logger(`join room event room id: ${room}`)
             })
 
             socket.on('leaveRoom', function (room) {
-                let newUser = room.user
-                let newRoom = room.roomId
                 logger(`Leave room event room id: ${room}`)
                 socket.leave(room)
             })
@@ -58,19 +53,28 @@ class SocketListener {
                 socket.leave(room)
             })
 
-            socket.on('getNotifications', function (user) {
+            socket.on('getNotifications', function (msg) {
                 logger('Listen to notifications')
                 //get file Owner from docId
-                Document.getDocOwner(user.docId)
+                console.log(msg)
+                let type = msg.type
+                let owner = '';
+                switch(type){
+                    case "comment":
+                       // socket.to(msg.target).emit('notify',msg)
+                       socket.to('user2').emit('notify',msg)
+                        return
+                    default:
+                       console.log("no such notification type")
+                       return
+                    
+                }
+                
 
             })
 
             //Notifications should be sent to global name space and redirected to specific users
             //fired by comment creation
-            socket.on('onReceiveNotification', function (msg) {
-                //get target userId from msg, reply message to specific room
-                socket.to(msg.toUser).emit('notify', msg)
-            })
         })
     }
 

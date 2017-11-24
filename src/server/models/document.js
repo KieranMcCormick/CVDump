@@ -126,6 +126,7 @@ class Document {
     }
     
 
+<<<<<<< HEAD
     static getDocOwner(doc_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_DOC_OWNER, [ doc_id ], (err, result) => {
@@ -145,6 +146,8 @@ class Document {
     // static VaildateDocument(doc_id){
     // }
 
+=======
+>>>>>>>  work in progress to get notifications to work
 }
 
 

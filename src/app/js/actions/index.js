@@ -54,11 +54,6 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             },
         })
 
-        SocketHandler.joinRoom(
-            "notifications",
-             username,
-            )
-
         dispatch(push('/'))
     } catch (error) {
         dispatch({
@@ -280,20 +275,8 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             }
         )
-
         //if target user is inside the room, we dont need to create notification
-        SocketHandler.emitEvent(
-            'notifications',
-            'getNotifications',
-            { sender:comment.username,
-              type:'comments',
-              data: {
-                  docId:comment.docId,
-                  content:comment.content,
-                  timeStamp:comment.createdAt,
-             }
-            })
-
+        
     } catch (error) {
         console.error(error)
     }
@@ -425,15 +408,71 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
 
 
 //Fired when user receives a notification
-export const dispatchSpawnNotification = (type,msg) => ({
-    type: types.SPAWN_NOTIFICATION,
+export const dispatchReceiveNotification = (msg) => ({
+    type: types.RECEIVE_NOTIFICATION,
     payload: {
-        type: type,
-        sender:msg.sender,
-        docId:msg.docId,
-        snapShot:msg.message,
+        newNotice:msg,
     },
 })
+
+export const dispatchSendNotification = (data) =>{
+    try {
+        //Store notification in db
+        axiosWithCSRF.post(
+            '/notifications/create', 
+            {sender:data.sender,
+             documentId: data.docId,
+             timeStamp:data.createdAt,
+             type:data.type,}
+             )
+
+        .then((success,err)=>{
+            if(success){
+                SocketHandler.emitEvent(
+                    'notifications',
+                    'getNotifications',
+                    {target:success.data.target,
+                     type:data.type,
+                     timeStamp:data.createdAt,
+                     sender:data.sender,
+                     documentId:data.docId,
+                     content:data.content,
+                    }
+                )
+            }
+
+            if(err) {
+                console.log(err)
+                return
+            }
+         
+        }) 
+    } catch (error) {
+        console.error(error)
+    }
+
+    
+    
+
+
+}
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
+
+//         dispatch({
+//             type: types.FETCH_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.FETCH_FILE_FAILURE,
+//             payload: error.data,
+//         })
+//     }
+// }
+
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
 //         const res = await axios.get('/file/pdf/${id}')

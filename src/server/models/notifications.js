@@ -1,13 +1,14 @@
 const { sqlInsert, sqlSelect } = require('../db')
 const _ = require('lodash')
 const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
+
 class Notifications {
     constructor(props) {
         if (props) {
-            this.email = props.email ? props.email : null
             this.documentId = props.documentId ? props.documentId : null
             this.timeStamp = props.timeStamp ? props.timeStamp : ''
             this.type = props.type ? props.type : "system"
+            this.sender = props.sender ? props.sender: ''
             
     }
     //checks if document exists
@@ -18,34 +19,45 @@ class Notifications {
    
 
     create() {
-        console.log(this);
         // might query using username instead ?
         const createQuery = 'INSERT INTO notifications (uuid, user_id, document_id, type, created_at) VALUES (UUID(), ?, ?, ?, ?)'
        
         return new Promise((resolve, reject) => {
             // notifications has to have userid, docid and a type of notification
-            if( !this.email || !this.documentId || !this.type) {
+            if( !this.documentId || !this.type) {
                 return reject({message:"Missing userID and docID"})
             }
 
-            sqlSelect(fetchUserQuery, [this.email], (err, success) => {
+            this.getDocOwner(this.documentId).then ((success, err) => {
                     if (err) {
-                        console.log(err)
-                        return resolve({ message: 'No such user' })
+                        return resolve({ message: err })
                     }
                     if (success) {
+                        
                         let uuid = success[0].uuid
-                        sqlInsert(createQuery, [uuid, this.documentId, this.type,this.timeStamp], (err, result) => {
-                            if (err) {
-                                console.log(err)
-                                return resolve({ params: [this.email, this.documentId, ,this.type, this.timeStamp], error: err })
-                            }
-                            return resolve({ message: 'comment uploaded', data: result })
-                        })
+                        let username = success[0].username
+                        if(username =! this.sender) {
+                            //No need to emit your own notification
+                            return reject({message:"Cannot create notifcation for yourself"})
+                        } else {
+                            //go ahead and create the notification
+                            sqlInsert(createQuery, [uuid, this.documentId, this.type,this.timeStamp], (err, result) => {
+                                if (err) {
+                                    console.log(err)
+                                    return resolve({ params: [username, this.documentId, ,this.type, this.timeStamp], error: err })
+                                }
+                                if(result){
+                                    return resolve({ 
+                                            target: success[0].username,
+                                            type:this.type,
+                                            documentId: this.documentId,
+                                            timeStamp:this.timeStamp,
+                                    })
+                                }    
+                            })
+                        }  
                     }
                 })
-
-     
         })
     }
 
@@ -89,6 +101,22 @@ class Notifications {
                 timeStamp: entries.created_at,
                 document_id:entries.document_id,
             }
+        })
+    }
+
+    getDocOwner(doc_id) {
+        const FIND_DOC_OWNER = 'SELECT users.uuid, username FROM documents, users where documents.uuid = ? AND documents.user_id = users.uuid'
+        return new Promise((resolve, reject) => {
+            sqlSelect(FIND_DOC_OWNER, [ doc_id ], (err, result) => {
+                if (err) {
+                    console.error(err)
+                    return reject(new Error('Database Error'))
+                }
+                if (!result/** || result**/) { // Check valid result ... ?
+                    return reject(new Error('Unknown Error'))
+                }
+                return resolve(result)
+            })
         })
     }
 }

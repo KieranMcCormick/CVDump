@@ -18,41 +18,37 @@ router.get('/load', (req, res) => {
             res.send({message:"no notifications"})
         }
     })
-    .catch((exception) =>{
-        res.send({message:"There is no such user"})
-    })
-   
+        .catch((exception) => {
+            console.log(exception)
+            res.send({ message: exception })
+        })
 })
 
 router.post('/create', (req, res) => {
-    
-   if(!validateJson(req.body) ) {
-       res.send({message:"Missing user and document ID"})
-   }
-
-   new Notifications ({
-        email: req.body.email,
+    let newNotification = {
+        sender: req.body.sender,
         documentId: req.body.documentId,
         timeStamp : new Date().toISOString().slice(0, 19).replace('T', ' '),
         type: req.body.type,
-    })
-    .create().then((result,err) => {
-
-        if(result){
-            console.log(result)
-            res.send({message:"notification created"})
-        }
-
+    }
+    
+    new Notifications(newNotification).create().then((result,err) => {
         if(err) {
-            console.log(err)
-            res.send({message:"fail to notify user"})
+            res.sendStatus(401)
+
         }
 
+        if(result) {
+            res.send(result)
+        }
+
+
     })
-    .catch((exception) =>{
-        res.send({message:"There is no such user"})
+
+    .catch((exception) => {
+        console.log(exception)
+        res.send({ message: exception })
     })
-   
 })
 
 router.post('/delete',(req,res) => {
