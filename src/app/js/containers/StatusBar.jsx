@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import { Logo, Avatar } from '../global/icon'
-import * as actions from '../actions'
 import PathLink from '../components/PathLink'
 import { Paper, Menu, MenuItem } from 'material-ui'
 import { getDisplayName } from '../global/common'
@@ -77,13 +76,14 @@ class StatusBar extends PureComponent {
             </div>
         )
     }
+    // //{this.renderNotificationCount()}
     render() {
         return (
             <div className="c-status-bar">
                 <PathLink pathname={this.props.location.pathname}/>
                 {this.renderLogo()}
                 {this.renderUser()}
-                {this.renderNotificationCount()}
+               
             </div>
         )
     }
@@ -101,18 +101,7 @@ StatusBar.propTypes = {
     location: PropTypes.shape({
         pathname: PropTypes.string.isRequired,
     }),
-<<<<<<< HEAD
-<<<<<<< HEAD
     dispatchLogOut: PropTypes.func.isRequired,
-=======
-    notifications: PropTypes.array.isRequired,
-    dispatchReceiveNotification: PropTypes.func.isRequired,
->>>>>>>  added notification state to store, now need to intialize it with fetch and update when recieving
-=======
-    notifications: PropTypes.any.isRequired,
-    dispatchReceiveNotification: PropTypes.func.isRequired,
-    dispatchFetchNotifications: PropTypes.func.isRequired,
->>>>>>>  made notification popup, and status counter to count serveer notifications and incomming notifications
 }
 
 
