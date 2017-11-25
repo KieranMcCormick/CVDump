@@ -60,6 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.run_list = [
       "recipe[baseconfig::default]",
       "recipe[baseconfig::development]",
+      "recipe[baseconfig::fs]",
       "recipe[database::default]"
     ]
   end
