@@ -22,24 +22,37 @@ const UPDATE_CAS_ID_SQL            = 'UPDATE users SET cas_id = ? WHERE uuid = ?
 const UPDATE_LINKEDIN_IN_SQL       = 'UPDATE users SET linkedin_id = ? WHERE uuid = ?'
 const UPDATE_PASSWORD_SQL          = 'UPDATE users SET password = ? WHERE uuid = ?'
 
-const UserUpdatePasswordValidation = [
+const UserCreatePasswordValidation = [
     check('password', 'must contain at least one lowercase, uppercase, number, and symbol')
         .matches(/[a-z]/).matches(/[A-Z]/).matches(/\d/).matches(/\W/)
         .isLength({min: 8}).withMessage('must be at least 8 characters long'),
     check('confirmPassword', 'must be present and match Password').exists() // Can't seem to match against other param with express-validator
 ]
 
+const UserUpdatePasswordValidation = _.concat(UserCreatePasswordValidation, [
+    check('currentPassword', 'must be present').exists()
+])
+
 const UserUpdateProfileValidation = [
     check('email').isEmail().withMessage('must be a valid Email').trim() //.normalizeEmail()
-        .custom(value => { return User.findOneByEmail(value).then((user) => {
-            if (user) { throw new Error('must be a valid Email') }
-            return true
-        })}),
-    check('firstname'), // Have these to whitelist in the params
-    check('lastname')
+        .custom((value, { req }) => {
+            if (req &&
+                req.user &&
+                req.user.email_address === value) { // if is unchanged
+                return true
+            }
+            return User.findOneByEmail(value).then((user) => {
+                if (user) { // another user
+                    throw new Error('must be a valid Email')
+                }
+                return true
+            })
+        }),
+    check('firstname').trim().escape(), // Have these to whitelist in the params
+    check('lastname').trim().escape()
 ]
 
-const UserCreationValidation = _.concat(UserUpdateProfileValidation, UserUpdatePasswordValidation, [
+const UserCreationValidation = _.concat(UserUpdateProfileValidation, UserCreatePasswordValidation, [
     check('username').matches(/^[a-z\d\-_]+$/i).withMessage('can only contain alphanumerics, -, and _')
         .isLength({min: 3}).withMessage('must be at least 3 characters long')
         .custom(value => { return User.findOneByUsername(value).then((user) => {
@@ -217,7 +230,7 @@ class User {
     }
 
     updateProfile(props) {
-        props = this.mapFrontEndFieldsToDB(props)
+        props = User.mapFrontEndFieldsToDB(props)
         return new Promise((resolve, reject) => {
             sqlInsert(UPDATE_PROFILE_SQL, [
                 props.email_address,
