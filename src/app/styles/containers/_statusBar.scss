@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: var(--status-bar-height);
+    min-height: var(--status-bar-height);
     background-color: $color-primary-dark;
 }
 

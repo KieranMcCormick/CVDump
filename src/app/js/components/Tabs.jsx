@@ -46,22 +46,25 @@ class Tabs extends Component {
         }
     }
 
-    onTabSelect(tabIndex) {
-        this.setState({ selectedIndex: tabIndex })
+    componentWillReceiveProps({ startIndex }) {
+        this.setState({ selectedIndex: startIndex })
+    }
+
+    onTabSelect(selectedIndex) {
+        this.setState({ selectedIndex })
     }
 
     renderTabs() {
-        const self = this
-        return this.props.children.map((item, index) =>
+        return this.props.children.map((item, index) => (
             <Link key={`tab-bar-item-${index}`} to={item.props.path}>
                 <Tab
                     active={this.state.selectedIndex === index}
                     index={index}
                     label={item.props.label}
-                    onClick={self.onTabSelect.bind(self, index)}
+                    onClick={() => {this.onTabSelect(index)}}
                 />
             </Link>
-        )
+        ), this)
     }
 
     render() {
@@ -80,11 +83,7 @@ class Tabs extends Component {
 
 Tabs.propTypes = {
     children: PropTypes.arrayOf(PropTypes.element).isRequired,
-    startIndex: PropTypes.number,
-}
-
-Tabs.defaultProps = {
-    startIndex: 0,
+    startIndex: PropTypes.number.isRequired,
 }
 
 export { Tab, Tabs }

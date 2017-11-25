@@ -53,9 +53,19 @@ class TabLayout extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        this.checkTabIndex(this.props.location.pathname)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.checkTabIndex(nextProps.location.pathname)
+    }
+
+    checkTabIndex(pathname) {
+        const endIndex = pathname.indexOf('/', 1)
+        const path = endIndex === -1 ? pathname.substring(1) : pathname.substring(1, endIndex)
         const index = routes.findIndex((item) => {
-            return item.path === this.props.location.pathname
+            return item.path.substring(1) === path
         })
 
         if (index !== -1) {
