@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import { Logo, Avatar } from '../global/icon'
+import * as actions from '../actions'
 import PathLink from '../components/PathLink'
 import { Paper, Menu, MenuItem } from 'material-ui'
 import { getDisplayName } from '../global/common'
@@ -76,14 +77,13 @@ class StatusBar extends PureComponent {
             </div>
         )
     }
-    // //{this.renderNotificationCount()}
     render() {
         return (
             <div className="c-status-bar">
                 <PathLink pathname={this.props.location.pathname}/>
                 {this.renderLogo()}
                 {this.renderUser()}
-               
+                {this.renderNotificationCount()}
             </div>
         )
     }
