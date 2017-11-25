@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import * as actions from '../../actions'
 import Comment from './Comments'
 import SocketHandler from '../../global/socketsHandler'
-import NotificationHandler from '../../global/notificationHandler'
 import moment from 'moment'
 import RaisedButton from 'material-ui/RaisedButton'
 

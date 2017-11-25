@@ -16,9 +16,14 @@ class SocketListener {
 
     comments_listener() {
         this.commentSpace.on('connection', function (socket) {
-            logger('Connect to comments space')
+            
             socket.on('joinRoom', function (room) {
                 logger(`join room event room id: ${room}`)
+                if(room) {
+                    logger('Connect to comments space')
+                    socket.join(room)
+                }
+                
             })
 
             socket.on('leaveRoom', function (room) {
@@ -46,7 +51,11 @@ class SocketListener {
             //room names will be their userIds
 
             socket.on('joinRoom', function (room) {
-                socket.join(room)
+                if(room) {
+                    logger('Connect to notification space')
+                    socket.join(room)
+                }
+               
             })
                 
             socket.on('leaveRoom', function (room) {

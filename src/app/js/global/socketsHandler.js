@@ -20,10 +20,13 @@ SocketHandler.joinRoom = (namespace, roomId, user) => {
     SocketHandler.log(`[${namespace}] Joining room: ${roomId}`)
     switch (namespace) {
         case 'comments':
+            //SocketHandler.commentSocket = io('/comments')
             SocketHandler.commentSocket.emit('joinRoom', {roomId:roomId,user:user})
             break
         case 'notifications':
+           // SocketHandler.notificationSocket = io('/notifications')
             SocketHandler.notificationSocket.emit('joinRoom', roomId)
+            
             break
         default:
             SocketHandler.log('No matching namespace')

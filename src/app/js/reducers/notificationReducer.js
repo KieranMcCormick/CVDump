@@ -11,7 +11,8 @@ export default (state = initState, action) => {
                 ...state,
                 ...action.payload,
             }
-        case types.SEND_NOTIFICATION_SUCCESS:
+        case types.SEND_NOTIFICATION_SUCCESS:  
+            console.log("notification sent");
             return {
                 ...state,
                 ...action.payload,

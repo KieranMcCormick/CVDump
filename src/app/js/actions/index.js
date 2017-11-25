@@ -428,6 +428,7 @@ export const dispatchSendNotification = (data) =>{
 
         .then((success,err)=>{
             if(success){
+                
                 SocketHandler.emitEvent(
                     'notifications',
                     'getNotifications',
@@ -447,6 +448,12 @@ export const dispatchSendNotification = (data) =>{
             }
          
         }) 
+        dispatch({
+            type: types.SEND_NOTIFICATION_SUCCESS,
+            payload: {
+                newNotice:"msg",
+            },
+        })
     } catch (error) {
         console.error(error)
     }
