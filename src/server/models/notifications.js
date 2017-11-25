@@ -9,6 +9,7 @@ class Notifications {
             this.timeStamp = props.timeStamp ? props.timeStamp : ''
             this.type = props.type ? props.type : "system"
             this.sender = props.sender ? props.sender: ''
+            this.email = props.email ? props.email : ''
             
     }
     //checks if document exists
@@ -64,16 +65,15 @@ class Notifications {
     load() {
         let that = this
         const fetchNotificationQuery = 'SELECT user_id, type, created_at, document_id FROM notifications WHERE user_id = ?'
-        console.log(this);
+        console.log(this.email)
         return new Promise((resolve, reject) => {
             sqlSelect(fetchUserQuery, [this.email], (err, success) => {
                 if (err) {
                     console.log(err)
                     return reject({ message: 'No such user' })
                 }
-
                 if (success[0]) {
-                    console.log(success)
+                    console.log(success[0])
                     let uuid = success[0].uuid
                     sqlSelect(fetchNotificationQuery, [uuid], (err, result) => {
                         if(err) {

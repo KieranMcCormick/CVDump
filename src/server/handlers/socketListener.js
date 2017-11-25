@@ -71,7 +71,7 @@ class SocketListener {
                 switch(type){
                     case "comment":
                        // socket.to(msg.target).emit('notify',msg)
-                       socket.to('user2').emit('notify',msg)
+                       socket.to(msg.target).emit('notify',msg)
                         return
                     default:
                        console.log("no such notification type")

@@ -102,11 +102,17 @@ StatusBar.propTypes = {
         pathname: PropTypes.string.isRequired,
     }),
 <<<<<<< HEAD
+<<<<<<< HEAD
     dispatchLogOut: PropTypes.func.isRequired,
 =======
     notifications: PropTypes.array.isRequired,
     dispatchReceiveNotification: PropTypes.func.isRequired,
 >>>>>>>  added notification state to store, now need to intialize it with fetch and update when recieving
+=======
+    notifications: PropTypes.any.isRequired,
+    dispatchReceiveNotification: PropTypes.func.isRequired,
+    dispatchFetchNotifications: PropTypes.func.isRequired,
+>>>>>>>  made notification popup, and status counter to count serveer notifications and incomming notifications
 }
 
 

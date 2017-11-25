@@ -406,6 +406,22 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
     }
 }
 
+export const dispatchFetchNotifications = (userEmail) => async (dispatch) => {
+    try {
+        let path = '/notifications/load?email=' +userEmail
+        const newAlerts =  await axios.get(path)
+        dispatch({
+            type: types.FETCH_NOTIFICATION_SUCCESS,
+            payload: newAlerts.data.notifications,
+        })
+        
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload:[],
+        })
+    }
+}
 
 //Fired when user receives a notification
 export const dispatchReceiveNotification = (msg) => ({
@@ -415,10 +431,10 @@ export const dispatchReceiveNotification = (msg) => ({
     },
 })
 
-export const dispatchSendNotification = (data) =>{
+export const dispatchSendNotification = (data) => async (dispatch) =>{
     try {
         //Store notification in db
-        axiosWithCSRF.post(
+        let success = await axiosWithCSRF.post(
             '/notifications/create', 
             {sender:data.sender,
              documentId: data.docId,
@@ -426,28 +442,19 @@ export const dispatchSendNotification = (data) =>{
              type:data.type,}
              )
 
-        .then((success,err)=>{
-            if(success){
-                
-                SocketHandler.emitEvent(
-                    'notifications',
-                    'getNotifications',
-                    {target:success.data.target,
-                     type:data.type,
-                     timeStamp:data.createdAt,
-                     sender:data.sender,
-                     documentId:data.docId,
-                     content:data.content,
-                    }
-                )
-            }
-
-            if(err) {
-                console.log(err)
-                return
-            }
-         
-        }) 
+         SocketHandler.emitEvent(
+             'notifications',
+             'getNotifications',
+              {target:success.data.target,
+                type:data.type,
+                timeStamp:data.createdAt,
+                sender:data.sender,
+                documentId:data.docId,
+                content:data.content,
+               }
+        )
+            
+    
         dispatch({
             type: types.SEND_NOTIFICATION_SUCCESS,
             payload: {
@@ -457,11 +464,6 @@ export const dispatchSendNotification = (data) =>{
     } catch (error) {
         console.error(error)
     }
-
-    
-    
-
-
 }
 
 // export const dispatchSavePdf = (id) => async (dispatch) => {

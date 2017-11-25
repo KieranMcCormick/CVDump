@@ -4,7 +4,8 @@ const Notifications= require('../models/notifications')
 
 //Called after login? or along with login?
 router.get('/load', (req, res) => {
-    new Notifications({ targetUser: req.params.docId }).load().then((result, err) => {
+    console.log(req.query)
+    new Notifications({ email: req.query.email }).load().then((result, err) => {
         if (err) {
             res.send({ message: 'cant find comments' })
         }
