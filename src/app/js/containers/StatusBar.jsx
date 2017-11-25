@@ -70,12 +70,20 @@ class StatusBar extends PureComponent {
         )
     }
 
+    renderNotificationCount() {
+        return (
+            <div className="c-status__notification">
+                <label>{this.props.notifications.length}</label>
+            </div>
+        )
+    }
     render() {
         return (
             <div className="c-status-bar">
                 <PathLink pathname={this.props.location.pathname}/>
                 {this.renderLogo()}
                 {this.renderUser()}
+                {this.renderNotificationCount()}
             </div>
         )
     }
@@ -93,12 +101,18 @@ StatusBar.propTypes = {
     location: PropTypes.shape({
         pathname: PropTypes.string.isRequired,
     }),
+<<<<<<< HEAD
     dispatchLogOut: PropTypes.func.isRequired,
+=======
+    notifications: PropTypes.array.isRequired,
+    dispatchReceiveNotification: PropTypes.func.isRequired,
+>>>>>>>  added notification state to store, now need to intialize it with fetch and update when recieving
 }
 
 
-const mapStateToProps = ({ user }) => ({
+const mapStateToProps = ({ user,app }) => ({
     user,
+    notifications: app.notifications,
 })
 
 

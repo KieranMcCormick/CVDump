@@ -2,16 +2,11 @@ const express = require('express')
 const router = express.Router()
 const Notifications= require('../models/notifications')
 
+//Called after login? or along with login?
 router.get('/load', (req, res) => {
-    if(validateJson(req.query) ) {
-        res.send({message:"Missing user and document ID"})
-    }
-    new Notifications({
-        email:req.query.email
-    })
-    .load().then( (result,err) =>{
-        if(result){
-            res.send({notifications:result})
+    new Notifications({ targetUser: req.params.docId }).load().then((result, err) => {
+        if (err) {
+            res.send({ message: 'cant find comments' })
         }
 
         if(err){
