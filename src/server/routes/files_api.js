@@ -10,7 +10,7 @@ router.use(requireLogin)
  * returns the collection of files base on user session
  */
 router.get('/', (req, res) => {
-    const user_id = req.user.user_id
+    const user_id = req.user.uuid
     if( user_id ){
         Document.LoadDocumentsByUserId(user_id).then((result, err) => {
             if (err){
@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
  * returns file with `id` for the user
  */
 router.get('/:id', (req, res) => {
-    const user_id = req.user.user_id
+    const user_id = req.user.uuid
     if (user_id) {
         Document.LoadDocumentsByUserId(user_id).then((result, err) => {
             if (err){
@@ -52,7 +52,7 @@ router.get('/:id', (req, res) => {
 
 
 router.get('/create', (req, res) => {
-    const user_id = req.user.user_id
+    const user_id = req.user.uuid
     const version = 1
     const title = req.params.title
     if( user_id ){
