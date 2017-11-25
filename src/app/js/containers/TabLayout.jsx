@@ -7,6 +7,7 @@ import { Tabs, Tab } from '../components/Tabs'
 import NotFound from '../components/NotFound'
 import Home from './Home'
 import File from '../components/File'
+import ShareFile from '../components/ShareFile'
 import FilesView from './FilesView'
 import SharesView from './SharesView'
 import BlocksView from './BlocksView'
@@ -77,6 +78,7 @@ class TabLayout extends Component {
                 </div>
                 <Switch>
                     <Route path="/files/:id" component={File} />
+                    <Route path="/shared/:id" component={ShareFile} />
                     {routes.map(({ path, component, exact, label })=> {
                         return <Route key={`routes-${label}`} path={path} component={component} exact={exact} />
                     })}

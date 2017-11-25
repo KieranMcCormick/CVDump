@@ -6,7 +6,7 @@ $status-bar-height: 50px;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: $status-bar-height;
+    min-height: $status-bar-height;
     background-color: $color-primary-dark;
 }
 

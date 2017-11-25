@@ -34,18 +34,6 @@ export default (state = initState, action) => {
         }
         case types.FETCH_FILES_FAILURE:
             return []
-        case types.FETCH_FILE_SUCCESS: {
-            // replace the old file object with the new file object
-            const { index } = findFile(state, action.payload.doc_id)
-            if (index === -1) {
-                return state
-            }
-            let newState = [ ...state ]
-            newState[index] = action.payload
-            return newState
-        }
-        case types.FETCH_FILE_FAILURE:
-            return state
         // Comments
         case types.RECEIVE_COMMENT:
         case types.CREATE_COMMENT_SUCCESS: {
