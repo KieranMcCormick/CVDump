@@ -58,16 +58,19 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
-                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
+        })
+        dispatch({
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage || 'Unknown Error',
         })
         dispatch(push('/login'))
     }
 }
 
-export const dispatchSignUp = ({ username, email, password, confirmPassword }) => async (dispatch) => {
+export const dispatchSignUp = ({ username, firstname, lastname, email, password, confirmPassword }) => async (dispatch) => {
     try {
-        const res = await axiosWithCSRF.post('/register', { username, email, password, confirmPassword })
+        const res = await axiosWithCSRF.post('/register', { username, firstname, lastname, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
@@ -77,14 +80,16 @@ export const dispatchSignUp = ({ username, email, password, confirmPassword }) =
         dispatch(push('/'))
     } catch (error) {
         dispatch({
-            type: types.SIGNUP_FAILURE,
-            payload: {
-                errorMessage: error.response.data.errorMessage,
-            },
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage,
         })
         dispatch(push('/signup'))
     }
 }
+
+export const dispatchClearFormError = () => ({
+    type: types.FORM_ERROR_CLEAR,
+})
 
 export const dispatchFetchFiles = () => async (dispatch) => {
     try {
@@ -235,7 +240,6 @@ export const dispatchMoveBlockFromSelectedFile = (blockOrder, delta) => ({
     },
 })
 
-
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
 
@@ -261,7 +265,6 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
     }
 }
 
-
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
     payload: {
@@ -283,6 +286,63 @@ export const dispatchCreateFile = () => async (dispatch) => {
             type: types.FETCH_FILE_FAILURE,
             payload: error.data,
         })
+    }
+}
+
+export const dispatchLogOut = () => async (dispatch) => {
+    try {
+        await axiosWithCSRF.post('/logout')
+
+        dispatch({
+            type: types.LOGOUT,
+            payload: {
+                isAuthenticated: false,
+                info: {},
+            },
+        })
+    } catch (error) {
+        // Unknown error
+        console.error(error)
+        dispatch(push('/'))
+    }
+}
+
+
+export const dispatchUpdate = ({ email, firstname, lastname }) => async (dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/users/profile', { email, firstname, lastname })
+        dispatch({
+            type: types.LOGIN_SUCCESS,
+            payload: {
+                info: res.data,
+            },
+        })
+        dispatch(push('/'))
+    } catch (error) {
+        dispatch({
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage,
+        })
+        dispatch(push('/profile'))
+    }
+}
+
+export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassword }) => async (dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/users/updatePassword', { currentPassword, password, confirmPassword })
+        dispatch({
+            type: types.LOGIN_SUCCESS,
+            payload: {
+                info: res.data,
+            },
+        })
+        dispatch(push('/'))
+    } catch (error) {
+        dispatch({
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage,
+        })
+        dispatch(push('/profile'))
     }
 }
 
@@ -317,4 +377,3 @@ export const dispatchCreateFile = () => async (dispatch) => {
 //         })
 //     }
 // }
-

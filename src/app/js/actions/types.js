@@ -3,13 +3,15 @@ export default {
     LOGIN_REQUEST: '@@user/LOGIN_REQUEST',
     LOGIN_FAILURE: '@@user/LOGIN_FAILURE',
     LOGIN_SUCCESS: '@@user/LOGIN_SUCCESS',
+    LOGOUT: '@@user/LOGOUT',
 
     // landing
     FETCH_REQUEST: '@@login/FETCH_REQUEST',
     FETCH_FAILURE: '@@login/FETCH_FAILURE',
 
-    // Sign up
-    SIGNUP_FAILURE: '@@user/SIGNUP_FAILURE',
+    // form error
+    FORM_ERROR: '@@form/FORM_ERROR',
+    FORM_ERROR_CLEAR: '@@form/FORM_ERROR_CLEAR',
 
     // File
     FETCH_FILES_SUCCESS: '@@file/FETCH_FILES_SUCCESS',
