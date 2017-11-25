@@ -1,5 +1,3 @@
-import { store } from '../store'
-
 // http://emailregex.com/
 const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ // eslint-disable-line
 
@@ -27,10 +25,3 @@ export const validateEmails = (emails) => {
  * @returns {bool} true if the email is validate, false otherwise
  */
 export const validateEmail = (email) => (email && re.test(email.trim()) === true)
-
-
-
-export const getDisplayName = () => {
-    const { user: { info } } = store.getState()
-    return info.username || info.email.split('@')[0]
-}

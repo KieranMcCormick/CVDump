@@ -50,6 +50,6 @@
       "indent": [ "error", 4, { "SwitchCase": 1 } ],
       "func-names": 0,
       "no-mixed-operators": ["error", {"allowSamePrecedence": true}],
-      "no-unused-vars": ["error", {"argsIgnorePattern": "^(reject|resolve|next)$"}]
+      "no-unused-vars": ["error", {"argsIgnorePattern": "^(reject|resolve)$"}]
     }
   }

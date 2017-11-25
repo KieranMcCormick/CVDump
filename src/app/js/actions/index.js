@@ -61,19 +61,16 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
+                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
-        })
-        dispatch({
-            type: types.FORM_ERROR,
-            payload: error.response.data.errorMessage || 'Unknown Error',
         })
         dispatch(push('/login'))
     }
 }
 
-export const dispatchSignUp = ({ username, firstname, lastname, email, password, confirmPassword }) => async (dispatch) => {
+export const dispatchSignUp = ({ username, email, password, confirmPassword }) => async (dispatch) => {
     try {
-        const res = await axiosWithCSRF.post('/register', { username, firstname, lastname, email, password, confirmPassword })
+        const res = await axiosWithCSRF.post('/register', { username, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
@@ -83,16 +80,14 @@ export const dispatchSignUp = ({ username, firstname, lastname, email, password,
         dispatch(push('/'))
     } catch (error) {
         dispatch({
-            type: types.FORM_ERROR,
-            payload: error.response.data.errorMessage,
+            type: types.SIGNUP_FAILURE,
+            payload: {
+                errorMessage: error.response.data.errorMessage,
+            },
         })
         dispatch(push('/signup'))
     }
 }
-
-export const dispatchClearFormError = () => ({
-    type: types.FORM_ERROR_CLEAR,
-})
 
 export const dispatchFetchFiles = () => async (dispatch) => {
     try {
@@ -165,12 +160,14 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 
         //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
         const comment = await axios.get(`/comment/${id}`)
-        const pdf = await axios.get(`/files/pdf/${id}`)
+        //const pdf = await axios.get(`/files/pdf/${id}`)
 
         dispatch({
             // TODO: CHANGE THE ACTION TYPE
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
+                doc_id: id,
+                version: 1,
                 comments: comment.data,
                 pdf: pdf.data,
             },
@@ -231,28 +228,6 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     }
 }
 
-export const dispatchSelectFile = (id) => ({
-    type: types.SELECT_FILE,
-    payload: id,
-})
-
-export const dispatchAddBlockToSelectedFile = (value) => ({
-    type: types.ADD_BLOCK_TO_SELECTED_FILE,
-    payload: value,
-})
-
-export const dispatchRemoveBlockFromSelectedFile = (blockOrder) => ({
-    type: types.REMOVE_BLOCK_FROM_SELECTED_FILE,
-    payload: blockOrder,
-})
-
-export const dispatchMoveBlockFromSelectedFile = (blockOrder, delta) => ({
-    type: types.MOVE_BLOCK_FROM_SELECTED_FILE,
-    payload: {
-        blockOrder,
-        delta,
-    },
-})
 
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
@@ -281,6 +256,7 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
         console.error(error)
     }
 }
+
 
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
@@ -498,3 +474,4 @@ export const dispatchSendNotification = (data) => async (dispatch) =>{
 //         })
 //     }
 // }
+

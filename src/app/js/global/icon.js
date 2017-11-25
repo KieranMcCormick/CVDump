@@ -16,17 +16,3 @@ export const Logo = ({ style }) => (
 Logo.propTypes = {
     style: PropTypes.object.isRequired,
 }
-
-export const Avatar = ({ url, style }) => (
-    <img
-        src={url}
-        alt="Avatar"
-        className="c-avatar-logo"
-        style={style}
-    />
-)
-
-Avatar.propTypes = {
-    url: PropTypes.string.isRequired,
-    style: PropTypes.object.isRequired,
-}

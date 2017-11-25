@@ -3,15 +3,13 @@ export default {
     LOGIN_REQUEST: '@@user/LOGIN_REQUEST',
     LOGIN_FAILURE: '@@user/LOGIN_FAILURE',
     LOGIN_SUCCESS: '@@user/LOGIN_SUCCESS',
-    LOGOUT: '@@user/LOGOUT',
 
     // landing
     FETCH_REQUEST: '@@login/FETCH_REQUEST',
     FETCH_FAILURE: '@@login/FETCH_FAILURE',
 
-    // form error
-    FORM_ERROR: '@@form/FORM_ERROR',
-    FORM_ERROR_CLEAR: '@@form/FORM_ERROR_CLEAR',
+    // Sign up
+    SIGNUP_FAILURE: '@@user/SIGNUP_FAILURE',
 
     // File
     FETCH_FILES_SUCCESS: '@@file/FETCH_FILES_SUCCESS',
@@ -28,13 +26,6 @@ export default {
 
     FETCH_PDF_SUCCESS: '@@file/FETCH_FILE_SUCCESS',
     FETCH_PDF_FAILURE: '@@file/FETCH_FILE_FAILURE',
-
-    // selected file
-    SELECT_FILE: '@@selected_file/SELECT_FILE',
-    SAVE_FILE: '@@selected_file/SAVE_FILE',
-    ADD_BLOCK_TO_SELECTED_FILE: '@@selected_file/ADD_BLOCK_TO_SELECTED_FILE',
-    REMOVE_BLOCK_FROM_SELECTED_FILE: '@@selected_file/REMOVE_BLOCK_FROM_SELECTED_FILE',
-    MOVE_BLOCK_FROM_SELECTED_FILE: '@@selected_file/MOVE_BLOCK_FROM_SELECTED_FILE',
 
     // Comment
     CREATE_COMMENT_SUCCESS: '@@file/CREATE_COMMENT_SUCCESS',

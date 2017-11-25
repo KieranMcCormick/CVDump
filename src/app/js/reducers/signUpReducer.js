@@ -1,18 +1,16 @@
 import types from '../actions/types'
 
 const initState = {
+    signUpFail: false,
     errorMessage: '',
 }
 
 export default (state = initState, action) => {
     switch (action.type) {
-        case types.FORM_ERROR:
+        case types.SIGNUP_FAILURE:
             return {
-                errorMessage: action.payload,
-            }
-        case types.FORM_ERROR_CLEAR:
-            return {
-                errorMessage: '',
+                signUpFail: true,
+                ...action.payload,
             }
         default:
             return state
