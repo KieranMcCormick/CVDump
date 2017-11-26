@@ -14,7 +14,7 @@
     "style:watch": "node-sass --watch src/app/styles/styles.scss src/public/styles.css",
     "lint": "eslint src --ext js,jsx --config .eslintrc.json --fix",
     "lint:jenkins": "eslint src --ext js,jsx --config .eslintrc.json -f checkstyle -o checkstyle-result.xml",
-    "test": "mocha test/server --recursive --exit && jest"
+    "test": "mocha test/server --recursive --exit && jest test/frontend --config test/jestconfig.json"
   },
   "repository": {
     "type": "git",
@@ -79,6 +79,7 @@
     "concurrently": "^3.5.0",
     "css-loader": "^0.28.7",
     "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
     "eslint": "^4.10.0",
     "eslint-plugin-react": "^7.4.0",
     "file-loader": "^1.1.5",

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router'
 import { routerReducer as routing } from 'react-router-redux'
-import { reducer as formReducer } from 'redux-form'
+import { reducer as reduxFormReducer } from 'redux-form'
 import thunk from 'redux-thunk'
 import configureStore from 'redux-mock-store'
 import App from '../../src/app/js/containers/App'
@@ -14,13 +14,17 @@ let store
 beforeEach(()=>{
     store = mockStore({
         app: {
-            signup: {
-                signUpFail: false,
-                errorMessage: '',
+            files: [],
+            selectedFile: {
+                id: '',
+                availableBlocks: [],
+                blocks: [],
             },
-            files: []
+            form: {
+                errorMessage: '',
+            }
         },
-        form: formReducer,
+        form: reduxFormReducer,
         user: {
             isFetching: false,
             isAuthenticated: false,

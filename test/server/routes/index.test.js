@@ -5,7 +5,7 @@ const should = chai.should()
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 
-const server = require('../../src/server')
+const server = require('../../../src/server')
 
 describe('GET index', () => {
     it('should should load', (done) => {
