@@ -8,7 +8,7 @@ chai.use(chaiHttp)
 const server = require('../../src/server')
 
 describe('GET index', () => {
-    it('should respond with all users', (done) => {
+    it('should should load', (done) => {
         chai.request(server)
         .get('/')
         .end((err, res) => {
