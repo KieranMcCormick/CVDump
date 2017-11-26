@@ -48,9 +48,13 @@ class NotificationsView extends PureComponent {
     }
 
     //Links to relevant page and deletes notification
-    resolveNotification(type,docId) {
-        if(type =='comment'){
-            let routePath = "/files/" +docId
+    resolveNotification(notice) {
+        if(notice.type =='comment'){
+            let routePath = "/files/" +notice.document_id
+            //fixes bug where user directly routes to file page before client fetchesFiles
+            this.props.dispatchFetchFiles()
+            this.props.dispatchResolveNotification(notice.uuid)
+            this.props.dispatchFetchNotifications()
             this.props.history.push(routePath);
             this.setState({dropdown:false})
         } else {
@@ -61,11 +65,10 @@ class NotificationsView extends PureComponent {
     renderNotificationCards() {
         if(this.props.notifications.length >0){
             return this.props.notifications.map((notice, index) => {
-                console.log(notice)
+                
                 if (notice.type =="comment"){
                     let caption = "New comment on "  +notice.file 
                     let subtitle = notice.timeStamp.substring(0,10)
-
                     return <Card >
                              <CardHeader
                                 title={caption}
@@ -73,7 +76,7 @@ class NotificationsView extends PureComponent {
                                 actAsExpander={true}
                                 />
                              <CardActions>
-                                 <FlatButton onClick={()=>this.resolveNotification(notice.type,notice.document_id)} label="View"/>
+                                 <FlatButton onClick={()=>this.resolveNotification(notice)} label="View"/>
                                  <FlatButton label="Remove"/>
                              </CardActions>   
 
@@ -141,7 +144,9 @@ NotificationsView.propTypes = {
     }),
     notifications: PropTypes.any.isRequired,
     dispatchReceiveNotification: PropTypes.func.isRequired,
+    dispatchResolveNotification:PropTypes.func.isRequired,
     dispatchFetchNotifications: PropTypes.func.isRequired,
+    dispatchFetchFile: PropTypes.func.isRequired,
 }
 
 

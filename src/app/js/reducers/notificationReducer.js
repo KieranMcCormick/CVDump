@@ -26,6 +26,17 @@ export default (state = initState, action) => {
             })
             console.log(newState)
             return newState
+        case types.RESOLVE_NOTIFICATION:
+             let id = action.payload.removed
+             console.log(id)
+             console.log(newState)
+             newState = [...state]
+            
+             return  _.remove(newState, function(destroy) {
+                 console.log(destroy)
+                 return destroy.uuid == id
+             })
+                         
         default:
             return state
     }

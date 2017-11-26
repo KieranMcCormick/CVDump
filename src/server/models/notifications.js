@@ -1,4 +1,4 @@
-const { sqlInsert, sqlSelect } = require('../db')
+const { sqlInsert, sqlSelect ,sqlDelete} = require('../db')
 const _ = require('lodash')
 const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
 const fetchFileName = 'SELECT title FROM documents WHERE uuid = ?'
@@ -65,7 +65,7 @@ class Notifications {
 
     load() {
         let that = this
-        const fetchNotificationQuery = 'SELECT notifications.user_id, type, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
+        const fetchNotificationQuery = 'SELECT notifications.uuid, notifications.user_id, type, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
         console.log(this.email)
         return new Promise((resolve, reject) => {
             sqlSelect(fetchUserQuery, [this.email], (err, success) => {
@@ -93,6 +93,27 @@ class Notifications {
         })
     }
 
+    delete(id){
+        const deleteNotification = "DELETE FROM notifications WHERE uuid = ?"
+        return new Promise((resolve, reject)=> {
+            sqlDelete(deleteNotification,[id],(err,result) => {
+                if(err) {
+                    console.log(err)
+                    return reject({message:"fail to fetch notifications"})
+                }
+                if(result){
+                    console.log(result)
+                    return resolve({result})
+                }
+
+            })
+
+        })
+     
+
+
+    }
+
     parseOutput(rows) {
         let that= this
         return _.map(rows, function (entries) {
@@ -103,6 +124,7 @@ class Notifications {
                 timeStamp: entries.created_at,
                 document_id:entries.document_id,
                 file: entries.title,
+                uuid:entries.uuid,
             }
         })
     }

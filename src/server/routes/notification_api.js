@@ -37,10 +37,7 @@ router.post('/create', (req, res) => {
         if(result) {
             res.send(result)
         }
-
-
     })
-
     .catch((exception) => {
         console.log(exception)
         res.send({ message: exception })
@@ -48,6 +45,15 @@ router.post('/create', (req, res) => {
 })
 
 router.post('/delete',(req,res) => {
+
+    new Notifications().delete(req.body.id).then((result, err) => {
+        if (err) {
+            res.send({ message: 'cant find comments' })
+        }
+        if (result) {
+            res.sendStatus(200)
+        }
+    })
 
 });
 

@@ -57,9 +57,8 @@ StatusBar.propTypes = {
 }
 
 
-const mapStateToProps = ({ user,app }) => ({
+const mapStateToProps = ({ user }) => ({
     user,
-    notifications: app.notifications,
 })
 
 

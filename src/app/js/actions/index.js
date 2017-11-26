@@ -442,12 +442,23 @@ export const dispatchSendNotification = (data) => async (dispatch) =>{
     }
 }
 
-export const dispatchResolveNotification = (msg) => ({
-    type: types.RECEIVE_NOTIFICATION,
-    payload: {
-        newNotice:msg,
-    },
-})
+//Deletes notification from db
+export const dispatchResolveNotification = (id) => async(dispatch) =>{
+    try {
+        //call delete on server
+        let success = await axiosWithCSRF.post('/notifications/delete',{id:id})
+        //update state by removing notification from old state
+        dispatch({
+            type: types.RESOLVE_NOTIFICATION,
+            payload: {
+                removed:id,
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+
+}
 
 // export const dispatchSavePdf = (id) => async (dispatch) => {
 //     try {
