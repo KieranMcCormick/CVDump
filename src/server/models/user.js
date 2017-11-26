@@ -83,6 +83,8 @@ class User {
             firstname: this.firstname,
             lastname: this.lastname,
             avatarUrl: this.avatarURL(),
+            hasCAS: !!this.cas_id,
+            hasLinkedIn: !!this.linkedin_id,
         }
     }
 
@@ -104,18 +106,6 @@ class User {
         props.email_address = props.email
         delete props.email
         return props
-    }
-
-    serialize() {
-        return {
-            username: this.username,
-            password: this.password,
-            email_address: this.email_address,
-            cas_id: this.cas_id,
-            linkedin_id: this.linkedin_id,
-            firstname: this.firstname,
-            lastname: this.lastname,
-        }
     }
 
     setPassword(password) {

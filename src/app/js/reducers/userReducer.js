@@ -11,6 +11,8 @@ const initState = {
         firstname: '',
         lastname: '',
         avatarUrl: '',
+        hasCAS: false,
+        hasLinkedIn: false,
     },
 }
 
