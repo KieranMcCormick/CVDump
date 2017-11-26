@@ -2,7 +2,7 @@ const express = require('express')
 const router  = express.Router()
 const { Document } = require('../models/document')
 const requireLogin = require('../middlewares/requireLogin')
-//const accessFS = require('../fs')
+const accessFS = require('../fs')
 
 router.use(requireLogin)
 
@@ -34,6 +34,24 @@ router.get('/', (req, res) => {
  * returns file with `id` for the user
  */
 router.get('/:id', (req, res) => {
+    const user_id = req.user.uuid
+    if (user_id) {
+        Document.LoadDocumentsByUserId(user_id).then((result, err) => {
+            if (err){
+                console.error(err)
+                res.send({ message : 'Something went wrong loading files' })
+            } else {
+                res.send(result)
+            }
+        }).catch((exception) => {
+            console.error(exception)
+            res.send({ message : 'Something went wrong loading files' })
+        })
+    }
+})
+
+
+router.post('/update/:doc_id', (req, res) => {
     const user_id = req.user.uuid
     if (user_id) {
         Document.LoadDocumentsByUserId(user_id).then((result, err) => {
@@ -92,23 +110,23 @@ router.get('/create', (req, res) => {
 //     }
 // })
 
-// router.get('/savepdf/:doc_id?', (req, res) => {
-//     const doc_id   = req.params.doc_id
-//     if(Document.VaildateDocument(doc_id)){
-//         accessFS.generatePDF(doc_id).then((result, err) => {
-//             if (err){
-//                 console.error(err)
-//                 res.send({ message : 'Something went wrong loading files' })
-//             }
-//             else{
-//                 res.send(result)
-//             }
-//         }).catch((exception) => {
-//             console.error(exception)
-//             res.send({ message : 'Something went wrong loading files' })
-//         })
-//     }
+router.get('/savepdf/:id?', (req, res) => {
+    const doc_id   = req.params.id
 
-// })
+    //if(Document.VaildateDocument(doc_id)){
+    accessFS.generatePDF(doc_id).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong loading files' })
+        }
+        else{
+            res.send(result)
+        }
+    }).catch((exception) => {
+        console.error(exception.error_message)
+        res.send({ message : 'Something went wrong loading files' })
+    })
+    //}
+})
 
 module.exports = router

@@ -346,21 +346,39 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
     }
 }
 
-// export const dispatchSavePdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/files/savepdf/${id}')
 
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.data,
-//         })
-//     }
-// }
+export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
+    try {
+        const res = await axios.get(`/files/update/${id}`)
+
+        dispatch({
+            type: types.UPDATE_FILE_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.UPDATE_FILE_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchSavePdf = (id) => async (dispatch) => {
+    try {
+        //5479dcaf-cce6-11e7-810c-000c291b6367
+        const res = await axios.get(`/files/savepdf/${id}`)
+
+        dispatch({
+            type: types.FETCH_PDF_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_PDF_FAILURE,
+            payload: error.data,
+        })
+    }
+}
 
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
