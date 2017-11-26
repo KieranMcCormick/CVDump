@@ -430,8 +430,7 @@ export const dispatchSendNotification = (data) => async (dispatch) =>{
                 content:data.content,
                }
         )
-            
-    
+        
         dispatch({
             type: types.SEND_NOTIFICATION_SUCCESS,
             payload: {

@@ -1,6 +1,7 @@
 const { sqlInsert, sqlSelect } = require('../db')
 const _ = require('lodash')
 const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
+const fetchFileName = 'SELECT title FROM documents WHERE uuid = ?'
 
 class Notifications {
     constructor(props) {
@@ -64,7 +65,7 @@ class Notifications {
 
     load() {
         let that = this
-        const fetchNotificationQuery = 'SELECT user_id, type, created_at, document_id FROM notifications WHERE user_id = ?'
+        const fetchNotificationQuery = 'SELECT notifications.user_id, type, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
         console.log(this.email)
         return new Promise((resolve, reject) => {
             sqlSelect(fetchUserQuery, [this.email], (err, success) => {
@@ -77,6 +78,7 @@ class Notifications {
                     let uuid = success[0].uuid
                     sqlSelect(fetchNotificationQuery, [uuid], (err, result) => {
                         if(err) {
+                            console.log(err)
                             return reject({message:"fail to fetch notifications"})
                         }
                         if(result){
@@ -100,6 +102,7 @@ class Notifications {
                 type: entries.type,
                 timeStamp: entries.created_at,
                 document_id:entries.document_id,
+                file: entries.title,
             }
         })
     }
