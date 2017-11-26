@@ -1,5 +1,5 @@
 const mysql      = require('mysql')
-const parsedJSON = require('./secrets.json')
+const parsedJSON = require('./secrets.json')['production']
 const sqlstring  = require('sqlstring')
 
 const options = {

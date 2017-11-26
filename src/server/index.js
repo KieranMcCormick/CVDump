@@ -79,13 +79,15 @@ app.get('*', (request, response) => {
     sendFile(PUBLIC_DIR, 'index.html', response)
 })
 
-server.listen(PORT, (err) => {
-    if (err) {
-        return console.log(err)
-    }
-    console.log(`[ OK ] App is listening on port: ${PORT} 👂`)
-    console.log(`http://localhost:${PORT}`)
-    new SocketListener(server)
-})
+if (process.env.NODE_ENV !== 'test') {
+    server.listen(PORT, (err) => {
+        if (err) {
+            return console.log(err)
+        }
+        console.log(`[ OK ] App is listening on port: ${PORT} 👂`)
+        console.log(`http://localhost:${PORT}`)
+        new SocketListener(server)
+    })
+}
 
-module.exports = server
+module.exports = app
