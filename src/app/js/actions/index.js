@@ -3,6 +3,8 @@ import types from './types'
 import { push } from 'react-router-redux'
 import SocketHandler from '../global/socketsHandler'
 
+axios.defaults.baseURL = '/api'
+
 const axiosWithCSRF = axios.create({
     xsrfCookieName: '_csrfToken',
 })
