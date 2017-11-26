@@ -44,7 +44,7 @@ router.post('/logout', (req, res) => {
     res.redirect('/')
 })
 
-router.post('/register', UserCreationValidation, (req, res) => {
+router.post('/register', UserCreationValidation, (req, res, next) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
@@ -56,13 +56,20 @@ router.post('/register', UserCreationValidation, (req, res) => {
     }
 
     User.create(matchedData(req)).then((user) => {
-        res.login(user)
-        res.cookie('JWT', user.generateJWT(), {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+        req.login(user, (err) => {
+            if (err) { return next(err) }
+            else {
+                req.session.source = 'pw'
+                res.cookie('JWT', user.generateJWT(), {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                })
+                res.json(_.merge(req.user.publicJson(), {
+                    source: req.session.source || 'unknown',
+                }))
+            }
         })
-        res.json(user.publicJson())
     }).catch((err) => {
         console.error(err)
         res.status(400).json({ errorMessage: err.message })
