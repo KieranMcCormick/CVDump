@@ -10,6 +10,9 @@
 @import "components/tabs";
 @import "components/loader";
 @import "components/fileBlock";
+@import "components/file";
+@import "components/editableBlock";
+@import "components/pathLink";
 
 // Containers
 @import "containers/app";
@@ -21,3 +24,4 @@
 
 // Util
 @import "util/flex";
+@import "util/border";

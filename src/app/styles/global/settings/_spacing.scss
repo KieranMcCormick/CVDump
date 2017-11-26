@@ -55,7 +55,7 @@ $spacing__map: (
 // Dimension
 // ---
 .u-full-width {
-    width: 100%;
+    width: 100% !important;
 }
 
 .u-full-height {
@@ -63,7 +63,7 @@ $spacing__map: (
 }
 
 .u-half-width {
-    width: 50%;
+    width: 50% !important;
 }
 
 .u-full {

@@ -58,16 +58,19 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
-                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
+        })
+        dispatch({
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage || 'Unknown Error',
         })
         dispatch(push('/login'))
     }
 }
 
-export const dispatchSignUp = ({ username, email, password, confirmPassword }) => async (dispatch) => {
+export const dispatchSignUp = ({ username, firstname, lastname, email, password, confirmPassword }) => async (dispatch) => {
     try {
-        const res = await axiosWithCSRF.post('/register', { username, email, password, confirmPassword })
+        const res = await axiosWithCSRF.post('/register', { username, firstname, lastname, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
@@ -77,14 +80,16 @@ export const dispatchSignUp = ({ username, email, password, confirmPassword }) =
         dispatch(push('/'))
     } catch (error) {
         dispatch({
-            type: types.SIGNUP_FAILURE,
-            payload: {
-                errorMessage: error.response.data.errorMessage,
-            },
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage,
         })
         dispatch(push('/signup'))
     }
 }
+
+export const dispatchClearFormError = () => ({
+    type: types.FORM_ERROR_CLEAR,
+})
 
 export const dispatchFetchFiles = () => async (dispatch) => {
     try {
@@ -101,22 +106,35 @@ export const dispatchFetchFiles = () => async (dispatch) => {
     }
 }
 
-//THIS SHOULD BE CHANGED TO SHARED FILES ENDPOINT
-export const dispatchFetchFile = (id, callback) => async (dispatch) => {
+
+// export const dispatchFetchFileWithVersion = () => async(dispatch) => {
+//     try {
+
+//     } catch (error) {
+
+//     }
+// }
+
+// collections
+export const dispatchFetchSharedFiles = (id, callback) => async (dispatch) => {
     try {
 
         //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
-        const comment = await axios.get(`/comment/${id}`)
-        //const pdf = await axios.get(`/files/pdf/${id}`)
-
+        // const comment = await axios.get(`/comment/${id}`)
+        // const res = await axios.get(`/shared`)
+        // dispatch({
+        //     type: types.FETCH_FILES_SUCCESS,
+        //     payload: res.data,
+        // })
         dispatch({
-            type: types.FETCH_FILE_SUCCESS,
+            type: types.FETCH_FILES_SUCCESS,
             payload: {
-                doc_id: id,
-                version: 1,
-                comments: comment.data,
-                blocks: [ //after changed to shared page this should not be here
-                    '__markdown__ *format*'
+                files: [
+                    {
+                        userId: 'sdfdsf',
+                        doc_id: 'asdasd',
+                        title: 'File title',
+                    }
                 ],
             },
         })
@@ -131,10 +149,102 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
 }
 
 
+// single file
+export const dispatchFetchSharedFile = (id) => async (dispatch) => {
+    try {
+
+        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
+        const comment = await axios.get(`/comment/${id}`)
+        const pdf = await axios.get(`/files/pdf/${id}`)
+
+        dispatch({
+            // TODO: CHANGE THE ACTION TYPE
+            type: types.FETCH_FILE_SUCCESS,
+            payload: {
+                comments: comment.data,
+                pdf: pdf.data,
+            },
+        })
+    } catch (error) {
+        dispatch({
+            // TODO: CHANGE THE ACTION TYPE
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+
+export const dispatchFetchFile = (id, callback) => async (dispatch) => {
+    try {
+        // const doc = await axios.get(`/files/${id}`)
+        // const availableBlocks = await axios.get(`/blocks`)
+
+        dispatch({
+            type: types.FETCH_FILE_SUCCESS,
+            payload: {
+                // version: doc.data.version,
+                version: 12,
+
+                // blocks: doc.data.blocks,
+                blocks: [
+                    {
+                        blockOrder: 1,
+                        summary: '# Resume 1 __hello__',
+                    },
+                    {
+                        blockOrder: 2,
+                        summary: '__markdown__ **format** 1. 23123 2. 123123',
+                    }
+                ],
+
+                // availableBlocks: availableBlocks.data
+                // array of strings
+                availableBlocks: [
+                    '__markdown__ **format** 1. 23123 2. 123123',
+                    '**format**  1. 23123 2. 123123',
+                    '# HEADER 1 **format**  1. 23123 2. 123123'
+                ],
+            },
+        })
+        callback()
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.data,
+        })
+        callback()
+    }
+}
+
+export const dispatchSelectFile = (id) => ({
+    type: types.SELECT_FILE,
+    payload: id,
+})
+
+export const dispatchAddBlockToSelectedFile = (value) => ({
+    type: types.ADD_BLOCK_TO_SELECTED_FILE,
+    payload: value,
+})
+
+export const dispatchRemoveBlockFromSelectedFile = (blockOrder) => ({
+    type: types.REMOVE_BLOCK_FROM_SELECTED_FILE,
+    payload: blockOrder,
+})
+
+export const dispatchMoveBlockFromSelectedFile = (blockOrder, delta) => ({
+    type: types.MOVE_BLOCK_FROM_SELECTED_FILE,
+    payload: {
+        blockOrder,
+        delta,
+    },
+})
+
 export const dispatchCreateComment = (comment) => async (dispatch) => {
     try {
 
-        axiosWithCSRF.post('/comment/create', comment)
+        await axiosWithCSRF.post('/comment/create', comment)
+
         dispatch({
             type: types.CREATE_COMMENT_SUCCESS,
             payload: {
@@ -154,7 +264,6 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
         console.error(error)
     }
 }
-
 
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
@@ -180,21 +289,96 @@ export const dispatchCreateFile = () => async (dispatch) => {
     }
 }
 
-// export const dispatchSavePdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/files/savepdf/${id}')
+export const dispatchLogOut = () => async (dispatch) => {
+    try {
+        await axiosWithCSRF.post('/logout')
 
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.data,
-//         })
-//     }
-// }
+        dispatch({
+            type: types.LOGOUT,
+            payload: {
+                isAuthenticated: false,
+                info: {},
+            },
+        })
+    } catch (error) {
+        // Unknown error
+        console.error(error)
+        dispatch(push('/'))
+    }
+}
+
+
+export const dispatchUpdate = ({ email, firstname, lastname }) => async (dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/users/profile', { email, firstname, lastname })
+        dispatch({
+            type: types.LOGIN_SUCCESS,
+            payload: {
+                info: res.data,
+            },
+        })
+        dispatch(push('/'))
+    } catch (error) {
+        dispatch({
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage,
+        })
+        dispatch(push('/profile'))
+    }
+}
+
+export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassword }) => async (dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/users/updatePassword', { currentPassword, password, confirmPassword })
+        dispatch({
+            type: types.LOGIN_SUCCESS,
+            payload: {
+                info: res.data,
+            },
+        })
+        dispatch(push('/'))
+    } catch (error) {
+        dispatch({
+            type: types.FORM_ERROR,
+            payload: error.response.data.errorMessage,
+        })
+        dispatch(push('/profile'))
+    }
+}
+
+
+export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
+    try {
+        const res = await axios.get(`/files/update/${id}`)
+
+        dispatch({
+            type: types.UPDATE_FILE_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.UPDATE_FILE_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchSavePdf = (id) => async (dispatch) => {
+    try {
+        //5479dcaf-cce6-11e7-810c-000c291b6367
+        const res = await axios.get(`/files/savepdf/${id}`)
+
+        dispatch({
+            type: types.FETCH_PDF_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_PDF_FAILURE,
+            payload: error.data,
+        })
+    }
+}
 
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
@@ -211,4 +395,3 @@ export const dispatchCreateFile = () => async (dispatch) => {
 //         })
 //     }
 // }
-

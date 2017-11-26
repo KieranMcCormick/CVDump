@@ -26,7 +26,7 @@ router.post('/create', (req, res) => {
     if (validateJson(req.body)) {
         let newComment = new Comments({
             username: req.body.username,
-            userId: req.user.user_id,
+            userId: req.user.uuid,
             documentId: req.body.docId,
             content: req.body.content,
             timeStamp: req.body.createdAt,

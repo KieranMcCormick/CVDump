@@ -5,10 +5,12 @@ const initState = {
     isAuthenticated: false,
     errorMessage: '',
     info: {
+        userId: '',
         username: '',
         email: '',
         firstname: '',
         lastname: '',
+        avatarUrl: '',
     },
 }
 
@@ -36,6 +38,11 @@ export default (state = initState, action) => {
                 ...action.payload,
             }
         case types.LOGIN_FAILURE:
+            return {
+                ...state,
+                ...action.payload,
+            }
+        case types.LOGOUT:
             return {
                 ...state,
                 ...action.payload,

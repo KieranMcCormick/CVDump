@@ -27,9 +27,9 @@ CREATE TABLE `blocks` (
   `created_at` datetime NOT NULL,
   `type` enum('headers','skills','jobs','projects','clubs','interests') NOT NULL,
   `label` varchar(30) NOT NULL,
-  `summary` blob,
   `updated_at` datetime DEFAULT NULL,
   `user_id` varchar(36) NOT NULL,
+  `summary` text,
   PRIMARY KEY (`uuid`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `blocks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`)
@@ -42,7 +42,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES ('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','foo===\n* bar\n* baz\n\nLorem ipsum dolor sit','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d'),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','foo===\n* bar\n* baz\n\n','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d');
+INSERT INTO `blocks` VALUES ('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d','FIRSTNAME LASTNAME\n CITY EMAIL PHONE NUMBER\n'),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d','### HEADER 2\n');
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,7 +75,7 @@ CREATE TABLE `comments` (
 
 LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
-INSERT INTO `comments` VALUES ('05b5883e-cff1-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 05:52:54',NULL,NULL,'meh'),('5768a25e-cff0-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 05:48:01',NULL,NULL,'hello'),('a7daa374-cff0-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 05:50:16',NULL,NULL,'woot woot'),('aded571d-cff0-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-22 05:50:26',NULL,NULL,'tree');
+INSERT INTO `comments` VALUES ('05b5883e-cff1-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 05:52:54',NULL,NULL,'meh'),('5768a25e-cff0-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 05:48:01',NULL,NULL,'hello'),('9d5ec2d5-d014-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 10:07:41',NULL,NULL,'hello'),('a7daa374-cff0-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-22 05:50:16',NULL,NULL,'woot woot'),('aded571d-cff0-11e7-92cb-000c291b6367','7bb327a5-cb4b-11e7-821a-026d4863120d','58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-22 05:50:26',NULL,NULL,'tree');
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,6 +141,32 @@ INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-
 UNLOCK TABLES;
 
 --
+-- Table structure for table `shared_files`
+--
+
+DROP TABLE IF EXISTS `shared_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `shared_files` (
+  `owner_id` varchar(36) DEFAULT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `doc_id` varchar(36) DEFAULT NULL,
+  UNIQUE KEY `owner_id_2` (`owner_id`,`user_id`,`doc_id`),
+  KEY `owner_id` (`owner_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `shared_files`
+--
+
+LOCK TABLES `shared_files` WRITE;
+/*!40000 ALTER TABLE `shared_files` DISABLE KEYS */;
+/*!40000 ALTER TABLE `shared_files` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -181,4 +207,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-22 21:21:24
+-- Dump completed on 2017-11-25 18:06:09
