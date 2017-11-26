@@ -1,0 +1,32 @@
+.my_trow {
+    display: flex;
+    width: 100%;
+    height: 100;
+    padding: 0 map-get($spacing__map, lg);
+}
+
+.my_celll {
+    // blocks list
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+    overflow: scroll;
+    
+}
+
+.my_cellr {
+    display: flex;
+}
+
+.padme {
+    margin: 10px;
+}
+
+.fillerup {
+    width:100%;
+    height:100px; 
+    box-sizing: border-box;         /* For IE and modern versions of Chrome */
+    -moz-box-sizing: border-box;    /* For Firefox                          */
+    -webkit-box-sizing: border-box; /* For Safari                           */
+}

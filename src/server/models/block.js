@@ -1,19 +1,8 @@
 const { sqlInsert, sqlSelect } = require('../db')
-const _ = require('lodash')
 
-const CREATE_BLOCK_SQL = 'INSERT INTO document_blocks (document_id, block_id, block_order) VALUES (?, ?, ?)'
-const GET_BLOCKS_BY_USERID = 'SELECT uuid, label, summary, created_at FROM blocks b where user_id = ?'
-
-
-/*This will be visible to public*/
-const ParseBlockSQL = (rows) => {
-    return _.map(rows, function (entries) {
-        return {
-            blockId : entries.uuid,
-            summary  : entries.summary,
-        }
-    })
-}
+const EDIT_BLOCK_SQL = 'UPDATE blocks SET summary=? WHERE uuid=?'
+const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, label, type, summary) VALUES (UUID(), ?, ?, ?, ?)'
+const GET_BLOCKS_SQL = 'SELECT * FROM blocks WHERE user_id = ?'
 
 class Block {
     constructor(props) {
@@ -22,24 +11,14 @@ class Block {
             this.label      = props.label ? props.label : 'untitled'
             this.type       = props.type
             this.user_id    = props.user_id
-            this.summary    = props.summary
+            this.summary    = props.summary ? props.summary : ''
             this.updated_at = props.updated_at
             this.created_at = props.created_at
         }
     }
 
-    blockJson() {
-        return {
-            label      : this.label,
-            type       : this.type,
-            block_id   : this.uuid,
-            updated_at : this.updated_at,
-            summary    : this.summary,
-        }
-    }
-
     SQLValueArray() {
-        return [ this.document_id, this.block_id, this.block_order ]
+        return [this.user_id, this.label, this.type, this.summary]
     }
 
     save() {
@@ -58,18 +37,9 @@ class Block {
         })
     }
 
-    static create(props) {
-
+    create() {
         return new Promise((resolve, reject) => {
-            const block = new Block()
-            block.uuid  = props.uuid
-            block.label = props.label
-            block.type  = props.type
-            block.user_id = props.user_id
-            block.summary = props.summary
-            block.updated_at = props.updated_at
-            block.created_at = props.created_at
-            block.save().then((savedblock) => {
+            this.save().then((savedblock) => {
                 resolve(savedblock)
             }).catch((error) => {
                 console.error(`[block][Error] Failed to create Block: ${error.message}`)
@@ -78,16 +48,36 @@ class Block {
         })
     }
 
-    static LoadBlocksByUserId(user_id){
+    static edit(props) {
         return new Promise((resolve, reject) => {
-            sqlSelect(GET_BLOCKS_BY_USERID, [ user_id ], (err, blocks) => {
-                if (err) { console.error(err); return reject(null) }
-                resolve(ParseBlockSQL(blocks))
+            sqlInsert(EDIT_BLOCK_SQL, [props.summary, props.uuid], (err, result) => {
+                if (err) {
+                    console.log(err)
+                    console.error(`[block][Error] Failed to create Block: ${err.message}`)
+                    return reject(null)
+                }
+                if(result) {
+                    return resolve(props)
+                }
+
+            })
+        })
+    }
+
+    static LoadBlocksByUserId(userId) {
+        return new Promise((resolve, reject) => {
+            sqlSelect(GET_BLOCKS_SQL, [userId], (err, blocks) => {
+                if (err) {
+                    console.log(err)
+                    return resolve({ message: 'No blocks' })
+                }
+                else {
+                    return resolve(blocks)
+                }
             })
         })
     }
 
 }
-
 
 module.exports = { Block }

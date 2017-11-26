@@ -404,3 +404,50 @@ export const dispatchGetPdf = (id) => async (dispatch) => {
         })
     }
 }
+
+export const dispatchFetchBlocks = () => async (dispatch) => {
+    try {
+
+        const res = await axios.get('/blocksapi')
+        dispatch({
+            type: types.FETCH_BLOCKS_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_BLOCKS_FALURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchCreateBlock = (block) => async (dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/blocksapi/create', block)
+        dispatch({
+            type: types.CREATE_BLOCK_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.CREATE_BLOCK_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchEditBlock = (block) => async (dispatch) => {
+    console.log('dispatchEditBlock')
+    try {
+        const res = await axiosWithCSRF.post('/blocksapi/edit', block)
+        dispatch({
+            type: types.EDIT_BLOCK_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.EDIT_BLOCK_FAILURE,
+            payload: error.data,
+        })
+    }
+}
