@@ -442,6 +442,13 @@ export const dispatchSendNotification = (data) => async (dispatch) =>{
     }
 }
 
+export const dispatchResolveNotification = (msg) => ({
+    type: types.RECEIVE_NOTIFICATION,
+    payload: {
+        newNotice:msg,
+    },
+})
+
 // export const dispatchSavePdf = (id) => async (dispatch) => {
 //     try {
 //         const res = await axios.get('/files/savepdf/${id}')
