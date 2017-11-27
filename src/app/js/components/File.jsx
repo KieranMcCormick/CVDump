@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import _ from 'lodash'
@@ -19,9 +20,16 @@ class File extends PureComponent {
     }
 
     componentDidMount() {
-        this.props.dispatchFetchFile(this.props.selectedFile.id, () => {
+        const id = this.getDocumentId()
+        this.props.dispatchFetchFile(id, () => {
             this.setState({ isLoading: false })
         })
+    }
+
+    getDocumentId() {
+        // if user refresh on the file, then selectedFile would be empty
+        const lastIndex = this.props.location.pathname.lastIndexOf('/')
+        return this.props.selectedFile.id || this.props.location.pathname.substring(lastIndex + 1)
     }
 
     onSave() {
@@ -126,6 +134,9 @@ File.propTypes = {
         })).isRequired,
         availableBlocks: PropTypes.arrayOf(PropTypes.string.isRequired),
     }),
+    location: PropTypes.shape({
+        pathname: PropTypes.string.isRequired,
+    }),
 }
 
 const mapStateToProps = ({ app }) => ({
@@ -133,4 +144,4 @@ const mapStateToProps = ({ app }) => ({
 })
 
 
-export default connect(mapStateToProps, actions)(File)
+export default withRouter(connect(mapStateToProps, actions)(File))

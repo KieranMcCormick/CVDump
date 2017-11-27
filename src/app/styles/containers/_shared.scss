@@ -1,0 +1,24 @@
+.c-shares-view-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    padding: 0 map-get($spacing__map, xl);
+}
+
+.c-shares-view-container .c-shares-view__files-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media print {
+    /* Only prints the file */
+    .c-status-bar,
+    .t-tab-tabbar,
+    .c-file-comments,
+    .c-file-content h3,
+    .c-file-content p {
+        display: none !important;
+    }
+}

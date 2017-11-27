@@ -5,14 +5,41 @@
     width: 100%;
 }
 
-.c-file-content {
+.c-file-container .c-file-content {
     width: 60%;
     padding: map-get($spacing__map, sm);
+    overflow: scroll;
 }
 
-.c-file-blocks {
+.c-file-container .c-file-blocks {
     width: 40%;
     padding: map-get($spacing__map, sm);
 }
 
 
+.c-file-container .c-file-comments {
+    width: 40%;
+    padding: map-get($spacing__map, sm);
+    background-color: $color-grey-85;
+}
+
+
+@media screen and (min-width: 1140px) {
+    .c-file-container .c-file-content {
+        width: 70%;
+        padding: map-get($spacing__map, sm);
+        overflow: scroll;
+    }
+
+    .c-file-container .c-file-blocks {
+        width: 30%;
+        padding: map-get($spacing__map, sm);
+    }
+
+
+    .c-file-container .c-file-comments {
+        width: 30%;
+        padding: map-get($spacing__map, sm);
+        background-color: $color-grey-85;
+    }
+}

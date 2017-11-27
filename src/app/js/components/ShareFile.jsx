@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import Loader from './Loader'
 import CommentBox from '../containers/comments/CommentBox'
-import RichTextEditor from 'react-rte'
+// import { Document, Page } from 'react-pdf'
 
 /**
  * FILE NOT READY
@@ -14,30 +15,30 @@ class ShareFile extends PureComponent {
     constructor(props) {
         super(props)
 
-        const index = this.props.files.findIndex((file) => (file.doc_id === this.props.match.params.id), this)
-
         this.state = {
-            index,
-            comments: (this.props.files[index] && this.props.files[index].comments) || [],
             isLoading: true,
+            numPages: 1,
+            pageNumber: 1,
         }
     }
 
     componentDidMount() {
-        this.props.dispatchFetchFile(this.props.match.params.id, () => {
+        const id = this.getDocumentId()
+        this.props.dispatchFetchSharedFile(id, () => {
             this.setState({ isLoading: false })
         })
     }
 
-    renderBlocks() {
-        return this.props.files[this.state.index].blocks.map((value, index) => {
-            return (
-                <RichTextEditor
-                    key={`blocks-${index}`}
-                    value={RichTextEditor.createValueFromString(value, 'markdown')}
-                    readOnly={true}
-                />
-            )
+    getDocumentId() {
+        // if user refresh on the file, then selectedFile would be empty
+        const lastIndex = this.props.location.pathname.lastIndexOf('/')
+        return this.props.selectedFile.id || this.props.location.pathname.substring(lastIndex + 1)
+    }
+
+    onDocumentLoad({ numPages }) {
+        this.setState({
+            numPages,
+            isLoading: false,
         })
     }
 
@@ -45,14 +46,23 @@ class ShareFile extends PureComponent {
         if (this.state.isLoading) {
             return <Loader />
         }
+        const { pageNumber, numPages } = this.state
         return (
             <div className="c-file-container">
                 <div className="c-file-content">
-                    <h3>Build Your Resume Here</h3>
+                    <h3>View Your Resume Here</h3>
+                    {/* Remove when endpoints are ready
+                        <Document
+                        file={this.props.selectedFile.pdf}
+                        onLoadSuccess={this.onDocumentLoad}
+                    >
+                        <Page pageNumber={pageNumber} />
+                    </Document> */}
+                    <p>Page {pageNumber} of {numPages}</p>
                 </div>
-                <div className="c-file-blocks">
-                    <h3>Your Personal Blocks</h3>
-                    <CommentBox docId={this.props.match.params.id} />
+                <div className="c-file-comments">
+                    <h3>Your Comments</h3>
+                    <CommentBox docId={this.getDocumentId()} />
                 </div>
             </div>
         )
@@ -60,22 +70,20 @@ class ShareFile extends PureComponent {
 }
 
 ShareFile.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            id: PropTypes.string.isRequired,
-        }).isRequired,
-    }).isRequired,
-    dispatchFetchFile: PropTypes.func.isRequired,
-    files: PropTypes.arrayOf(PropTypes.shape({
-        doc_id: PropTypes.string.isRequired,
-        comments: PropTypes.array,
-        blocks: PropTypes.array,
-    })).isRequired,
+    location: PropTypes.shape({
+        pathname: PropTypes.string.isRequired,
+    }),
+    dispatchFetchSharedFile: PropTypes.func.isRequired,
+    selectedFile: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        comments: PropTypes.array.isRequired,
+        pdf: PropTypes.string.isRequired,
+    }),
 }
 
 const mapStateToProps = ({ app }) => ({
-    files: app.files,
+    selectedFile: app.selectedFile,
 })
 
 
-export default connect(mapStateToProps, actions)(ShareFile)
+export default withRouter(connect(mapStateToProps, actions)(ShareFile))

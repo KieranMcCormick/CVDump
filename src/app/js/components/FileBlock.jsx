@@ -6,15 +6,16 @@ import * as actions from '../actions'
 
 
 class FileBlock extends PureComponent {
+    onClickHandler() {
+        this.props.dispatchSelectFile(this.props.id)
+    }
+
     render() {
         return (
             <Link
                 to={`/files/${this.props.id}`}
                 className="c-file-block"
-                params={{ id: this.props.id }}
-                onClick={() => {
-                    this.props.dispatchSelectFile(this.props.id)
-                }}
+                onClick={this.onClickHandler.bind(this)}
             >
                 <div>
                     <div className="u-padding-v-md">{this.props.name}</div>

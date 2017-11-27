@@ -4,6 +4,8 @@ const initState = {
     id: '',
     availableBlocks: [],
     blocks: [],
+    comments: [],
+    pdf: '',
 }
 
 const reorder = (blocks) => {
@@ -20,6 +22,8 @@ export default (state = initState, action) => {
                 id: action.payload,
                 availableBlocks: [],
                 blocks: [],
+                comments: [],
+                pdf: '',
             }
         case types.FETCH_FILE_SUCCESS:
             return {
@@ -28,6 +32,8 @@ export default (state = initState, action) => {
             }
         case types.FETCH_FILE_FAILURE:
             return state
+
+        // Files view
         case types.ADD_BLOCK_TO_SELECTED_FILE: {
             const newBlock = {
                 blockOrder: state.blocks.length + 1,
@@ -67,6 +73,23 @@ export default (state = initState, action) => {
             return {
                 ...state,
                 blocks: newBlocks,
+            }
+        }
+
+        // Shares view
+        case types.FETCH_SHARE_FILE_SUCCESS:
+            return {
+                ...state,
+                ...action.payload,
+            }
+        case types.RECEIVE_COMMENT:
+        case types.CREATE_COMMENT_SUCCESS: {
+            return {
+                ...state,
+                comments: [
+                    ...state.comments,
+                    action.payload.comment
+                ],
             }
         }
         default:
