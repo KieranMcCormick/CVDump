@@ -1,15 +1,21 @@
 import React, { PureComponent } from 'react'
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import * as actions from '../actions'
 
 
 class ShareBlock extends PureComponent {
+    onClickHandler() {
+        this.props.dispatchSelectFile(this.props.id)
+    }
+
     render() {
         return (
             <Link
-                to={`/shares/${this.props.id}`}
+                to={`/shared/${this.props.id}`}
                 className="c-file-block"
-                params={{ id: this.props.id }}
+                onClick={this.onClickHandler.bind(this)}
             >
                 <div>
                     <div className="u-padding-v-md">{this.props.name}</div>
@@ -21,6 +27,7 @@ class ShareBlock extends PureComponent {
 }
 
 ShareBlock.propTypes = {
+    dispatchSelectFile: PropTypes.func.isRequired,
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
     isAdd: PropTypes.bool,
@@ -31,4 +38,4 @@ ShareBlock.defaultProps = {
     isAdd: false,
 }
 
-export default ShareBlock
+export default connect(null, actions)(ShareBlock)

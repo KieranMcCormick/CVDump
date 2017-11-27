@@ -103,7 +103,7 @@ export const dispatchFetchFiles = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.FETCH_FILES_FAILURE,
-            payload: error.data,
+            payload: error.response.data,
         })
     }
 }
@@ -118,33 +118,40 @@ export const dispatchFetchFiles = () => async (dispatch) => {
 // }
 
 // collections
-export const dispatchFetchSharedFiles = (id, callback) => async (dispatch) => {
+export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
     try {
 
         //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
-        // const comment = await axios.get(`/comment/${id}`)
-        // const res = await axios.get(`/shared`)
+        // const res = await axios.get('/shared')
         // dispatch({
-        //     type: types.FETCH_FILES_SUCCESS,
+        //     type: types.FETCH_SHARES_SUCCESS,
         //     payload: res.data,
         // })
+
+        // mocking the data here
+        const res = await axios.get('/files')
         dispatch({
-            type: types.FETCH_FILES_SUCCESS,
-            payload: {
-                files: [
-                    {
-                        userId: 'sdfdsf',
-                        doc_id: 'asdasd',
-                        title: 'File title',
-                    }
-                ],
-            },
+            type: types.FETCH_SHARES_SUCCESS,
+            payload: res.data,
         })
+        // expected objects
+        // dispatch({
+        //     type: types.FETCH_SHARES_SUCCESS,
+        //     payload: {
+        //         files: [
+        //             {
+        //                 user_id: 'userId',
+        //                 doc_id: 'asdasd',
+        //                 title: 'asdeasdasdasdasda',
+        //             }
+        //         ],
+        //     },
+        // })
         callback()
     } catch (error) {
         dispatch({
-            type: types.FETCH_FILE_FAILURE,
-            payload: error.data,
+            type: types.FETCH_SHARES_FAILURE,
+            payload: error.response.data,
         })
         callback()
     }
@@ -152,7 +159,7 @@ export const dispatchFetchSharedFiles = (id, callback) => async (dispatch) => {
 
 
 // single file
-export const dispatchFetchSharedFile = (id) => async (dispatch) => {
+export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
     try {
 
         //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
@@ -161,18 +168,20 @@ export const dispatchFetchSharedFile = (id) => async (dispatch) => {
 
         dispatch({
             // TODO: CHANGE THE ACTION TYPE
-            type: types.FETCH_FILE_SUCCESS,
+            type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
                 comments: comment.data,
                 pdf: pdf.data,
             },
         })
+        callback()
     } catch (error) {
         dispatch({
             // TODO: CHANGE THE ACTION TYPE
             type: types.FETCH_FILE_FAILURE,
-            payload: error.data,
+            payload: error.response.data,
         })
+        callback()
     }
 }
 
@@ -213,7 +222,7 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.FETCH_FILE_FAILURE,
-            payload: error.data,
+            payload: error.response.data,
         })
         callback()
     }
@@ -286,7 +295,7 @@ export const dispatchCreateFile = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.FETCH_FILE_FAILURE,
-            payload: error.data,
+            payload: error.response.data,
         })
     }
 }
@@ -360,7 +369,7 @@ export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.UPDATE_FILE_FAILURE,
-            payload: error.data,
+            payload: error.response.data,
         })
     }
 }
@@ -377,7 +386,7 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.FETCH_PDF_FAILURE,
-            payload: error.data,
+            payload: error.response.data,
         })
     }
 }
@@ -393,7 +402,7 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
 //     } catch (error) {
 //         dispatch({
 //             type: types.FETCH_FILE_FAILURE,
-//             payload: error.data,
+//             payload: error.response.data,
 //         })
 //     }
 // }

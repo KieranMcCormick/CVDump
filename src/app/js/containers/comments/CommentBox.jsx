@@ -13,12 +13,6 @@ class CommentBox extends Component {
     constructor(props) {
         super(props)
 
-        const index = this.props.files.findIndex((file) => (file.doc_id === this.props.docId), this)
-        this.state = {
-            index,
-            comments: (this.props.files[index] && this.props.files[index].comments) || [],
-        }
-
         this.createComment = this.createComment.bind(this)
         this.onClickHandler = this.onClickHandler.bind(this)
     }
@@ -36,14 +30,14 @@ class CommentBox extends Component {
         SocketHandler.leaveRoom('comments', this.props.docId)
     }
 
-    componentWillReceiveProps({ files }) {
-        const { comments, index } = this.state
-        if (files[index].comments && comments.length < files[index].comments.length) {
-            this.setState({
-                comments: files[index].comments,
-            })
-        }
-    }
+    // componentWillReceiveProps({ files }) {
+    //     const { comments, index } = this.state
+    //     if (files[index].comments && comments.length < files[index].comments.length) {
+    //         this.setState({
+    //             comments: files[index].comments,
+    //         })
+    //     }
+    // }
 
     onClickHandler(comment) {
         this.createComment(comment)
@@ -53,21 +47,24 @@ class CommentBox extends Component {
     render() {
         return (
             <div className="c-comment__container">
-                <h1> Comments ( {this.state.comments.length} ) </h1>
-                {this.displayComments()}
-                <textarea
-                    type="text"
-                    className="c-comment__input"
-                    placeholder="Enter comment"
-                    ref={(input) => this.textArea = input}
-                />
-                <button onClick={this.onClickHandler}>Send</button>
+                <h5> Comments ({this.props.selectedFile.comments.length}) </h5>
+                <div className="c-comment__comment-list">
+                    {this.displayComments()}
+                </div>
+                <div className="c-comment__input">
+                    <textarea
+                        type="text"
+                        placeholder="Enter comment"
+                        ref={(input) => this.textArea = input}
+                    />
+                    <button onClick={this.onClickHandler}>Send</button>
+                </div>
             </div>
         )
     }
 
     displayComments() {
-        return this.state.comments.map((comment, index) => {
+        return this.props.selectedFile.comments.map((comment, index) => {
             return <Comment key={`file-comment-${index}`} comment={comment} />
         })
     }
@@ -75,7 +72,7 @@ class CommentBox extends Component {
     createComment() {
         this.props.dispatchCreateComment({
             content: this.textArea.value,
-            createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
+            createdAt: new moment().format('YYYY-MM-DD hh:mm:ss'),
             username: this.props.user.info.username,
             docId: this.props.docId,
         })
@@ -89,16 +86,15 @@ CommentBox.propTypes = {
             username: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
-    files: PropTypes.arrayOf(PropTypes.shape({
-        doc_id: PropTypes.string.isRequired,
-        comments: PropTypes.array,
-    })).isRequired,
+    selectedFile: PropTypes.shape({
+        comments: PropTypes.array.isRequired,
+    }),
     dispatchCreateComment: PropTypes.func.isRequired,
     dispatchReceiveComment: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-    files: state.app.files,
+    selectedFile: state.app.selectedFile,
     user: state.user,
 })
 
