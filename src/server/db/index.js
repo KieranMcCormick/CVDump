@@ -1,5 +1,6 @@
 const mysql      = require('mysql')
-const parsedJSON = require('./secrets.json')['production']
+const DB_ENV     = process.env.NODE_ENV === 'test' ? 'test' : 'production'
+const parsedJSON = require('./secrets.json')[DB_ENV]
 const sqlstring  = require('sqlstring')
 
 const options = {
