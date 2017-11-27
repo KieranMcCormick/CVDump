@@ -14,7 +14,7 @@
     "style:watch": "node-sass --watch src/app/styles/styles.scss src/public/styles.css",
     "lint": "eslint src --ext js,jsx --config .eslintrc.json --fix",
     "lint:jenkins": "eslint src --ext js,jsx --config .eslintrc.json -f checkstyle -o checkstyle-result.xml",
-    "test": "mocha test/server --recursive --exit -R nyan && jest test/frontend --config test/jestconfig.json"
+    "test": "mocha test/server --recursive --exit && jest test/frontend --config test/jestconfig.json"
   },
   "repository": {
     "type": "git",
