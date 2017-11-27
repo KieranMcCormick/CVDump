@@ -16,6 +16,11 @@ execute 'create database project' do
   command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
 end
 
+execute 'create database project_test' do
+  query =  "'create database project_test;'"
+  command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
+end
+
 execute 'create project_user' do
   query = "\"create user \'project_user\'@\'localhost\' identified by \'sup3rsecure\';\""
   command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
@@ -23,6 +28,11 @@ end
 
 execute 'grant priviledges project_user' do
   query = "\"grant all privileges on project.* to \'project_user\'@\'localhost\' with grant option;\""
+  command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
+end
+
+execute 'grant test priviledges project_user' do
+  query = "\"grant all privileges on project_test.* to \'project_user\'@\'localhost\' with grant option;\""
   command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
 end
 
