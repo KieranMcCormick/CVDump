@@ -8,7 +8,7 @@ const dbSecrets = require('../../src/server/db/secrets.json')['test']
 
 const pristineDB = async () => {
     try {
-        await exec(`mysql -u ${dbSecrets['user']} -p${dbSecrets['password']} ${dbSecrets['database']} < ./chef/cookbooks/database/files/sqldump.sql`)
+        await exec(`mysql -h 127.0.0.1 -u ${dbSecrets['user']} -p${dbSecrets['password']} ${dbSecrets['database']} < ./chef/cookbooks/database/files/sqldump.sql`)
     } catch (e) {
         throw new Error('[TestHelper] Could not Pristine DB! Check Test DB config.')
     }
