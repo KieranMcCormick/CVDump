@@ -2,11 +2,8 @@ const db = require('../db')
 const passport = require('passport')
 
 module.exports = (app) => {
-    app.use('/comment', require('./comment_api'))
-    app.use('/files', require('./files_api'))
+    app.use('/api', require('./api'))
     app.use(require('./auth'))
-    app.use(require('./sessions'))
-    app.use('/users', require('./users'))
 
     // Development Testing Routes
     if (process.env.NODE_ENV === 'development') {
