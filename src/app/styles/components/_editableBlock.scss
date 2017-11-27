@@ -5,6 +5,8 @@
 }
 
 .c-editable-block-container .c-editable-block__buttons {
+    display: flex;
+    justify-content: space-around;
     min-width: 130px;
 }
 

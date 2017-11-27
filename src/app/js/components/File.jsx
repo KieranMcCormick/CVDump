@@ -5,8 +5,9 @@ import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import _ from 'lodash'
 import Loader from './Loader'
-import FlatButton from 'material-ui/FlatButton'
+import { FlatButton, TextField } from 'material-ui'
 import EditableBlock from './EditableBlock'
+import classNames from 'classnames'
 
 
 class File extends PureComponent {
@@ -82,7 +83,7 @@ class File extends PureComponent {
 
     renderButtons() {
         return (
-            <div>
+            <div className="c-file-content__button">
                 {this.renderEditButton()}
                 <FlatButton
                     label="Save to PDF"
@@ -107,12 +108,20 @@ class File extends PureComponent {
         if (this.state.isLoading) {
             return <Loader />
         }
+        const fileClassName = classNames('c-file-content__file', {
+            'c--active': !this.state.isEditing,
+        })
         return (
             <div className="c-file-container">
                 <div className="c-file-content">
-                    <h3>Build Your Resume Here</h3>
                     {this.renderButtons()}
-                    {this.renderFileBlock()}
+                    <TextField
+                        defaultValue={this.props.selectedFile.title}
+                        floatingLabelText="Title"
+                    />
+                    <div className={fileClassName}>
+                        {this.renderFileBlock()}
+                    </div>
                 </div>
                 <div className="c-file-blocks">
                     <h3>Your Personal Blocks</h3>
@@ -128,6 +137,7 @@ File.propTypes = {
     dispatchFetchFile: PropTypes.func.isRequired,
     selectedFile: PropTypes.shape({
         id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
         blocks: PropTypes.arrayOf(PropTypes.shape({
             blockOrder: PropTypes.number.isRequired,
             summary: PropTypes.string.isRequired,

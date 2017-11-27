@@ -197,6 +197,8 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
                 // version: doc.data.version,
                 version: 12,
 
+                title: 'file title',
+
                 // blocks: doc.data.blocks,
                 blocks: [
                     {

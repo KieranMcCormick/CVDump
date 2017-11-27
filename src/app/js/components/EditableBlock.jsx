@@ -13,15 +13,15 @@ class EditableBlock extends PureComponent {
             return (
                 <div className="c-editable-block__buttons">
                     <i
-                        className="material-icons u-margin-h-sm"
+                        className="material-icons"
                         onClick={()=>{this.props.dispatchMoveBlockFromSelectedFile(blockOrder, -1)}}
                     >arrow_upward</i>
                     <i
-                        className="material-icons u-margin-h-sm"
+                        className="material-icons"
                         onClick={()=>{this.props.dispatchMoveBlockFromSelectedFile(blockOrder, 1)}}
                     >arrow_downward</i>
                     <i
-                        className="material-icons u-margin-h-sm"
+                        className="material-icons"
                         onClick={()=>{this.props.dispatchRemoveBlockFromSelectedFile(blockOrder)}}
                     >remove</i>
                 </div>
@@ -47,7 +47,7 @@ class EditableBlock extends PureComponent {
                 <RichTextEditor
                     value={RichTextEditor.createValueFromString(this.props.value, 'markdown')}
                     readOnly={true}
-                    className="u-border-none"
+                    className="c-block-editor"
                 />
             </div>
         )

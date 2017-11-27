@@ -5,7 +5,7 @@
     -ms-overflow-style: none !important;
 }
 
-body, html, p {
+body, html {
     margin: 0;
     padding: 0;
 }
@@ -14,7 +14,12 @@ h1, h2, h3, h4, h5, p, ol, ul, li, label {
     color: $color-grey-15;
 }
 
-p, ol, ul {
+h1, h2, h3, h4, h5 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+ol, ul {
     font-size: 0.9em;
 }
 
@@ -24,6 +29,10 @@ button:focus {
 
 button, input {
     cursor: pointer;
+}
+
+body {
+    background-color: $color-lightest-blue;
 }
 
 // Input Placeholder Style
@@ -42,9 +51,4 @@ button, input {
 :-moz-placeholder { /* Firefox 4 - 18 */
     color: $color-grey-70;
     font-weight: 300;
-}
-
-// Scrollbar Style
-::-webkit-scrollbar {
-    display: none;
 }

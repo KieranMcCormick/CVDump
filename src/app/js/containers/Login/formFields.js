@@ -4,6 +4,7 @@ export default [
         name: 'username',
         type: 'text',
         autoComplete: 'username',
+        autoFocus: true,
     },
     {
         label: 'Password',
