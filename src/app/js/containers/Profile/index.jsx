@@ -30,7 +30,7 @@ class Profile extends Component {
                 <StatusBar />
                 <Avatar
                     url={user.info.avatarUrl}
-                    style={{ width: 100, height: 'auto', margin: '25px'}}
+                    style={{ width: 100, height: 'auto', margin: '15px' }}
                 />
                 <p className="u-font--size-lg">
                     Hello <strong>{getDisplayName()}</strong>, you can update your info here

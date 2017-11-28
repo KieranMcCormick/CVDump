@@ -44,13 +44,13 @@ class SharedView extends Component {
     render() {
         return (
             <div className="c-shares-view-container">
-                <h2>Files Shared with Me</h2>
-                <div className="c-shares-view__files-list">
-                    {this.renderSharedWith()}
-                </div>
                 <h2>Files I Shared with People</h2>
                 <div className="c-shares-view__files-list">
                     {this.renderSharedTo()}
+                </div>
+                <h2>Files Shared with Me</h2>
+                <div className="c-shares-view__files-list">
+                    {this.renderSharedWith()}
                 </div>
             </div>
         )

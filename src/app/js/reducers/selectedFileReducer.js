@@ -2,6 +2,7 @@ import types from '../actions/types'
 
 const initState = {
     id: '',
+    title: '',
     availableBlocks: [],
     blocks: [],
     comments: [],
@@ -20,6 +21,7 @@ export default (state = initState, action) => {
         case types.SELECT_FILE:
             return {
                 id: action.payload,
+                title: '',
                 availableBlocks: [],
                 blocks: [],
                 comments: [],

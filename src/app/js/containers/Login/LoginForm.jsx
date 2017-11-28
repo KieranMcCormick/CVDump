@@ -13,13 +13,14 @@ class LoginForm extends Component {
     render() {
         return (
             <form onSubmit={this.props.handleSubmit(this.props.onLoginSubmit)}>
-                {formFields.map(({ name, type, label, autoComplete }) => (
+                {formFields.map(({ name, type, label, autoComplete, autoFocus }) => (
                     <Field
                         key={`login-field-${name}`}
                         name={name} type={type}
                         component={LoginField}
                         label={label}
                         autoComplete={autoComplete}
+                        autoFocus={autoFocus}
                         className="u-full-width"
                     />
                 ))}

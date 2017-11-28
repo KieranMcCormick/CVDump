@@ -14,11 +14,13 @@
 
 @media print {
     /* Only prints the file */
+    /* Still testing this */
     .c-status-bar,
     .t-tab-tabbar,
     .c-file-comments,
-    .c-file-content h3,
-    .c-file-content p {
+    .c-file-blocks,
+    .c-file-content__button
+    .c-file-content__file .material-icons {
         display: none !important;
     }
 }

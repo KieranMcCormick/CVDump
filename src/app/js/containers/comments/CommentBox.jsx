@@ -5,6 +5,7 @@ import * as actions from '../../actions'
 import Comment from './Comments'
 import SocketHandler from '../../global/socketsHandler'
 import moment from 'moment'
+import RaisedButton from 'material-ui/RaisedButton'
 
 
 class CommentBox extends Component {
@@ -24,20 +25,20 @@ class CommentBox extends Component {
             'update',
             (newComment) => this.props.dispatchReceiveComment(newComment)
         )
+        this.scrollToBottom()
     }
 
     componentWillUnmount() {
         SocketHandler.leaveRoom('comments', this.props.docId)
     }
 
-    // componentWillReceiveProps({ files }) {
-    //     const { comments, index } = this.state
-    //     if (files[index].comments && comments.length < files[index].comments.length) {
-    //         this.setState({
-    //             comments: files[index].comments,
-    //         })
-    //     }
-    // }
+    componentDidUpdate() {
+        this.scrollToBottom()
+    }
+
+    scrollToBottom () {
+        this.commentsNode.scrollIntoView({ behavior: 'smooth' })
+    }
 
     onClickHandler(comment) {
         this.createComment(comment)
@@ -50,6 +51,7 @@ class CommentBox extends Component {
                 <h5> Comments ({this.props.selectedFile.comments.length}) </h5>
                 <div className="c-comment__comment-list">
                     {this.displayComments()}
+                    <div ref={ref => this.commentsNode = ref}> </div>
                 </div>
                 <div className="c-comment__input">
                     <textarea
@@ -57,7 +59,11 @@ class CommentBox extends Component {
                         placeholder="Enter comment"
                         ref={(input) => this.textArea = input}
                     />
-                    <button onClick={this.onClickHandler}>Send</button>
+                    <RaisedButton
+                        label="Send"
+                        primary
+                        onClick={this.onClickHandler}
+                    />
                 </div>
             </div>
         )

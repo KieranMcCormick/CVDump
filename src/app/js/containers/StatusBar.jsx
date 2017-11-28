@@ -22,7 +22,7 @@ class StatusBar extends PureComponent {
     renderLogo() {
         return (
             <Link className="c-status-bar__logo" to="/">
-                <Logo style={{width: '50px', height: 'auto'}} />
+                <Logo style={{ width: '65px', height: 'auto' }} />
             </Link>
         )
     }
