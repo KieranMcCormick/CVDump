@@ -176,6 +176,7 @@ CREATE TABLE `notifications` (
   `uuid` varchar(36) NOT NULL,
   `type` varchar(36),
   `user_id` varchar(36) NOT NULL,
+  `sender` varchar(36)  NOT NULL,
   `document_id` varchar(36),
   `created_at` datetime NOT NULL,
   `is_deleted` tinyint(1) DEFAULT NULL,

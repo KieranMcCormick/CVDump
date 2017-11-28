@@ -12,46 +12,80 @@ class Notifications {
             this.sender = props.sender ? props.sender: ''
             this.email = props.email ? props.email : ''
             
-    }
+        }
     //checks if document exists
    
     //checks if user exists ,returns iD
    }
 
-   
 
-    create() {
+   create() {
         // might query using username instead ?
-        const createQuery = 'INSERT INTO notifications (uuid, user_id, document_id, type, created_at) VALUES (UUID(), ?, ?, ?, ?)'
-       
+       return new Promise ((resolve,reject)=>{
+           this.getUUid().then((success,err)=>{
+                if(success){
+                    console.log(success)
+                    return resolve(this.createNotification(success))
+                }
+                if(err){
+                    reject(null)
+                }
+        })
+       })   
+    }
+
+   getUUid () {
+    const newId = 'SELECT UUID() AS uuid'
+    return new Promise((resolve, reject) =>{
+        sqlSelect(newId,null, (err,result)=>{
+            if(err){
+               return reject(null)
+            }
+            if(result){
+               
+                return resolve(result[0].uuid)
+            }
+        })
+    })
+
+
+   }
+   
+    createNotification(uuid) {
+        const createQuery = 'INSERT INTO notifications (uuid, user_id, document_id, sender, type, created_at) VALUES (?, ?, ?, ?, ?,?)'
+    
         return new Promise((resolve, reject) => {
             // notifications has to have userid, docid and a type of notification
             if( !this.documentId || !this.type) {
                 return reject({message:"Missing userID and docID"})
             }
-
+            
             this.getDocOwner(this.documentId).then ((success, err) => {
                     if (err) {
                         return resolve({ message: err })
                     }
                     if (success) {
                         
-                        let uuid = success[0].uuid
+                        let userId = success[0].uuid
                         let username = success[0].username
+
                         if(username =! this.sender) {
                             //No need to emit your own notification
                             return reject({message:"Cannot create notifcation for yourself"})
+
                         } else {
                             //go ahead and create the notification
-                            sqlInsert(createQuery, [uuid, this.documentId, this.type,this.timeStamp], (err, result) => {
+                            sqlInsert(createQuery, [uuid,userId, this.documentId,this.sender, this.type,this.timeStamp], (err, result) => {
                                 if (err) {
                                     console.log(err)
                                     return resolve({ params: [username, this.documentId, ,this.type, this.timeStamp], error: err })
                                 }
                                 if(result){
                                     return resolve({ 
+                                            uuid:uuid,
                                             target: success[0].username,
                                             type:this.type,
+                                            sender:this.sender,
                                             documentId: this.documentId,
                                             timeStamp:this.timeStamp,
                                     })
@@ -61,11 +95,16 @@ class Notifications {
                     }
                 })
         })
+
+
+
     }
+
+ 
 
     load() {
         let that = this
-        const fetchNotificationQuery = 'SELECT notifications.uuid, notifications.user_id, type, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
+        const fetchNotificationQuery = 'SELECT notifications.uuid, notifications.user_id, type, sender, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
         console.log(this.email)
         return new Promise((resolve, reject) => {
             sqlSelect(fetchUserQuery, [this.email], (err, success) => {

@@ -21,21 +21,19 @@ export default (state = initState, action) => {
             let newState = [ ...state ]
             newState.push({
                 document_id:newNotice.documentId,
+                filename:newNotice.filename,
+                content: newNotice.content,
                 type:newNotice.type,
                 timeStamp: newNotice.timeStamp,
+                sender: newNotice.sender,
+                uuid: newNotice.uuid,
             })
-            console.log(newState)
+            console.log(newNotice)
             return newState
         case types.RESOLVE_NOTIFICATION:
              let id = action.payload.removed
-             console.log(id)
-             console.log(newState)
-             newState = [...state]
-            
-             return  _.remove(newState, function(destroy) {
-                 console.log(destroy)
-                 return destroy.uuid == id
-             })
+             state = state.filter((notice) =>{return notice.uuid !=id}) 
+             return state
                          
         default:
             return state

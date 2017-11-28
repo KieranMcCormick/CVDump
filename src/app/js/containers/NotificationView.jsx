@@ -26,7 +26,7 @@ class NotificationsView extends PureComponent {
         }
     }
     componentDidMount(){
-      
+        let that = this
         if(this.props.user.isAuthenticated) {
             this.props.dispatchFetchNotifications(this.props.user.info.email)
             SocketHandler.joinRoom(
@@ -39,8 +39,15 @@ class NotificationsView extends PureComponent {
             'notify',
             (notification) => {
                 //Triggers the state change for notifications
+            
             this.props.dispatchReceiveNotification(notification)
-            NotificationHandler.createNotification('comment',notification)
+            NotificationHandler.createNotification('comment',notification,function(notification){
+                console.log(notification)
+                that.props.dispatchFetchFiles()
+                that.props.dispatchResolveNotification(notification.uuid)
+                let routePath = "/files/" +notification.document_id
+                that.props.history.push(routePath);
+            })
               
             }
         )
@@ -48,26 +55,27 @@ class NotificationsView extends PureComponent {
     }
 
     //Links to relevant page and deletes notification
-    resolveNotification(notice) {
-        if(notice.type =='comment'){
+    resolveNotification(notice,route) {
+        console.log(notice)
+        //fixes bug where user directly routes to file page before client fetchesFiles
+        this.props.dispatchFetchFiles()
+        this.props.dispatchResolveNotification(notice.uuid)
+        if(route) {
             let routePath = "/files/" +notice.document_id
-            //fixes bug where user directly routes to file page before client fetchesFiles
-            this.props.dispatchFetchFiles()
-            this.props.dispatchResolveNotification(notice.uuid)
-            this.props.dispatchFetchNotifications()
             this.props.history.push(routePath);
             this.setState({dropdown:false})
-        } else {
-            this.props.history.push('/');
-        }
+        }    
+      
     }
+    
 
     renderNotificationCards() {
         if(this.props.notifications.length >0){
             return this.props.notifications.map((notice, index) => {
                 
                 if (notice.type =="comment"){
-                    let caption = "New comment on "  +notice.file 
+
+                    let caption = notice.file ? "New comment on "  + notice.file : "New comment from " +notice.sender
                     let subtitle = notice.timeStamp.substring(0,10)
                     return <Card >
                              <CardHeader
@@ -75,9 +83,12 @@ class NotificationsView extends PureComponent {
                                 subtitle={subtitle}
                                 actAsExpander={true}
                                 />
+                             <CardText>
+                                 {notice.content}   
+                             </CardText>    
                              <CardActions>
-                                 <FlatButton onClick={()=>this.resolveNotification(notice)} label="View"/>
-                                 <FlatButton label="Remove"/>
+                                 <FlatButton onClick={()=>this.resolveNotification(notice,true)} label="View"/>
+                                 <FlatButton onClick={()=>this.resolveNotification(notice,false)}label="Remove"/>
                              </CardActions>   
 
                                 

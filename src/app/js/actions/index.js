@@ -418,16 +418,18 @@ export const dispatchSendNotification = (data) => async (dispatch) =>{
              timeStamp:data.createdAt,
              type:data.type,}
              )
-
+         
          SocketHandler.emitEvent(
              'notifications',
              'getNotifications',
+
               {target:success.data.target,
                 type:data.type,
                 timeStamp:data.createdAt,
                 sender:data.sender,
                 documentId:data.docId,
                 content:data.content,
+                uuid:success.data.uuid,
                }
         )
         
