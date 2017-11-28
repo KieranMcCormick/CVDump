@@ -21,7 +21,7 @@ NotificationHandler.createNotification = (type,data,callback) => {
                         let commentNotify = new Notification(title,options)
                         commentNotify.onclick = function(event) {
                           console.log("NOTIFICATION CLICKED")
-                          callback()
+                          callback(data)
                         }
                         setTimeout(commentNotify.close.bind(commentNotify),5000)
                         return

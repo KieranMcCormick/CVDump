@@ -43,10 +43,7 @@ class NotificationsView extends PureComponent {
             this.props.dispatchReceiveNotification(notification)
             NotificationHandler.createNotification('comment',notification,function(notification){
                 console.log(notification)
-                that.props.dispatchFetchFiles()
-                that.props.dispatchResolveNotification(notification.uuid)
-                let routePath = "/files/" +notification.document_id
-                that.props.history.push(routePath);
+                that.resolveNotification(notification,true)
             })
               
             }
@@ -61,7 +58,7 @@ class NotificationsView extends PureComponent {
         this.props.dispatchFetchFiles()
         this.props.dispatchResolveNotification(notice.uuid)
         if(route) {
-            let routePath = "/files/" +notice.document_id
+            let routePath = "/files/" +notice.documentId
             this.props.history.push(routePath);
             this.setState({dropdown:false})
         }    
