@@ -1,35 +1,36 @@
 const { sqlInsert, sqlSelect } = require('../db')
+const _ = require('lodash')
 
-const CREATE_BLOCK_SQL = 'INSERT INTO document_blocks (document_id, block_id, block_order) VALUES (?, ?, ?)'
-const GET_BLOCKS_BY_DOCID_SQL = 'SELECT b.summary FROM blocks b JOIN document_blocks dbs ON dbs.block_id = b.uuid WHERE dbs.document_id = ? ORDER BY block_order ASC'
+const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, type, summary) VALUES (UUID(), ?, ?, ?)'
+
+const GET_BLOCKS_SQL = 'SELECT * FROM blocks WHERE user_id = ?'
+
+const EDIT_BLOCK_SQL = 'UPDATE blocks SET summary=? WHERE uuid=?'
+
+const parseBlockOutput = (rows) => {
+    let reader = new FileReader()
+    return _.map(rows, function (blocks) {
+        return {
+            label: blocks.username ? blocks.username : 'test',
+            type: blocks.type ? blocks.type : 'test',
+            summary: blocks.summary ? blocks.summary : 'test',
+            uuid: blocks.uuid ? blocks.uuid : 'test',
+        }
+    })
+}
 
 class Block {
     constructor(props) {
         if (props) {
-            this.block_id   = props.uuid
-            this.label      = props.label ? props.label : 'untitled'
-            this.type       = props.type
-            this.user_id    = props.user_id
-            this.summary    = props.summary
-            this.updated_at = props.updated_at
-            this.created_at = props.created_at
-        }
-    }
-
-    blockJson() {
-        return {
-            uuid       : this.uuid,
-            label      : this.label,
-            type       : this.type,
-            block_id   : this.block_id,
-            user_id    : this.user_id,
-            updated_at : this.updated_at,
-            summary    : this.summary,
+            this.label = props.label ? props.label : 'untitled'
+            this.type = props.type ? props.type : 'skills'
+            this.user_id = props.user_id
+            this.summary = props.summary ? props.summary : ''
         }
     }
 
     SQLValueArray() {
-        return [ this.document_id, this.block_id, this.block_order ]
+        return [this.user_id, this.type, this.summary]
     }
 
     save() {
@@ -40,26 +41,21 @@ class Block {
                     console.error(err)
                     return reject(new Error('Database Error'))
                 }
-                if (!result) {
+                if (!result/** || result**/) { // Check valid result ... ?
                     return reject(new Error('Unknown Error'))
                 }
+                console.log('this:')
+                console.log(this)
                 return resolve(this)
             })
         })
     }
 
-    static create(props) {
-
+    create(userId) {
         return new Promise((resolve, reject) => {
-            const block = new Block()
-            block.uuid  = props.uuid
-            block.label = props.label
-            block.type  = props.type
-            block.user_id = props.user_id
-            block.summary = props.summary
-            block.updated_at = props.updated_at
-            block.created_at = props.created_at
-            block.save().then((savedblock) => {
+            //const block = new Block()
+            //block.user_id = userId
+            this.save().then((savedblock) => {
                 resolve(savedblock)
             }).catch((error) => {
                 console.error(`[block][Error] Failed to create Block: ${error.message}`)
@@ -68,26 +64,34 @@ class Block {
         })
     }
 
-    //WIP
-    static GetBlocks(id){
+    static edit(props) {
         return new Promise((resolve, reject) => {
-            sqlSelect(GET_BLOCKS_BY_DOCID_SQL, [ id ], (err, blocks) => {
-                if (err) { console.error(err); return resolve(null) }
-                let doc = ''
-
-                for ( let b of blocks ){
-                    doc += b.summary
+            // validate user first
+            sqlInsert(EDIT_BLOCK_SQL, [props.summary, props.uuid], (err, result) => {
+                if (err) {
+                    console.log(err)
+                    return resolve({ params: [this.username, this.content, this.timeStamp], error: err })
                 }
-                console.log(doc)
-                resolve(doc)
-            }).catch((error) => {
-                console.error(`Failed to compile blocks from document ${id}`)
-                reject(error)
+                return resolve({ message: 'block edited', data: result })
+            })
+        })
+    }
+
+    static LoadBlocksByUserId(userId) {
+        console.log('LoadBlocksByUserId')
+        return new Promise((resolve, reject) => {
+            sqlSelect(GET_BLOCKS_SQL, [userId], (err, blocks) => {
+                if (err) {
+                    console.log(err)
+                    return resolve({ message: 'No blocks' })
+                }
+                else {
+                    return resolve(blocks)
+                }
             })
         })
     }
 
 }
 
-
-module.exports = { Block }
+module.exports = Block
