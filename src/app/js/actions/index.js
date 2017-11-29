@@ -188,35 +188,37 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
-        // const doc = await axios.get(`/files/${id}`)
-        // const availableBlocks = await axios.get(`/blocks`)
+        // this could be triggered during a new document creation
+        // const doc = id
+        //     ? await axios.get(`/files/${id}`)
+        //     : {
+        //         data: {
+        //             version: 0,
+        //             title: '',
+        //             blocks: [],
+        //         },
+        //     }
+        // const availableBlocks = await axios.get('/blocks')
 
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
             payload: {
+                // not sure if version is needed anymore, remove if not
                 // version: doc.data.version,
-                version: 12,
-
-                title: 'file title',
-
+                // title: doc.data.title,
                 // blocks: doc.data.blocks,
-                blocks: [
+                title: '',
+                blocks: [],
+                // availableBlocks: availableBlocks.data,
+                availableBlocks: [
                     {
-                        blockOrder: 1,
-                        summary: '# Resume 1 __hello__',
+                        block_id: 'asdfasdfasdf',
+                        summary: '1. 23123 2. 123123',
                     },
                     {
-                        blockOrder: 2,
+                        block_id: 'asdfasdfasdf',
                         summary: '__markdown__ **format** 1. 23123 2. 123123',
                     }
-                ],
-
-                // availableBlocks: availableBlocks.data
-                // array of strings
-                availableBlocks: [
-                    '__markdown__ **format** 1. 23123 2. 123123',
-                    '**format**  1. 23123 2. 123123',
-                    '# HEADER 1 **format**  1. 23123 2. 123123'
                 ],
             },
         })
@@ -230,9 +232,12 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     }
 }
 
-export const dispatchSelectFile = (id) => ({
+export const dispatchSelectFile = (id, title) => ({
     type: types.SELECT_FILE,
-    payload: id,
+    payload: {
+        id,
+        title,
+    },
 })
 
 export const dispatchAddBlockToSelectedFile = (value) => ({
@@ -286,21 +291,62 @@ export const dispatchReceiveComment = (comment) => ({
     },
 })
 
-export const dispatchCreateFile = () => async (dispatch) => {
-    try {
-        const res = await axios.get('/files/create')
+export const dispatchOnClickCreateFile = () => ({
+    type: types.CREATING_NEW_FILE,
+})
 
+export const dispatchCreateFile = ({ title /* , blocks, created_at */ }, callback) => async (dispatch) => {
+    try {
+        // returns the id of the newly created document
+        // const res = await axios.post('/files/create', { title, blocks, created_at })
+
+        // dispatch({
+        //     type: types.CREATE_FILE_SUCCESS,
+        //     payload: res.data,
+        // })
         dispatch({
-            type: types.FETCH_FILE_SUCCESS,
-            payload: res.data,
+            type: types.CREATE_FILE_SUCCESS,
+            payload: {
+                title,
+            },
         })
+
+        // dispatch.push(`/files/${res.data.id}`)
+        dispatch(push('sdfsdfsdfsdfsdfsdf'))
+
+        callback('File created')
     } catch (error) {
         dispatch({
-            type: types.FETCH_FILE_FAILURE,
+            type: types.CREATE_FILE_FAILURE,
             payload: error.response.data,
         })
+        callback('File create failed')
     }
 }
+
+export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispatch) => {
+    try {
+        // const res = await axios.post(`/files/update/${id}`, { title, blocks })
+        // dispatch({
+        //     type: types.UPDATE_FILE_SUCCESS,
+        //     payload: res.data,
+        // })
+        dispatch({
+            type: types.UPDATE_FILE_SUCCESS,
+            payload: {
+                title,
+            },
+        })
+        callback('File updated')
+    } catch (error) {
+        dispatch({
+            type: types.UPDATE_FILE_FAILURE,
+            payload: error.response.data,
+        })
+        callback('File update failed')
+    }
+}
+
 
 export const dispatchLogOut = () => async (dispatch) => {
     try {
@@ -360,21 +406,21 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
 }
 
 
-export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
-    try {
-        const res = await axios.get(`/files/update/${id}`)
+// export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get(`/files/update/${id}`)
 
-        dispatch({
-            type: types.UPDATE_FILE_SUCCESS,
-            payload: res.data,
-        })
-    } catch (error) {
-        dispatch({
-            type: types.UPDATE_FILE_FAILURE,
-            payload: error.response.data,
-        })
-    }
-}
+//         dispatch({
+//             type: types.UPDATE_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.UPDATE_FILE_FAILURE,
+//             payload: error.response.data,
+//         })
+//     }
+// }
 
 export const dispatchSavePdf = (id) => async (dispatch) => {
     try {

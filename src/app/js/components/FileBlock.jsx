@@ -7,7 +7,7 @@ import * as actions from '../actions'
 
 class FileBlock extends PureComponent {
     onClickHandler() {
-        this.props.dispatchSelectFile(this.props.id)
+        this.props.dispatchSelectFile(this.props.id, this.props.name)
     }
 
     render() {
@@ -29,13 +29,11 @@ class FileBlock extends PureComponent {
 FileBlock.propTypes = {
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
-    isAdd: PropTypes.bool,
     dispatchSelectFile: PropTypes.func.isRequired,
 }
 
 FileBlock.defaultProps = {
     name: 'File',
-    isAdd: false,
 }
 
 export default connect(null, actions)(FileBlock)
