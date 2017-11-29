@@ -82,6 +82,14 @@ class CommentBox extends Component {
             username: this.props.user.info.username,
             docId: this.props.docId,
         })
+
+        this.props.dispatchSendNotification({
+            type:'comment',
+            content: this.textArea.value,
+            createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
+            sender: this.props.user.info.username,
+            docId: this.props.docId,
+        })
     }
 }
 
@@ -97,6 +105,7 @@ CommentBox.propTypes = {
     }),
     dispatchCreateComment: PropTypes.func.isRequired,
     dispatchReceiveComment: PropTypes.func.isRequired,
+    dispatchSendNotification: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({

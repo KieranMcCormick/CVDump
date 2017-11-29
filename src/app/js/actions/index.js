@@ -53,6 +53,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
                 info: res.data,
             },
         })
+
         dispatch(push('/'))
     } catch (error) {
         dispatch({
@@ -60,6 +61,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
+                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
         })
         dispatch({
@@ -121,32 +123,12 @@ export const dispatchFetchFiles = () => async (dispatch) => {
 export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
     try {
 
-        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
-        // const res = await axios.get('/shared')
-        // dispatch({
-        //     type: types.FETCH_SHARES_SUCCESS,
-        //     payload: res.data,
-        // })
+        const res = await axios.get('/shared')
 
-        // mocking the data here
-        const res = await axios.get('/files')
         dispatch({
             type: types.FETCH_SHARES_SUCCESS,
             payload: res.data,
         })
-        // expected objects
-        // dispatch({
-        //     type: types.FETCH_SHARES_SUCCESS,
-        //     payload: {
-        //         files: [
-        //             {
-        //                 user_id: 'userId',
-        //                 doc_id: 'asdasd',
-        //                 title: 'asdeasdasdasdasda',
-        //             }
-        //         ],
-        //     },
-        // })
         callback()
     } catch (error) {
         dispatch({
@@ -162,14 +144,14 @@ export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
 export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
     try {
 
-        //IN PROGRESS DO NOT TOUCH UNLESS YOU ARE SELEENA
         const comment = await axios.get(`/comment/${id}`)
         const pdf = await axios.get(`/files/pdf/${id}`)
 
         dispatch({
-            // TODO: CHANGE THE ACTION TYPE
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
+                doc_id: id,
+                version: 1,
                 comments: comment.data,
                 pdf: pdf.data,
             },
@@ -177,8 +159,7 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
         callback()
     } catch (error) {
         dispatch({
-            // TODO: CHANGE THE ACTION TYPE
-            type: types.FETCH_FILE_FAILURE,
+            type: types.FETCH_SHARE_FILE_FAILURE,
             payload: error.response.data,
         })
         callback()
@@ -188,39 +169,12 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
-        // this could be triggered during a new document creation
-        // const doc = id
-        //     ? await axios.get(`/files/${id}`)
-        //     : {
-        //         data: {
-        //             version: 0,
-        //             title: '',
-        //             blocks: [],
-        //         },
-        //     }
-        // const availableBlocks = await axios.get('/blocks')
 
+        const doc = await axios.get(`/files/${id}`)
+        // const availableBlocks = await axios.get(`/blocks`)
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
-            payload: {
-                // not sure if version is needed anymore, remove if not
-                // version: doc.data.version,
-                // title: doc.data.title,
-                // blocks: doc.data.blocks,
-                title: '',
-                blocks: [],
-                // availableBlocks: availableBlocks.data,
-                availableBlocks: [
-                    {
-                        block_id: 'asdfasdfasdf',
-                        summary: '1. 23123 2. 123123',
-                    },
-                    {
-                        block_id: 'asdfasdfasdf',
-                        summary: '__markdown__ **format** 1. 23123 2. 123123',
-                    }
-                ],
-            },
+            payload: doc.data,
         })
         callback()
     } catch (error) {
@@ -278,10 +232,13 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             }
         )
+        //if target user is inside the room, we dont need to create notification
+
     } catch (error) {
         console.error(error)
     }
 }
+
 
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
@@ -295,24 +252,15 @@ export const dispatchOnClickCreateFile = () => ({
     type: types.CREATING_NEW_FILE,
 })
 
-export const dispatchCreateFile = ({ title /* , blocks, created_at */ }, callback) => async (dispatch) => {
+export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => async (dispatch) => {
     try {
         // returns the id of the newly created document
-        // const res = await axios.post('/files/create', { title, blocks, created_at })
+        const res = await axiosWithCSRF.post('/files/create/', { title, blocks, created_at })
 
-        // dispatch({
-        //     type: types.CREATE_FILE_SUCCESS,
-        //     payload: res.data,
-        // })
         dispatch({
             type: types.CREATE_FILE_SUCCESS,
-            payload: {
-                title,
-            },
+            payload: res.data,
         })
-
-        // dispatch.push(`/files/${res.data.id}`)
-        dispatch(push('sdfsdfsdfsdfsdfsdf'))
 
         callback('File created')
     } catch (error) {
@@ -331,6 +279,8 @@ export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispat
         //     type: types.UPDATE_FILE_SUCCESS,
         //     payload: res.data,
         // })
+        await axiosWithCSRF.post(`/files/savepdf/${id}`, { id, title, blocks })
+
         dispatch({
             type: types.UPDATE_FILE_SUCCESS,
             payload: {
@@ -351,6 +301,11 @@ export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispat
 export const dispatchLogOut = () => async (dispatch) => {
     try {
         await axiosWithCSRF.post('/logout')
+
+
+        // export const dispatchSavePdf = (id) => async (dispatch) => {
+        //     try {
+        //         const res = await axios.get('/files/savepdf/${id}')
 
         dispatch({
             type: types.LOGOUT,
@@ -424,7 +379,7 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
 
 export const dispatchSavePdf = (id) => async (dispatch) => {
     try {
-        //5479dcaf-cce6-11e7-810c-000c291b6367
+
         const res = await axios.get(`/files/savepdf/${id}`)
 
         dispatch({
@@ -438,6 +393,105 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
         })
     }
 }
+
+export const dispatchFetchNotifications = (userEmail) => async (dispatch) => {
+    try {
+        let path = '/notifications/load?email=' + userEmail
+        const newAlerts = await axios.get(path)
+        console.log(newAlerts)
+        dispatch({
+            type: types.FETCH_NOTIFICATION_SUCCESS,
+            payload: newAlerts.data.notifications,
+        })
+
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: [],
+        })
+    }
+}
+
+//Fired when user receives a notification
+export const dispatchReceiveNotification = (msg) => ({
+    type: types.RECEIVE_NOTIFICATION,
+    payload: {
+        newNotice: msg,
+    },
+})
+
+export const dispatchSendNotification = (data) => async (dispatch) => {
+    try {
+        //Store notification in db
+        let success = await axiosWithCSRF.post(
+            '/notifications/create',
+            {
+                sender: data.sender,
+                documentId: data.docId,
+                timeStamp: data.createdAt,
+                type: data.type,
+            }
+        )
+
+        SocketHandler.emitEvent(
+            'notifications',
+            'getNotifications',
+
+            {
+                target: success.data.target,
+                type: data.type,
+                timeStamp: data.createdAt,
+                sender: data.sender,
+                documentId: data.docId,
+                content: data.content,
+                uuid: success.data.uuid,
+            }
+        )
+
+        dispatch({
+            type: types.SEND_NOTIFICATION_SUCCESS,
+            payload: {
+                newNotice: 'msg',
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+//Deletes notification from db
+export const dispatchResolveNotification = (id) => async (dispatch) => {
+    try {
+        //call delete on server
+        await axiosWithCSRF.post('/notifications/delete', { id: id })
+        //update state by removing notification from old state
+        dispatch({
+            type: types.RESOLVE_NOTIFICATION,
+            payload: {
+                removed: id,
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
+
+//         dispatch({
+//             type: types.FETCH_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.FETCH_FILE_FAILURE,
+//             payload: error.data,
+//         })
+//     }
+// }
 
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
@@ -454,3 +508,19 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
 //         })
 //     }
 // }
+
+export const dispatchGetPdf = (id) => async (dispatch) => {
+    try {
+        const res = await axios.get(`/file/pdf/${id}`)
+
+        dispatch({
+            type: types.FETCH_FILE_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: error.response.data,
+        })
+    }
+}
