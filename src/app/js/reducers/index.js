@@ -6,6 +6,7 @@ import fileReducer from './fileReducer'
 import selectedFileReducer from './selectedFileReducer'
 import formReducer from './formReducer'
 import sharedFilesReducer from './sharedFilesReducer'
+import notificationReducer from './notificationReducer'
 
 export const initialState = {}
 
@@ -15,6 +16,7 @@ const appReducer = combineReducers({
     selectedFile: selectedFileReducer,
     form: formReducer,
     sharedFiles: sharedFilesReducer,
+    notifications: notificationReducer,
 })
 
 // combined reducer

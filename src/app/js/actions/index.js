@@ -53,6 +53,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
                 info: res.data,
             },
         })
+
         dispatch(push('/'))
     } catch (error) {
         dispatch({
@@ -60,6 +61,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
+                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
         })
         dispatch({
@@ -170,6 +172,8 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
             // TODO: CHANGE THE ACTION TYPE
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
+                doc_id: id,
+                version: 1,
                 comments: comment.data,
                 pdf: pdf.data,
             },
@@ -278,10 +282,13 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             }
         )
+        //if target user is inside the room, we dont need to create notification
+
     } catch (error) {
         console.error(error)
     }
 }
+
 
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
@@ -351,6 +358,11 @@ export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispat
 export const dispatchLogOut = () => async (dispatch) => {
     try {
         await axiosWithCSRF.post('/logout')
+
+
+        // export const dispatchSavePdf = (id) => async (dispatch) => {
+        //     try {
+        //         const res = await axios.get('/files/savepdf/${id}')
 
         dispatch({
             type: types.LOGOUT,
@@ -439,6 +451,105 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
     }
 }
 
+export const dispatchFetchNotifications = (userEmail) => async (dispatch) => {
+    try {
+        let path = '/notifications/load?email=' + userEmail
+        const newAlerts = await axios.get(path)
+        console.log(newAlerts)
+        dispatch({
+            type: types.FETCH_NOTIFICATION_SUCCESS,
+            payload: newAlerts.data.notifications,
+        })
+
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: [],
+        })
+    }
+}
+
+//Fired when user receives a notification
+export const dispatchReceiveNotification = (msg) => ({
+    type: types.RECEIVE_NOTIFICATION,
+    payload: {
+        newNotice: msg,
+    },
+})
+
+export const dispatchSendNotification = (data) => async (dispatch) => {
+    try {
+        //Store notification in db
+        let success = await axiosWithCSRF.post(
+            '/notifications/create',
+            {
+                sender: data.sender,
+                documentId: data.docId,
+                timeStamp: data.createdAt,
+                type: data.type,
+            }
+        )
+
+        SocketHandler.emitEvent(
+            'notifications',
+            'getNotifications',
+
+            {
+                target: success.data.target,
+                type: data.type,
+                timeStamp: data.createdAt,
+                sender: data.sender,
+                documentId: data.docId,
+                content: data.content,
+                uuid: success.data.uuid,
+            }
+        )
+
+        dispatch({
+            type: types.SEND_NOTIFICATION_SUCCESS,
+            payload: {
+                newNotice: 'msg',
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+//Deletes notification from db
+export const dispatchResolveNotification = (id) => async (dispatch) => {
+    try {
+        //call delete on server
+        let success = await axiosWithCSRF.post('/notifications/delete', { id: id })
+        //update state by removing notification from old state
+        dispatch({
+            type: types.RESOLVE_NOTIFICATION,
+            payload: {
+                removed: id,
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+// export const dispatchSavePdf = (id) => async (dispatch) => {
+//     try {
+//         const res = await axios.get('/files/savepdf/${id}')
+
+//         dispatch({
+//             type: types.FETCH_FILE_SUCCESS,
+//             payload: res.data,
+//         })
+//     } catch (error) {
+//         dispatch({
+//             type: types.FETCH_FILE_FAILURE,
+//             payload: error.data,
+//         })
+//     }
+// }
+
 // export const dispatchGetPdf = (id) => async (dispatch) => {
 //     try {
 //         const res = await axios.get('/file/pdf/${id}')
@@ -454,3 +565,4 @@ export const dispatchSavePdf = (id) => async (dispatch) => {
 //         })
 //     }
 // }
+
