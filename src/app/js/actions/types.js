@@ -9,9 +9,10 @@ export default {
     FETCH_REQUEST: '@@login/FETCH_REQUEST',
     FETCH_FAILURE: '@@login/FETCH_FAILURE',
 
-    // form error
+    // form
+    FORM_SUCCESS: '@@form/FORM_SUCCESS',
     FORM_ERROR: '@@form/FORM_ERROR',
-    FORM_ERROR_CLEAR: '@@form/FORM_ERROR_CLEAR',
+    FORM_MESSAGES_CLEAR: '@@form/FORM_MESSAGES_CLEAR',
 
     // File
     CREATING_NEW_FILE: '@@file/CREATING_NEW_FILE',

@@ -89,8 +89,8 @@ export const dispatchSignUp = ({ username, firstname, lastname, email, password,
     }
 }
 
-export const dispatchClearFormError = () => ({
-    type: types.FORM_ERROR_CLEAR,
+export const dispatchClearFormMessages = () => ({
+    type: types.FORM_MESSAGES_CLEAR,
 })
 
 export const dispatchFetchFiles = () => async (dispatch) => {

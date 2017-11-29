@@ -7,7 +7,7 @@ import { Logo } from '../../global/icon'
 
 class SignUp extends Component {
     componentWillUnmount() {
-        this.props.dispatchClearFormError()
+        this.props.dispatchClearFormMessages()
     }
 
     render() {
@@ -27,7 +27,7 @@ class SignUp extends Component {
 
 SignUp.propTypes = {
     dispatchSignUp: PropTypes.func.isRequired,
-    dispatchClearFormError: PropTypes.func.isRequired,
+    dispatchClearFormMessages: PropTypes.func.isRequired,
     form: PropTypes.object,
     formMessage: PropTypes.shape({
         errorMessage: PropTypes.string.isRequired,

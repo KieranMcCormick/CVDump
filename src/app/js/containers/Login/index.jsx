@@ -20,7 +20,7 @@ class Login extends Component {
     }
 
     componentWillUnmount() {
-        this.props.dispatchClearFormError()
+        this.props.dispatchClearFormMessages()
     }
 
     render() {
@@ -40,7 +40,7 @@ class Login extends Component {
 
 Login.propTypes = {
     dispatchLogin: PropTypes.func.isRequired,
-    dispatchClearFormError: PropTypes.func.isRequired,
+    dispatchClearFormMessages: PropTypes.func.isRequired,
     form: PropTypes.object,
     user: PropTypes.shape({
         isAuthenticated: PropTypes.bool,

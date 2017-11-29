@@ -21,7 +21,7 @@ class PasswordForm extends Component {
                         autoComplete={autoComplete}
                     />
                 ))}
-                <RaisedButton type="submit" className="u-margin-v-md" style={{ width: '260px'}} label="Update Password" />
+                <RaisedButton type="submit" className="u-margin-v-md" style={{ width: '260px' }} label="Update Password" />
             </form>
         )
     }

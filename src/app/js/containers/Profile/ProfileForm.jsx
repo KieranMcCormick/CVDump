@@ -22,7 +22,7 @@ class ProfileForm extends Component {
                         autoComplete={autoComplete}
                     />
                 ))}
-                <RaisedButton type="submit" className="u-margin-v-md" style={{ width: '260px'}} label="Update Profile" />
+                <RaisedButton type="submit" className="u-margin-v-md" style={{ width: '260px' }} label="Update Profile" />
             </form>
         )
     }
