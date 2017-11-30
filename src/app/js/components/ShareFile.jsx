@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import Loader from './Loader'
 import CommentBox from '../containers/comments/CommentBox'
-// import { Document, Page } from 'react-pdf'
+import { Document } from 'react-pdf'
 
 /**
  * FILE NOT READY
@@ -58,6 +58,7 @@ class ShareFile extends PureComponent {
                     >
                         <Page pageNumber={pageNumber} />
                     </Document> */}
+                    <Document file={{ URL :this.props.selectedFile.pdf}}/>
                     <p>Page {pageNumber} of {numPages}</p>
                 </div>
                 <div className="c-file-comments">
