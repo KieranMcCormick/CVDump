@@ -7,6 +7,7 @@ const fs = require('fs')
 //path to where file system is located
 let fs_path = '/home/ubuntu/files/'
 
+
 function genFilePath(){
     const options = {
         length: 1,

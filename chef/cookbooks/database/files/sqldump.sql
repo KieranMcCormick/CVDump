@@ -193,6 +193,7 @@ CREATE TABLE `shared_files` (
 
 LOCK TABLES `shared_files` WRITE;
 /*!40000 ALTER TABLE `shared_files` DISABLE KEYS */;
+INSERT INTO `shared_files` VALUES ('7bb327a5-cb4b-11e7-821a-026d4863120d','user1@email.com','5479dcaf-cce6-11e7-810c-000c291b6367');
 /*!40000 ALTER TABLE `shared_files` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,4 +238,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-29 16:12:35
+-- Dump completed on 2017-11-29 17:47:54
