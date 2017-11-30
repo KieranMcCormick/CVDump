@@ -56,7 +56,6 @@ module.exports = {
                 else{
                     md = blocks
                     if (update_flag) {
-                        console.log('NO FILE PATH EXISTS YET')
                         Document.UpdateDocumentFilepath(doc_id, filepath, filename)
                     }
                 }
