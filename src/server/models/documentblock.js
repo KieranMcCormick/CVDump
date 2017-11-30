@@ -1,7 +1,19 @@
 const { sqlInsert, sqlSelect } = require('../db')
+const _ = require('lodash')
 
 const CREATE_DOC_SQL = 'INSERT INTO document_blocks (document_id, block_id, block_order) VALUES (?, ?, ?)'
 const GET_BLOCKS_BY_DOCID_SQL = 'SELECT dbs.block_order, b.summary FROM blocks b JOIN document_blocks dbs ON dbs.block_id = b.uuid WHERE dbs.document_id = ? ORDER BY block_order ASC'
+//const UPDATE_DOCUMENT_BY_DOCID_SQL = 'UPDATE document_blocks dbs set block_order = ? WHERE document_id = ? AND block_id = ?'
+
+/*This will be visible to public*/
+const ParseDocBlockSQL = (rows) => {
+    return _.map(rows, function (entries) {
+        return {
+            blockOrder : entries.block_order,
+            summary    : entries.summary,
+        }
+    })
+}
 
 class DocumentBlock {
     constructor(props) {
@@ -13,12 +25,12 @@ class DocumentBlock {
         }
     }
 
-    blockJson() {
-        return {
-            blockOrder  : this.blockOrder,
-            summary     : this.summary,
-        }
-    }
+    // blockJson() {
+    //     return {
+    //         blockOrder  : this.blockOrder,
+    //         summary     : this.summary,
+    //     }
+    // }
 
     SQLValueArray() {
         return [ this.document_id, this.block_id, this.block_order ]
@@ -61,23 +73,22 @@ class DocumentBlock {
     }
 
 
-    static GetBlocks(doc_id){
+    static GetDocumentBlocks(doc_id){
         return new Promise((resolve, reject) => {
             sqlSelect(GET_BLOCKS_BY_DOCID_SQL, [ doc_id ], (err, blocks) => {
                 if (err) { console.error(err); return reject(null) }
-                let doc = { 'blocks' : [] }
-
-                for ( let b of blocks ){
-                    doc.blocks.push(new DocumentBlock(b))
-                }
-
-                resolve(doc)
+                resolve(ParseDocBlockSQL(blocks))
             })
         })
     }
 
     // static UpdateDocument(doc_id, blocks, title){
-
+    //     return new Promise((resolve, reject) => {
+    //         sqlUpdate(UPDATE_DOCUMENT_BY_DOCID_SQL, [ doc_id ], (err, result) => {
+    //             if (err) { console.error(err); return reject(null) }
+    //             resolve(result)
+    //         })
+    //     })
     // }
 
 }

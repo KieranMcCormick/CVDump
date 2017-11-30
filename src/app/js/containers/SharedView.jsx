@@ -18,24 +18,24 @@ class SharedView extends Component {
     }
 
     renderSharedWith() {
-        const userId = this.props.user.info.userId
-        const files = this.props.sharedFiles.filter(({ user_id }) => userId !== user_id )
-        return files.map(({doc_id, title}, index) => (
+        const Email = this.props.user.info.userEmail
+        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail !== Email )
+        return files.map(({docId, title}, index) => (
             <ShareBlock
                 key={`file-block-shared-with-${index}`}
-                id={doc_id}
+                id={docId}
                 name={title}
             />
         ))
     }
 
     renderSharedTo() {
-        const userId = this.props.user.info.userId
-        const files = this.props.sharedFiles.filter(({ user_id }) => userId === user_id )
-        return files.map(({doc_id, title}, index) => (
+        const Email = this.props.user.info.userEmail
+        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail === Email )
+        return files.map(({docId, title}, index) => (
             <ShareBlock
                 key={`file-block-shared-to-${index}`}
-                id={doc_id}
+                id={docId}
                 name={title}
             />
         ))
@@ -60,12 +60,12 @@ class SharedView extends Component {
 SharedView.propTypes = {
     user: PropTypes.shape({
         info: PropTypes.shape({
-            userId: PropTypes.string.isRequired,
+            userEmail: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
     sharedFiles: PropTypes.arrayOf(PropTypes.shape({
-        user_id: PropTypes.string.isRequired,
-        doc_id: PropTypes.string.isRequired,
+        userEmail: PropTypes.string.isRequired,
+        docId: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
     }).isRequired).isRequired,
     dispatchFetchSharedFiles: PropTypes.func.isRequired,

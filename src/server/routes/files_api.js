@@ -34,21 +34,6 @@ router.get('/', (req, res) => {
 /**
  * returns file with `id` for the user
  */
-// router.get('/:id', (req, res) => {
-//     const user_id = req.user.uuid
-//     DocumentBlock.GetBlocks(id).then((result, err) => {
-//         if (err){
-//             console.error(err)
-//             res.send({ message : 'Something went wrong loading files' })
-//         } else {
-//             res.send(result)
-//         }
-//     }).catch((exception) => {
-//         console.error(exception)
-//         res.send({ message : 'Something went wrong loading files' })
-//     })
-// })
-
 router.get('/:id', (req, res) => {
     const user_id = req.user.uuid
     const doc_id  = req.params.id
@@ -58,7 +43,7 @@ router.get('/:id', (req, res) => {
         }
         else{
             if ( res ){
-                return DocumentBlock.GetBlocks(doc_id)
+                return DocumentBlock.GetDocumentBlocks(doc_id)
             }
             else{
                 res.status(403).send({ message : 'User does not have permission to view' })

@@ -7,7 +7,6 @@ const fs = require('fs')
 //path to where file system is located
 let fs_path = '/home/ubuntu/files/'
 
-
 function genFilePath(){
     const options = {
         length: 1,
@@ -46,10 +45,9 @@ module.exports = {
                     filename = rand.generate(6) + '.pdf'
                     path = genFilePath()
                 }
-                return DocumentBlock.GetBlocks(doc_id)
+                return DocumentBlock.GetDocumentBlocks(doc_id)
 
             }).then((blocks, err) => {
-                console.log(filename)
                 if (err){
                     throw(err)
                 }
@@ -66,7 +64,6 @@ module.exports = {
                 }
                 else{
                     const full_path_pdf = path + filename
-                    console.log(full_path_pdf)
 
                     mdpdf().from.string(md).to(full_path_pdf, function(){
                         console.log('PDF File created')
