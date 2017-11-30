@@ -12,12 +12,12 @@ end
 
 #future: use databag
 execute 'create database project' do
-  query =  "'create database project;'"
+  query =  "'create database if not exists project;'"
   command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
 end
 
 execute 'create project_user' do
-  query = "\"create user \'project_user\'@\'localhost\' identified by \'sup3rsecure\';\""
+  query = "\"create user if not exists \'project_user\'@\'localhost\' identified by \'sup3rsecure\';\""
   command "mysql -h 127.0.0.1 -u root -ppass123 -e #{query}"
 end
 
