@@ -16,6 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `app_tracker`
+--
+
+DROP TABLE IF EXISTS `app_tracker`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `app_tracker` (
+  `uuid` varchar(36) DEFAULT NULL,
+  `company_name` varchar(20) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `document_id` varchar(36) DEFAULT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `status` text,
+  `job_title` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_tracker`
+--
+
+LOCK TABLES `app_tracker` WRITE;
+/*!40000 ALTER TABLE `app_tracker` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_tracker` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `blocks`
 --
 
@@ -104,7 +131,7 @@ CREATE TABLE `document_blocks` (
 
 LOCK TABLES `document_blocks` WRITE;
 /*!40000 ALTER TABLE `document_blocks` DISABLE KEYS */;
-INSERT INTO `document_blocks` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','c297e95b-cf3d-11e7-a173-000c291b6367',1),('5479dcaf-cce6-11e7-810c-000c291b6367','c297e95b-cf3d-11e7-a173-000c291b6367',2),('5479dcaf-cce6-11e7-810c-000c291b6367','cef2510c-cf3d-11e7-a173-000c291b6367',3);
+INSERT INTO `document_blocks` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','c297e95b-cf3d-11e7-a173-000c291b6367',1),('5479dcaf-cce6-11e7-810c-000c291b6367','c297e95b-cf3d-11e7-a173-000c291b6367',2),('5479dcaf-cce6-11e7-810c-000c291b6367','cef2510c-cf3d-11e7-a173-000c291b6367',3),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','cef2510c-cf3d-11e7-a173-000c291b6367',1);
 /*!40000 ALTER TABLE `document_blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,7 +163,7 @@ CREATE TABLE `documents` (
 
 LOCK TABLES `documents` WRITE;
 /*!40000 ALTER TABLE `documents` DISABLE KEYS */;
-INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-18 20:58:48','first document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,NULL,NULL),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-18 20:59:59','second document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,NULL,NULL),('861cf54c-cce6-11e7-810c-000c291b6367','2017-11-18 21:00:12','Resume 1','99d3ced7-cb4b-11e7-821a-026d4863120d',1,NULL,NULL);
+INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-18 20:58:48','first document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,'1/3/3','EipjRV.pdf'),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-18 20:59:59','second document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,NULL,NULL),('861cf54c-cce6-11e7-810c-000c291b6367','2017-11-18 21:00:12','Resume 1','99d3ced7-cb4b-11e7-821a-026d4863120d',1,NULL,NULL);
 /*!40000 ALTER TABLE `documents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,11 +176,14 @@ DROP TABLE IF EXISTS `shared_files`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `shared_files` (
   `owner_id` varchar(36) DEFAULT NULL,
-  `user_id` varchar(36) DEFAULT NULL,
-  `doc_id` varchar(36) DEFAULT NULL,
-  UNIQUE KEY `owner_id_2` (`owner_id`,`user_id`,`doc_id`),
+  `user_email` varchar(30) DEFAULT NULL,
+  `document_id` varchar(36) DEFAULT NULL,
   KEY `owner_id` (`owner_id`),
-  KEY `user_id` (`user_id`)
+  KEY `user_email` (`user_email`),
+  KEY `document_id` (`document_id`),
+  CONSTRAINT `shared_files_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`uuid`),
+  CONSTRAINT `shared_files_ibfk_2` FOREIGN KEY (`user_email`) REFERENCES `users` (`email_address`),
+  CONSTRAINT `shared_files_ibfk_3` FOREIGN KEY (`document_id`) REFERENCES `documents` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -207,4 +237,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-25 18:06:09
+-- Dump completed on 2017-11-29 16:12:35
