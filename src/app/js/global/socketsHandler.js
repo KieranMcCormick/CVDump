@@ -16,7 +16,7 @@ SocketHandler.start = () => {
  * @param {string} namespace for the same endpoint but different namespace
  * @param {string} roomId
  */
-SocketHandler.joinRoom = (namespace, roomId, user) => {
+SocketHandler.joinRoom = (namespace, roomId) => {
     SocketHandler.log(`[${namespace}] Joining room: ${roomId}`)
     switch (namespace) {
         case 'comments':

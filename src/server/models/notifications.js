@@ -1,7 +1,6 @@
 const { sqlInsert, sqlSelect ,sqlDelete} = require('../db')
 const _ = require('lodash')
 const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
-const fetchFileName = 'SELECT title FROM documents WHERE uuid = ?'
 
 class Notifications {
     constructor(props) {
@@ -78,7 +77,7 @@ class Notifications {
                         sqlInsert(createQuery, [uuid,userId, this.documentId,this.sender, this.type,this.timeStamp], (err, result) => {
                             if (err) {
                                 console.log(err)
-                                return resolve({ params: [username, this.documentId, ,this.type, this.timeStamp], error: err })
+                                return resolve({ params: [username, this.documentId, this.type, this.timeStamp], error: err })
                             }
                             if(result){
                                 return resolve({

@@ -60,9 +60,7 @@ class SocketListener {
             socket.on('getNotifications', function (msg) {
                 logger('Listen to notifications')
                 //get file Owner from docId
-                console.log(msg)
                 let type = msg.type
-                let owner = ''
                 switch(type){
                     case 'comment':
                         // socket.to(msg.target).emit('notify',msg)
