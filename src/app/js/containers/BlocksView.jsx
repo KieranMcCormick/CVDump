@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import RichTextEditor, { createEmptyValue } from 'react-rte'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
-import RaisedButton from 'material-ui/RaisedButton'
+import { RaisedButton, TextField } from 'material-ui'
 
 class TextEditor extends Component {
     constructor(props) {
@@ -16,32 +16,44 @@ class TextEditor extends Component {
             value: createEmptyValue(),
             format: 'markdown',
             readOnly: false,
+            titleInput: 'Untitled',
         }
     }
 
     render() {
-        let { value, format } = this.state
+        if (!this.currentBlock) {
+            return (
+                <div className="c-blocks-editor">
+                    <h3>Please Select One Block on the Left Column to Edit</h3>
+                </div>
+            )
+        }
+
+        let { value, titleInput } = this.state
 
         return (
-            <div>
-                <div>
-                    <RichTextEditor
-                        value={value}
-                        onChange={this.onChange}
-                        placeholder="Tell a story"
-                        readOnly={this.state.readOnly}
+            <div className="c-blocks-editor">
+                <h3>Edit Block</h3>
+                <div className="u-flex-row u--center-cross u--space-between u-full-width u-padding-v-md">
+                    <TextField
+                        hintText="New Block Name"
+                        defaultValue={titleInput}
+                        ref={ref => this.titleNode = ref}
+                    />
+                    <RaisedButton
+                        label="Save"
+                        labelColor="#fff"
+                        backgroundColor="#2286c3"
+                        onClick={this.saveData}
                     />
                 </div>
-                <div>
-                    <textarea className="fillerup"
-                        placeholder="Editor Source"
-                        value={value.toString(format)}
-                        onChange={this.onChangeSource}
-                    />
-                </div>
-                <div>
-                    <RaisedButton onClick={this.saveData}>Save</RaisedButton>
-                </div>
+                <RichTextEditor
+                    className="u-full"
+                    value={value}
+                    onChange={this.onChange}
+                    placeholder="Tell a story"
+                    readOnly={this.state.readOnly}
+                />
             </div>
         )
     }
@@ -61,14 +73,23 @@ class TextEditor extends Component {
     updateData(block) {
         let { value, format } = this.state
         this.currentBlock = block
-        this.setState({
-            value: value.setContentFromString(this.currentBlock.summary, format),
-        })
+        if (this.titleNode) {
+            this.titleNode.input.value = block.label
+            this.setState({
+                value: value.setContentFromString(this.currentBlock.summary, format),
+            })
+        } else {
+            this.setState({
+                value: value.setContentFromString(this.currentBlock.summary, format),
+                titleInput: block.label,
+            })
+        }
     }
 
     saveData() {
         let { value, format } = this.state
         this.currentBlock.summary = value.toString(format)
+        this.currentBlock.label = this.titleNode.getValue()
         this.props.saveBlock(this.currentBlock)
     }
 }
@@ -79,7 +100,11 @@ TextEditor.propTypes = {
 
 const BlockParentComponent = props => (
     <div>
-        <RaisedButton className="u-margin-v-md u-full-width" onClick={props.addChild}>+</RaisedButton>
+        <RaisedButton
+            label="+"
+            className="u-margin-v-md u-full-width"
+            onClick={props.addChild}
+        />
         {props.children}
     </div>
 )
@@ -90,9 +115,11 @@ BlockParentComponent.propTypes = {
 }
 
 const BlockChildComponent = props => (
-    <RaisedButton className="u-margin-md padme" onClick={props.onClick.bind(this, props.block)}>
-        {'Edit: ' + props.block.label}
-    </RaisedButton>
+    <RaisedButton
+        label={`${props.block.label}`}
+        className="u-padding-md u-full-width"
+        onClick={props.onClick.bind(this, props.block)}
+    />
 )
 
 
@@ -116,22 +143,12 @@ class Blocks extends Component {
 
     }
 
-    saveBlock(block){
-        this.props.dispatchEditBlock(block)
-    }
     componentDidMount() {
         this.props.dispatchFetchBlocks()
-        //this.setState({oldblocks: this.props.blocks})
     }
 
-    renderFiles() {
-        return this.props.blocks.map(({ uuid, summary }) => {
-            return (
-                <p key={uuid}>
-                    {summary}
-                </p>
-            )
-        })
+    saveBlock(block){
+        this.props.dispatchEditBlock(block)
     }
 
     handleClick(block) {
@@ -144,9 +161,6 @@ class Blocks extends Component {
             label: newName,
             type: newType,
         })
-
-        //this.props.blocks.push(newBlock)
-        //this.forceUpdate()
     }
 
     onChangeSource(event) {
@@ -157,17 +171,17 @@ class Blocks extends Component {
     }
 
     render() {
-        const HeadersChildren = this.props.blocks.map(function (block, index) {
-            if (block.type == 'headers') {
-                return <BlockChildComponent
-                    key={index}
-                    onClick={this.handleClick}
-                    block={block}
-                />
-            }
-        }.bind(this))
+        // const HeadersChildren = this.props.blocks.map((block, index) => {
+        //     if (block.type == 'headers') {
+        //         return <BlockChildComponent
+        //             key={index}
+        //             onClick={this.handleClick}
+        //             block={block}
+        //         />
+        //     }
+        // })
 
-        const SkillsChildren = this.props.blocks.map(function (block, index) {
+        const SkillsChildren = this.props.blocks.map((block, index) => {
             if (block.type == 'skills') {
                 return <BlockChildComponent
                     key={index}
@@ -175,36 +189,25 @@ class Blocks extends Component {
                     block={block}
                 />
             }
-        }.bind(this))
-
-
+        })
 
         return (
-            <div>
-                <br />
-                <p className="padme" >Name of new block:
-                    <input
-                        value={this.state.inputValue}
-                        onChange={this.onChangeSource}
-                    />
-                </p>
-
-                <div className="my_trow">
-                    <div className="my_celll">
-                        <div>Headers</div>
-                        <BlockParentComponent addChild={this.addChild.bind(this, 'headers')}>
-                            {HeadersChildren}
-                        </BlockParentComponent>
-                        <hr/>
-                        <div>Skills</div>
-                        <BlockParentComponent addChild={this.addChild.bind(this, 'skills')}>
-                            {SkillsChildren}
-                        </BlockParentComponent>
-                    </div>
-                    <div className="my_cellr">
-                        <TextEditor saveBlock={this.saveBlock.bind(this)} ref={(editor) => { this.editorRef = editor }} />
-                    </div>
+            <div className="c-file-container">
+                <div className="c-blocks-list">
+                    <h3>Please press + to add a new block</h3>
+                    {/* <div>Headers</div>
+                    <BlockParentComponent addChild={this.addChild.bind(this, 'headers')}>
+                        {HeadersChildren}
+                    </BlockParentComponent>
+                    <div>Skills</div> */}
+                    <BlockParentComponent addChild={this.addChild.bind(this, 'skills')}>
+                        {SkillsChildren}
+                    </BlockParentComponent>
                 </div>
+                <TextEditor
+                    saveBlock={this.saveBlock.bind(this)}
+                    ref={(editor) => { this.editorRef = editor }}
+                />
             </div>
         )
     }

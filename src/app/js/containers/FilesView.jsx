@@ -55,9 +55,11 @@ class Files extends Component {
             return <Loader />
         }
         return (
-            <div className="u-flex-row u--wrap u-padding-lg">
-                {this.renderFiles()}
-                {this.renderAddButton()}
+            <div className="t-view-container">
+                <div className="c-files-list">
+                    {this.renderFiles()}
+                    {this.renderAddButton()}
+                </div>
             </div>
         )
     }

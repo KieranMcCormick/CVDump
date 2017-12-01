@@ -102,13 +102,24 @@ class NotificationsView extends PureComponent {
 
     renderNotificationCount() {
         return (
-            <div>
+            <div className="u-padding-h-md">
                 <Badge
                     badgeContent={this.props.notifications.length}
                     secondary={true}
-                    badgeStyle={{ top: 20, right: 20 }}
+                    badgeStyle={{
+                        top: 0,
+                        right: 0,
+                        width: '20px',
+                        height: '20px',
+                    }}
+                    style={{ padding: 0 }}
                 >
-                    <IconButton tooltip="Notifications" onClick={(event) => this.showNotifications(event)}>
+                    <IconButton
+                        tooltip="Notifications"
+                        onClick={(event) => this.showNotifications(event)}
+                        style={{ padding: 0 }}
+                        iconStyle={{ padding: 0 }}
+                    >
                         <NotificationsIcon />
                     </IconButton>
                 </Badge>

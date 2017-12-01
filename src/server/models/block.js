@@ -1,5 +1,5 @@
 const { sqlInsert, sqlSelect } = require('../db')
-const EDIT_BLOCK_SQL = 'UPDATE blocks SET summary=? WHERE uuid=?'
+const EDIT_BLOCK_SQL = 'UPDATE blocks SET summary=?, label=? WHERE uuid=?'
 const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, label, type, summary) VALUES (?, ?, ?, ?, ?)'
 const GET_BLOCKS_SQL = 'SELECT * FROM blocks WHERE user_id = ?'
 const SELECT_UUID = 'SELECT UUID() as uuid'
@@ -49,7 +49,7 @@ class Block {
 
     static edit(props) {
         return new Promise((resolve, reject) => {
-            sqlInsert(EDIT_BLOCK_SQL, [props.summary, props.uuid], (err, result) => {
+            sqlInsert(EDIT_BLOCK_SQL, [props.summary, props.label, props.uuid], (err, result) => {
                 if (err) {
                     console.log(err)
                     console.error(`[block][Error] Failed to create Block: ${err.message}`)

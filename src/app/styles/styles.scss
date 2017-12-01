@@ -22,8 +22,10 @@
 @import "containers/tablayout";
 @import "containers/comment";
 @import "containers/statusBar";
-@import "containers/shared";
 @import "containers/blocks";
+@import "containers/files";
+@import "containers/views";
+
 
 // Util
 @import "util/flex";

@@ -118,13 +118,6 @@ typings/
 !.vscode/extensions.json
 .history
 
-### Font ###
-*.fnt
-*.fon
-*.otf
-*.ttf
-*.eot
-
 # End of https://www.gitignore.io/api/node,sass,linux,macos,vagrant,visualstudiocode
 
 config/tmp/*

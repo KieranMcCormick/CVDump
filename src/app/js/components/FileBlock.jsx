@@ -17,8 +17,8 @@ class FileBlock extends PureComponent {
                 className="c-file-block"
                 onClick={this.onClickHandler.bind(this)}
             >
-                <div>
-                    <div className="u-padding-v-md">{this.props.name}</div>
+                <div className="c-file-block__container">
+                    <p>{this.props.name}</p>
                     <i className="material-icons md-lg">insert_drive_file</i>
                 </div>
             </Link>
