@@ -9,7 +9,7 @@ import Home from './Home'
 import File from '../components/File'
 import ShareFile from '../components/ShareFile'
 import FilesView from './FilesView'
-import SharesView from './SharesView'
+import SharedView from './SharedView'
 import BlocksView from './BlocksView'
 import HistoryView from './HistoryView'
 import StatusBar from './StatusBar'
@@ -28,9 +28,9 @@ const routes = [
         component: FilesView,
     },
     {
-        path: '/shares',
-        label: 'Shares',
-        component: SharesView,
+        path: '/shared',
+        label: 'Shared',
+        component: SharedView,
     },
     {
         path: '/blocks',

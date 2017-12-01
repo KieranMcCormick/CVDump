@@ -14,20 +14,28 @@ class Files extends Component {
         this.props.dispatchFetchFiles()
     }
 
+    onClickHandler() {
+        this.props.dispatchOnClickCreateFile()
+    }
+
     renderAddButton() {
         return (
-            <Link to="/files/new" className="c-file-block">
+            <Link
+                to="/files/new"
+                className="c-file-block"
+                onClick={this.onClickHandler.bind(this)}
+            >
                 <i className="material-icons md-xxl">note_add</i>
             </Link>
         )
     }
 
     renderFiles() {
-        return this.props.files.map(({ title, doc_id }) => {
+        return this.props.files.map(({ title, docId }) => {
             return (
                 <FileBlock
                     key={`file-block-${title}`}
-                    id={doc_id}
+                    id={docId}
                     name={title}
                 />
             )
@@ -47,6 +55,7 @@ class Files extends Component {
 Files.propTypes = {
     files: PropTypes.array.isRequired,
     dispatchFetchFiles: PropTypes.func.isRequired,
+    dispatchOnClickCreateFile: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = ({ app }) => ({

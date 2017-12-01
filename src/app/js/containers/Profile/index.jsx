@@ -5,18 +5,20 @@ import * as actions from '../../actions'
 import ProfileForm from './ProfileForm'
 import PasswordForm from './PasswordForm'
 import StatusBar from '../StatusBar'
+import ExternalAuthSection from './ExternalAuthSection'
 import { Avatar } from '../../global/icon'
 import { getDisplayName } from '../../global/common'
 
+
 class Profile extends Component {
     componentWillUnmount() {
-        this.props.dispatchClearFormError()
+        this.props.dispatchClearFormMessages()
     }
 
     render() {
         const {
             user,
-            formMessage: { errorMessage },
+            formMessage: { errorMessage, message },
             profileForm,
             passwordForm,
         } = this.props
@@ -30,11 +32,12 @@ class Profile extends Component {
                 <StatusBar />
                 <Avatar
                     url={user.info.avatarUrl}
-                    style={{ width: 100, height: 'auto', margin: '25px'}}
+                    style={{ width: 100, height: 'auto', margin: '15px' }}
                 />
                 <p className="u-font--size-lg">
                     Hello <strong>{getDisplayName()}</strong>, you can update your info here
                 </p>
+                {!errorMessage && message && <span className="u-success-text">{message}</span>}
                 {errorMessage && <span className="u-fail-text">{errorMessage}</span>}
                 <div className="u-flex-row u--space-around u-full-width u-padding-lg">
                     <ProfileForm
@@ -44,6 +47,7 @@ class Profile extends Component {
                     />
                     <PasswordForm className="u-half-width" onUpdateSubmit={() => this.props.dispatchUpdatePassword(passwordForm.values)} />
                 </div>
+                <ExternalAuthSection className="u-flex-row u--space-around u-full-width u-padding-lg" />
             </div>
         )
     }
@@ -52,11 +56,12 @@ class Profile extends Component {
 Profile.propTypes = {
     dispatchUpdate: PropTypes.func.isRequired,
     dispatchUpdatePassword: PropTypes.func.isRequired,
-    dispatchClearFormError: PropTypes.func.isRequired,
+    dispatchClearFormMessages: PropTypes.func.isRequired,
     profileForm: PropTypes.object,
     passwordForm: PropTypes.object,
     formMessage: PropTypes.shape({
         errorMessage: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
     }).isRequired,
     user: PropTypes.shape({
         info: PropTypes.shape({

@@ -23,6 +23,7 @@ class Field extends PureComponent {
             meta: { touched, error },
             style,
             className,
+            autoFocus,
         } = this.props
         return (
             <div className="u-flex-row u--center u-margin-v-sm">
@@ -34,6 +35,7 @@ class Field extends PureComponent {
                     autoComplete={autoComplete}
                     style={style}
                     className={className}
+                    autoFocus={autoFocus}
                 />
             </div>
         )
@@ -48,6 +50,7 @@ Field.propTypes = {
     meta: PropTypes.object,
     style: PropTypes.object,
     className: PropTypes.string,
+    autoFocus: PropTypes.bool,
 }
 
 export default Field

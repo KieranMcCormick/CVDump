@@ -1,6 +1,7 @@
 const express = require('express')
 const router  = express.Router()
 const { Document } = require('../models/document')
+const { DocumentBlock } = require('../models/documentblock')
 const requireLogin = require('../middlewares/requireLogin')
 const accessFS = require('../fs')
 
@@ -35,19 +36,33 @@ router.get('/', (req, res) => {
  */
 router.get('/:id', (req, res) => {
     const user_id = req.user.uuid
-    if (user_id) {
-        Document.LoadDocumentsByUserId(user_id).then((result, err) => {
-            if (err){
-                console.error(err)
-                res.send({ message : 'Something went wrong loading files' })
-            } else {
-                res.send(result)
+    const doc_id  = req.params.id
+    Document.VaildateDocumentPermission(doc_id, user_id).then((res, err) => {
+        if( err ){
+            throw(err)
+        }
+        else{
+            if ( res ){
+                return DocumentBlock.GetDocumentBlocks(doc_id)
             }
-        }).catch((exception) => {
-            console.error(exception)
-            res.send({ message : 'Something went wrong loading files' })
-        })
-    }
+            else{
+                res.status(403).send({ message : 'User does not have permission to view' })
+                throw(err)
+            }
+        }
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.status(403).send({ message : 'Something went wrong loading files' })
+        } else {
+            res.send(result)
+        }
+    }).catch((exception) => {
+        console.error(exception)
+        if ( !res.headersSent ){
+            res.status(500).send({ message : 'Something went wrong loading files' })
+        }
+    })
 })
 
 
@@ -69,7 +84,7 @@ router.post('/update/:doc_id', (req, res) => {
 })
 
 
-router.get('/create', (req, res) => {
+router.post('/create', (req, res) => {
     const user_id = req.user.uuid
     const version = 1
     const title = req.params.title
@@ -92,41 +107,70 @@ router.get('/create', (req, res) => {
     }
 })
 
-// router.get('/pdf/:id', function(req, res){
-//     const doc_id = req.params.doc_id
-//     if(Document.VaildateDocument(doc_id)){
-//         Document.FindFilepathByDocid(doc_id).then((result, err) => {
-//             if (err){
-//                 console.error(err)
-//                 res.send({ message : 'Something went wrong loading files' })
-//             }
-//             else{
-//                 res.send(result)
-//             }
-//         }).catch((exception) => {
-//             console.error(exception)
-//             res.send({ message : 'Something went wrong loading files' })
-//         })
-//     }
-// })
+router.get('/pdf/:id', function(req, res){
 
-router.get('/savepdf/:id?', (req, res) => {
-    const doc_id   = req.params.id
+    const doc_id  = req.params.id
+    const user_id = req.user.uuid
 
-    //if(Document.VaildateDocument(doc_id)){
-    accessFS.generatePDF(doc_id).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+        if (err){
+            throw(err)
+        }
+        else if (result){
+            return accessFS.retrievePDF(doc_id)
+        }
+    }).then((result, err) => {
         if (err){
             console.error(err)
-            res.send({ message : 'Something went wrong loading files' })
+            res.send({ message : 'Something went wrong loading the pdf' })
+        }
+        else{
+            res.type('pdf')
+            res.send(result)
+        }
+    }).catch((exception) => {
+        console.error(exception)
+        res.send({ message : 'Something went wrong loading the pdf' })
+    })
+})
+
+router.post('/savepdf/:id', (req, res) => {
+
+    const user_id = req.user.uuid
+    const doc_id = req.params.id
+
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+        if (err){
+            throw(err)
+        }
+        else if (result){
+            const blocks = req.params.blocks
+            const title = req.params.title
+
+            return DocumentBlock.UpdateDocument(doc_id, blocks, title)
+        }
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong saving the pdf' })
+        }
+        else{
+            return accessFS.generatePDF(user_id)
+        }
+
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong saving the pdf' })
         }
         else{
             res.send(result)
         }
     }).catch((exception) => {
         console.error(exception.error_message)
-        res.send({ message : 'Something went wrong loading files' })
+        res.send({ message : 'Something went wrong saving the pdf' })
     })
-    //}
+
 })
 
 module.exports = router

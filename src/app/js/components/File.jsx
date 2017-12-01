@@ -1,11 +1,14 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import _ from 'lodash'
 import Loader from './Loader'
-import FlatButton from 'material-ui/FlatButton'
+import { FlatButton, TextField, Snackbar } from 'material-ui'
 import EditableBlock from './EditableBlock'
+import classNames from 'classnames'
+import moment from 'moment'
 
 
 class File extends PureComponent {
@@ -19,15 +22,51 @@ class File extends PureComponent {
     }
 
     componentDidMount() {
-        this.props.dispatchFetchFile(this.props.selectedFile.id, () => {
-            this.setState({ isLoading: false })
+        const { selectedFile, location: { pathname } } = this.props
+        const lastIndex = pathname.lastIndexOf('/')
+        const isNew = selectedFile.isNew || pathname.substring(lastIndex + 1) === 'new'
+        const id = isNew ? '' : this.getDocumentId()
+        this.props.dispatchFetchFile(id, () => {
+            this.setState({
+                isLoading: false,
+                isNew: isNew,
+                hasMessage: false,
+                message: '',
+            })
         })
     }
 
+    getDocumentId() {
+        // if user refresh on the file, then selectedFile would be empty
+        const lastIndex = this.props.location.pathname.lastIndexOf('/')
+        return this.props.selectedFile.id || this.props.location.pathname.substring(lastIndex + 1)
+    }
+
     onSave() {
-        // Uncomment when the endpoint is ready
-        // this.dispatchSavePdf()
-        // this.setState({ isLoading: true })
+        this.setState({
+            isLoading: true,
+            hasMessage: false,
+            message: '',
+        })
+        const title = this.titleNode.getValue()
+        const blocks = this.props.selectedFile.blocks
+        const callback = (message) => {
+            this.setState({
+                isLoading: false,
+                hasMessage: true,
+                message,
+            })
+        }
+        if (this.state.isNew) {
+            const data = {
+                title,
+                blocks,
+                created_at: new moment().format('YYYY-MM-DD hh:mm:ss'),
+            }
+            this.props.dispatchCreateFile(data, callback)
+        } else {
+            this.props.dispatchUpdateFile(this.getDocumentId(), title, blocks, callback)
+        }
     }
 
     onShare() {
@@ -48,7 +87,7 @@ class File extends PureComponent {
 
     renderAvailableBlocks() {
         return this.props.selectedFile.availableBlocks.map((value, index) => (
-            <EditableBlock key={`available-blocks-${index}`} value={value} />
+            <EditableBlock key={`available-blocks-${index}`} value={value.summary} />
         ))
     }
 
@@ -74,7 +113,7 @@ class File extends PureComponent {
 
     renderButtons() {
         return (
-            <div>
+            <div className="c-file-content__button">
                 {this.renderEditButton()}
                 <FlatButton
                     label="Save to PDF"
@@ -95,16 +134,36 @@ class File extends PureComponent {
         )
     }
 
+    renderMessage() {
+        return (
+            <Snackbar
+                open={this.state.hasMessage}
+                message={this.state.message}
+                autoHideDuration={2000}
+            />
+        )
+    }
+
     render() {
         if (this.state.isLoading) {
             return <Loader />
         }
+        const fileClassName = classNames('c-file-content__file', {
+            'c--active': !this.state.isEditing,
+        })
         return (
             <div className="c-file-container">
                 <div className="c-file-content">
-                    <h3>Build Your Resume Here</h3>
+                    {this.renderMessage()}
                     {this.renderButtons()}
-                    {this.renderFileBlock()}
+                    <TextField
+                        defaultValue={this.props.selectedFile.title}
+                        floatingLabelText="Title"
+                        ref={ref => this.titleNode = ref}
+                    />
+                    <div className={fileClassName}>
+                        {this.renderFileBlock()}
+                    </div>
                 </div>
                 <div className="c-file-blocks">
                     <h3>Your Personal Blocks</h3>
@@ -116,15 +175,25 @@ class File extends PureComponent {
 }
 
 File.propTypes = {
-    // dispatchSavePdf: PropTypes.func.isRequired,
+    //dispatchSavePdf: PropTypes.func.isRequired,
+    dispatchCreateFile: PropTypes.func.isRequired,
+    dispatchUpdateFile: PropTypes.func.isRequired,
     dispatchFetchFile: PropTypes.func.isRequired,
     selectedFile: PropTypes.shape({
         id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
         blocks: PropTypes.arrayOf(PropTypes.shape({
             blockOrder: PropTypes.number.isRequired,
             summary: PropTypes.string.isRequired,
         })).isRequired,
-        availableBlocks: PropTypes.arrayOf(PropTypes.string.isRequired),
+        availableBlocks: PropTypes.arrayOf(PropTypes.shape({
+            blockId: PropTypes.string.isRequired,
+            summary: PropTypes.string.isRequired,
+        })),
+        isNew: PropTypes.bool.isRequired,
+    }),
+    location: PropTypes.shape({
+        pathname: PropTypes.string.isRequired,
     }),
 }
 
@@ -133,4 +202,4 @@ const mapStateToProps = ({ app }) => ({
 })
 
 
-export default connect(mapStateToProps, actions)(File)
+export default withRouter(connect(mapStateToProps, actions)(File))

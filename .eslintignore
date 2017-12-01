@@ -1,3 +1,2 @@
-main.js
-sw-toolbox.js
+src/public/**/*.js
 test/

@@ -1,5 +1,5 @@
 .c-status-bar {
-    --status-bar-height: 50px;
+    --status-bar-height: 60px;
 
     position: relative;
     display: flex;
@@ -7,18 +7,18 @@
     justify-content: space-between;
     width: 100%;
     min-height: var(--status-bar-height);
-    background-color: $color-primary-dark;
+    background-color: $color-primary;
+    padding: map-get($spacing__map, sm) 0;
 }
 
 .c-status-bar .c-status-bar__logo {
-    --logoWidth: 20px;
+    --logoWidth: 65px;
 
     position: absolute;
-    left: calc(50% - var(--logoWidth));
+    left: calc(50% - (var(--logoWidth)/2));;
     width: var(--logoWidth);
     height: auto;
-    margin-top: map-get($spacing__map, xs);
-    transform: translateX(-var(--status-bar-height)/2);
+    z-index: $modal-layer;
 }
 
 .c-status-bar .c-status-bar__user {
