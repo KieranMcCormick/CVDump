@@ -6,7 +6,7 @@ const requireLogin = require('../middlewares/requireLogin')
 router.use(requireLogin)
 //Called after login? or along with login?
 router.get('/load', (req, res) => {
-    
+
     new Notifications({ email: req.user.email }).load().then((result, err) => {
         if (result) {
             res.send(result)
