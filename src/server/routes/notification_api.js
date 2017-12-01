@@ -1,11 +1,13 @@
 const express = require('express')
 const router = express.Router()
 const Notifications = require('../models/notifications')
+const requireLogin = require('../middlewares/requireLogin')
 
+router.use(requireLogin)
 //Called after login? or along with login?
 router.get('/load', (req, res) => {
-    console.log(req.query)
-    new Notifications({ email: req.query.email }).load().then((result, err) => {
+    
+    new Notifications({ email: req.user.email }).load().then((result, err) => {
         if (result) {
             res.send(result)
         }
