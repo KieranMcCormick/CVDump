@@ -45,6 +45,9 @@ const sendFile = (rootDir, relPath, response) => {
 app.get('/:filename(main.js|styles.css)', (request, response) => {
     sendFile(PUBLIC_DIR, request.url, response)
 })
+app.get('/shared/:filename(0.js|1.js)', (request, response) => {
+    sendFile(PUBLIC_DIR, request.params.filename, response)
+})
 
 app.get(['/assets/:filename', '/assets/*/:filename'], (request, response) => {
     sendFile(PUBLIC_DIR, request.url, response)

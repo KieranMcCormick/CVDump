@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import Loader from './Loader'
 import CommentBox from '../containers/comments/CommentBox'
-import { Document } from 'react-pdf'
+import { Document, Page } from 'react-pdf/build/entry.webpack'
 
 /**
  * FILE NOT READY
@@ -42,6 +42,14 @@ class ShareFile extends PureComponent {
         })
     }
 
+    onLoadError(error) {
+        if ((error.message || error) === 'cancelled') {
+            console.log(`[PDF render] ${error.message}`)
+            return
+        }
+    }
+
+
     render() {
         if (this.state.isLoading) {
             return <Loader />
@@ -51,14 +59,13 @@ class ShareFile extends PureComponent {
             <div className="c-file-container">
                 <div className="c-file-content">
                     <h3>View Your Resume Here</h3>
-                    {/* Remove when endpoints are ready
-                        <Document
-                        file={this.props.selectedFile.pdf}
-                        onLoadSuccess={this.onDocumentLoad}
+                    <Document
+                        file={{ data: this.props.selectedFile.pdf }}
+                        onLoadSuccess={this.onDocumentLoad.bind(this)}
+                        onLoadError={this.onLoadError.bind(this)}
                     >
-                        <Page pageNumber={pageNumber} />
-                    </Document> */}
-                    <Document file={{ URL :this.props.selectedFile.pdf}}/>
+                        <Page pageNumber={1} />
+                    </Document>
                     <p>Page {pageNumber} of {numPages}</p>
                 </div>
                 <div className="c-file-comments">
@@ -78,7 +85,7 @@ ShareFile.propTypes = {
     selectedFile: PropTypes.shape({
         id: PropTypes.string.isRequired,
         comments: PropTypes.array.isRequired,
-        pdf: PropTypes.string.isRequired,
+        // pdf: PropTypes.object,
     }),
 }
 

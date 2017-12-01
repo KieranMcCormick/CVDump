@@ -144,12 +144,14 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 
         const comment = await axios.get(`/comment/${id}`)
         const pdf = await axios.get(`/files/pdf/${id}`)
+        // expermental code might not work in all broswer
+        const enc = new TextEncoder('utf-8')
 
         dispatch({
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
                 comments: comment.data,
-                pdf: pdf.data,
+                pdf: enc.encode(pdf.data),
             },
         })
         callback()
