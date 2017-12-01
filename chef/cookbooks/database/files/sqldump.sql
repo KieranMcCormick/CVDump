@@ -69,7 +69,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES ('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d','FIRSTNAME LASTNAME\n CITY EMAIL PHONE NUMBER\n'),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d','### HEADER 2\n');
+INSERT INTO `blocks` VALUES ('5915c474-d60c-11e7-9932-000c291b6367','2017-11-30 12:23:38','jobs','sales associate','2017-11-30 12:23:38','7bb327a5-cb4b-11e7-821a-026d4863120d','## SALES ASSOCIATE @PLACE \n ..* make monthly sales goals \n ..* increase company profits by 5% annually with new promotion'),('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d',' ## JOE SMITH \n #### city, state | phone: 111-111-1111 | email: joesmith@email.com\n ==='),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d','## SARAH LEE \n '),('d7d628a9-d60d-11e7-9932-000c291b6367','2017-11-30 12:34:20','headers','extra','2017-11-30 12:34:20','7bb327a5-cb4b-11e7-821a-026d4863120d','-----'),('e457b5cc-d60b-11e7-9932-000c291b6367','2017-11-30 12:20:22','jobs','donut shop job','2017-11-30 12:20:22','7bb327a5-cb4b-11e7-821a-026d4863120d','## DONUT PLACE\n -decorated and baked donuts \n -took customer orders and told them about promotions');
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,7 +117,6 @@ CREATE TABLE `document_blocks` (
   `document_id` varchar(36) NOT NULL,
   `block_id` varchar(36) NOT NULL,
   `block_order` int(11) NOT NULL,
-  PRIMARY KEY (`document_id`,`block_order`),
   KEY `document_id` (`document_id`),
   KEY `block_id` (`block_id`),
   CONSTRAINT `document_blocks_ibfk_1` FOREIGN KEY (`document_id`) REFERENCES `documents` (`uuid`),
@@ -163,7 +162,7 @@ CREATE TABLE `documents` (
 
 LOCK TABLES `documents` WRITE;
 /*!40000 ALTER TABLE `documents` DISABLE KEYS */;
-INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-18 20:58:48','first document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,'1/3/3','EipjRV.pdf'),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-18 20:59:59','second document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,NULL,NULL),('861cf54c-cce6-11e7-810c-000c291b6367','2017-11-18 21:00:12','Resume 1','99d3ced7-cb4b-11e7-821a-026d4863120d',1,NULL,NULL);
+INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-18 20:58:48','first document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,'1/3/3/','EipjRV.pdf'),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-18 20:59:59','second document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,NULL,NULL),('861cf54c-cce6-11e7-810c-000c291b6367','2017-11-18 21:00:12','Resume 1','99d3ced7-cb4b-11e7-821a-026d4863120d',1,NULL,NULL);
 /*!40000 ALTER TABLE `documents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,4 +267,6 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-29 16:12:35
+
+-- Dump completed on 2017-11-30 16:34:03
+
