@@ -9,7 +9,7 @@ router.use(requireLogin)
 
 router.get('/', (req, res) => {
     const user_email = req.user.email_address
-<<<<<<< HEAD
+
     if( user_email ){
         Document.LoadSharedDocumentsByUserEmail(user_email).then((result, err) => {
             if (err){
@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
     else{
         res.send([])
     }
-=======
+
 
     Document.LoadSharedDocumentsByUserEmail(user_email).then((result, err) => {
         if (err){
@@ -43,7 +43,6 @@ router.get('/', (req, res) => {
         res.send({ message : 'Something went wrong loading shared files' })
     })
 
->>>>>>> origin/master
 })
 
 
