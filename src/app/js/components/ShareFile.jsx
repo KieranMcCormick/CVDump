@@ -62,7 +62,6 @@ class ShareFile extends PureComponent {
         return (
             <div className="c-file-container">
                 <div className="c-file-content">
-                    <h3>View Your Resume Here</h3>
                     <Document
                         file={{ url: this.props.selectedFile.pdfUrl }}
                         onLoadSuccess={this.onDocumentLoad.bind(this)}

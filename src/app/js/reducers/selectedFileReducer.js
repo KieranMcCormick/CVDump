@@ -24,6 +24,7 @@ const reorder = (blocks) => {
     return blocks.map((block, index) => ({
         summary: block.summary,
         blockOrder: index + 1,
+        blockId: block.blockId,
     }))
 }
 
@@ -59,13 +60,14 @@ export default (state = initState, action) => {
         case types.CREATE_FILE_SUCCESS:
             return {
                 ...state,
-                title: action.payload.title,
+                title: action.payload,
                 isNew: false,
             }
         case types.ADD_BLOCK_TO_SELECTED_FILE: {
             const newBlock = {
                 blockOrder: state.blocks.length + 1,
-                summary: action.payload,
+                summary: action.payload.value,
+                blockId: action.payload.id,
             }
             return {
                 ...state,

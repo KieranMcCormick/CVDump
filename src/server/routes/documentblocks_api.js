@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 
     const user_id = req.user.uuid
 
-    Block.LoadBlocksByUserId(user_id).then((result, err) => {
+    Block.LoadDocBlocksByUserId(user_id).then((result, err) => {
         if (err) {
             console.error(err)
             res.send({ message: 'Something went wrong loading blocks' })

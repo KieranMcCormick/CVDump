@@ -55,7 +55,12 @@ class File extends PureComponent {
             message: '',
         })
         const title = this.titleNode.getValue()
-        const blocks = this.props.selectedFile.blocks
+        const blocks = this.props.selectedFile.blocks.map(item => {
+            return {
+                id: item.blockId,
+                blockOrder: item.blockOrder,
+            }
+        })
         const callback = (message) => {
             this.setState({
                 isLoading: false,
@@ -85,6 +90,7 @@ class File extends PureComponent {
             <EditableBlock
                 key={`available-blocks-${index}`}
                 value={block.summary}
+                id={block.blockId}
                 blockOrder={block.blockOrder}
                 isEditing={this.state.isEditing}
             />
@@ -92,8 +98,12 @@ class File extends PureComponent {
     }
 
     renderAvailableBlocks() {
-        return this.props.selectedFile.availableBlocks.map((value, index) => (
-            <EditableBlock key={`available-blocks-${index}`} value={value.summary} />
+        return this.props.selectedFile.availableBlocks.map((block, index) => (
+            <EditableBlock
+                key={`available-blocks-${index}`}
+                value={block.summary}
+                id={block.blockId}
+            />
         ))
     }
 
@@ -181,7 +191,6 @@ class File extends PureComponent {
 }
 
 File.propTypes = {
-    //dispatchSavePdf: PropTypes.func.isRequired,
     dispatchCreateFile: PropTypes.func.isRequired,
     dispatchUpdateFile: PropTypes.func.isRequired,
     dispatchFetchFile: PropTypes.func.isRequired,
@@ -190,6 +199,7 @@ File.propTypes = {
         id: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
         blocks: PropTypes.arrayOf(PropTypes.shape({
+            blockId: PropTypes.string.isRequired,
             blockOrder: PropTypes.number.isRequired,
             summary: PropTypes.string.isRequired,
         })).isRequired,

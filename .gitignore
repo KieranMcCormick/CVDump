@@ -133,3 +133,7 @@ src/public/styles.*
 
 package-lock.json
 nodes/*
+
+src/public/0.js
+src/public/1.js
+src/public/pdf.worker.js

@@ -32,7 +32,7 @@ class EditableBlock extends PureComponent {
                 <div className="c-editable-block__button">
                     <i
                         className="material-icons"
-                        onClick={()=>{this.props.dispatchAddBlockToSelectedFile(this.props.value)}}
+                        onClick={()=>{this.props.dispatchAddBlockToSelectedFile(this.props.value, this.props.id)}}
                     >
                         add
                     </i>
@@ -57,6 +57,7 @@ class EditableBlock extends PureComponent {
 EditableBlock.propTypes = {
     value: PropTypes.string.isRequired,
     blockOrder: PropTypes.number,
+    id: PropTypes.string.isRequired,
     isEditing: PropTypes.bool,
     dispatchAddBlockToSelectedFile: PropTypes.func.isRequired,
     dispatchRemoveBlockFromSelectedFile: PropTypes.func.isRequired,

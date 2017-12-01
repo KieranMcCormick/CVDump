@@ -7,16 +7,27 @@ const fs = require('fs')
 //path to where file system is located
 let fs_path = process.env.FILESYSTEM_PATH || '/home/ubuntu/files/'
 
+
+if (process.env.NODE_ENV !== 'production') {
+    fs_path = '/home/seleena/Documents/files/'
+}
+
+/* returns file path: append filename to this*/
 function genFilePath(){
     const options = {
         length: 1,
         charset: '123',
     }
-    let path = fs_path +
-               rand.generate(options) + '/' +
+    let path = rand.generate(options) + '/' +
                rand.generate(options) + '/' +
                rand.generate(options) + '/'
     return path
+}
+
+function genFilename(){
+
+    let filename = rand.generate(6) + '.pdf'
+    return filename
 }
 
 
@@ -30,30 +41,36 @@ module.exports = {
             let filename = ''
             let filepath = ''
             let md = ''
-            let path = ''
 
             Document.FindFilepathByDocid(doc_id).then((res, err) => {
                 if (err){
                     throw(err)
                 }
-                else if (res[0].filepath != ''){ //filepath already exists
+                //filepath already exists
+                else if ( res != undefined && (res[0].filename != null || res[0].filepath != null) ){
+
                     filename = res[0].filename
                     filepath = res[0].filepath
+                }
+                //create new filepath
+                else{
+
                     update_flag = true
+                    filename    = genFilename()
+                    filepath    = genFilePath()
+
                 }
-                else{ //create new filepath
-                    filename = rand.generate(6) + '.pdf'
-                    path = genFilePath()
-                }
-                return DocumentBlock.GetDocumentBlocks(doc_id)
+                return DocumentBlock.GetDocumentBlocksSummary(doc_id)
 
             }).then((blocks, err) => {
                 if (err){
                     throw(err)
                 }
                 else{
-                    md = blocks
+                    md = blocks.map(item => {return item.summary}).join(' \n ')
+
                     if (update_flag) {
+                        console.log(filepath+filename)
                         Document.UpdateDocumentFilepath(doc_id, filepath, filename)
                     }
                 }
@@ -63,8 +80,7 @@ module.exports = {
                     throw(err)
                 }
                 else{
-                    const full_path_pdf = path + filename
-
+                    let full_path_pdf = fs_path + filepath + filename
                     mdpdf().from.string(md).to(full_path_pdf, function(){
                         console.log('PDF File created')
                     })
@@ -78,7 +94,6 @@ module.exports = {
     },
 
 
-    //WIP
     retrievePDF: function(doc_id) {
         return new Promise((resolve, reject) => {
             Document.FindFilepathByDocid(doc_id).then((filepath, err) => {
@@ -86,14 +101,17 @@ module.exports = {
                     throw(err)
                 }
                 else{
-                    fs.readFile(fs_path+filepath, function (error, result){
-                        if (error){
-                            throw(error)
-                        }
-                        else{
-                            resolve(result)
-                        }
-                    })
+                    if ( filepath != undefined || filepath.length > 0 ){ //test this when pdf render works
+                        let full_path_pdf = fs_path + filepath[0].filepath + filepath[0].filename
+                        fs.readFile(full_path_pdf, function (error, result){
+                            if (error){
+                                throw(error)
+                            }
+                            else{
+                                resolve(result)
+                            }
+                        })
+                    }
                 }
             }).catch((error) => {
                 console.error(error)
