@@ -31,8 +31,13 @@ const extractCSRF = (agent) => {
     return cookie ? cookie.value : null
 }
 
+const extractCookies = (agent) => {
+    return agent.jar.getCookies(new Cookie.CookieAccessInfo())
+}
+
 module.exports = {
     pristineDB,
     loginUser,
-    extractCSRF
+    extractCSRF,
+    extractCookies
 }

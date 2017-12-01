@@ -44,7 +44,7 @@ router.post('/logout', (req, res) => {
     res.redirect('/')
 })
 
-router.post('/register', UserCreationValidation, (req, res, next) => {
+router.post('/signup', UserCreationValidation, (req, res, next) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
