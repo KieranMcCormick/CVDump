@@ -52,7 +52,6 @@ class NotificationsView extends PureComponent {
     //Links to relevant page and deletes notification
     resolveNotification(notice,route) {
         //fixes bug where user directly routes to file page before client fetchesFiles
-        this.props.dispatchFetchFiles()
         this.props.dispatchResolveNotification(notice.uuid)
         if(route) {
             let routePath = '/shared/' +notice.documentId
@@ -71,7 +70,7 @@ class NotificationsView extends PureComponent {
 
                     let caption = notice.file ? 'New comment on '  + notice.file : 'New comment from ' +notice.sender
                     let subtitle = notice.timeStamp.substring(0,10)
-                    return <Card >
+                    return <Card key={'notification-' +index}>
                         <CardHeader
                             title={caption}
                             subtitle={subtitle}
@@ -145,11 +144,11 @@ NotificationsView.propTypes = {
     location: PropTypes.shape({
         pathname: PropTypes.string.isRequired,
     }),
+    history: PropTypes.any.isRequired,
     notifications: PropTypes.any.isRequired,
     dispatchReceiveNotification: PropTypes.func.isRequired,
     dispatchResolveNotification:PropTypes.func.isRequired,
     dispatchFetchNotifications: PropTypes.func.isRequired,
-    dispatchFetchFile: PropTypes.func.isRequired,
 }
 
 

@@ -21,7 +21,7 @@ SocketHandler.joinRoom = (namespace, roomId, user) => {
     switch (namespace) {
         case 'comments':
             //SocketHandler.commentSocket = io('/comments')
-            SocketHandler.commentSocket.emit('joinRoom', { roomId: roomId, user: user })
+            SocketHandler.commentSocket.emit('joinRoom',  roomId)
             break
         case 'notifications':
             // SocketHandler.notificationSocket = io('/notifications')

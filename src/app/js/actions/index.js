@@ -463,7 +463,7 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
 export const dispatchResolveNotification = (id) => async (dispatch) => {
     try {
         //call delete on server
-        let success = await axiosWithCSRF.post('/notifications/delete', { id: id })
+        await axiosWithCSRF.post('/notifications/delete', { id: id })
         //update state by removing notification from old state
         dispatch({
             type: types.RESOLVE_NOTIFICATION,

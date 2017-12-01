@@ -19,7 +19,7 @@ class CommentBox extends Component {
     }
 
     componentDidMount() {
-        SocketHandler.joinRoom('comments', this.props.docId,this.props.username)
+        SocketHandler.joinRoom('comments', this.props.docId)
         SocketHandler.listen(
             'comments',
             'update',
