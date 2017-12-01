@@ -143,13 +143,12 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
     try {
 
         const comment = await axios.get(`/comment/${id}`)
-        const pdf = await axios.get(`/files/pdf/${id}`)
 
         dispatch({
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
                 comments: comment.data,
-                pdf: pdf.data,
+                pdfUrl: `/api/files/pdf/${id}`,
             },
         })
         callback()

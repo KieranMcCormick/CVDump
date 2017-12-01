@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {// Only use these in production
 const sendFile = (rootDir, relPath, response) => {
     response.sendFile(relPath, { root: rootDir })
 }
-app.get('/:filename(main.js|styles.css)', (request, response) => {
+app.get('/:filename(main.js|styles.css|pdf.worker.js)', (request, response) => {
     sendFile(PUBLIC_DIR, request.url, response)
 })
 
