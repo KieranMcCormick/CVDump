@@ -76,7 +76,7 @@ class File extends PureComponent {
     }
 
     onShare() {
-
+        this.props.dispatchShareFile(this.getDocumentId(),['user1@email.com','user2@email.com'])
     }
 
     renderFileBlock() {
@@ -186,6 +186,12 @@ File.propTypes = {
     dispatchUpdateFile: PropTypes.func.isRequired,
     dispatchFetchFile: PropTypes.func.isRequired,
     dispatchSelectFile: PropTypes.func.isRequired,
+    dispatchShareFile: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+        info: PropTypes.shape({
+            username: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
     selectedFile: PropTypes.shape({
         id: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
@@ -204,8 +210,9 @@ File.propTypes = {
     }),
 }
 
-const mapStateToProps = ({ app }) => ({
+const mapStateToProps = ({ app, user }) => ({
     selectedFile: app.selectedFile,
+    user: user,
 })
 
 

@@ -16,10 +16,10 @@ const CHECK_USER_PERMISSION_ON_DOC = 'SELECT user_id from documents where uuid =
 const ParseDocSQL = (rows) => {
     return _.map(rows, function (entries) {
         return {
-            title    : entries.title,
-            docId    : entries.uuid,
-            filename : entries.filename,
-            filepath : entries.filepath,
+            title: entries.title,
+            docId: entries.uuid,
+            filename: entries.filename,
+            filepath: entries.filepath,
             userEmail: entries.user_email,
         }
     })
@@ -28,10 +28,10 @@ const ParseDocSQL = (rows) => {
 class Document {
     constructor(props) {
         if (props) {
-            this.doc_id   = props.uuid
-            this.title    = props.title ? props.title : 'untitled'
-            this.user_id  = props.user_id
-            this.version  = props.version
+            this.doc_id = props.uuid
+            this.title = props.title ? props.title : 'untitled'
+            this.user_id = props.user_id
+            this.version = props.version
             this.filepath = props.filepath ? props.filepath : ''
             this.filename = props.filename ? props.filename : ''
         }
@@ -48,7 +48,7 @@ class Document {
 
 
     SQLValueArray() {
-        return [ this.title, this.user_id, this.filename, this.filepath, this.version ]
+        return [this.title, this.user_id, this.filename, this.filepath, this.version]
     }
 
     save() {
@@ -71,7 +71,7 @@ class Document {
 
         return new Promise((resolve, reject) => {
             const doc = new Document()
-            doc.title   = props.title
+            doc.title = props.title
             doc.version = props.version
             doc.user_id = props.user_id
             doc.save().then((savedDoc) => {
@@ -86,21 +86,21 @@ class Document {
 
     static LoadDocumentsByUserId(user_id) {
         return new Promise((resolve, reject) => {
-            sqlSelect(FIND_RECENT_BY_USERID, [ user_id ], (err, documents) => {
+            sqlSelect(FIND_RECENT_BY_USERID, [user_id], (err, documents) => {
                 if (err) { console.error(err); return resolve(null) }
 
-                let userFiles = { 'files' : ParseDocSQL(documents)}
+                let userFiles = { 'files': ParseDocSQL(documents) }
                 resolve(userFiles)
             })
         })
     }
 
-    static LoadSharedDocumentsByUserEmail(user_email){
+    static LoadSharedDocumentsByUserEmail(user_email) {
         return new Promise((resolve, reject) => {
-            sqlSelect(FIND_SHARED_TO_USEREMAIL, [ user_email ], (err, documents) => {
+            sqlSelect(FIND_SHARED_TO_USEREMAIL, [user_email], (err, documents) => {
                 if (err) { console.error(err); return resolve(null) }
 
-                let userFiles = { 'files' : ParseDocSQL(documents)}
+                let userFiles = { 'files': ParseDocSQL(documents) }
                 resolve(userFiles)
             })
         })
@@ -109,7 +109,7 @@ class Document {
 
     static UpdateTitleByDocid(doc_id) {
         return new Promise((resolve, reject) => {
-            sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [ doc_id ], (err, res) => {
+            sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [doc_id], (err, res) => {
                 if (err) { console.error(err); return resolve(null) }
                 resolve(res)
             })
@@ -118,7 +118,7 @@ class Document {
 
     static FindFilepathByDocid(doc_id) {
         return new Promise((resolve, reject) => {
-            sqlSelect(FIND_FILEPATH_BY_DOCID, [ doc_id ], (err, documents) => {
+            sqlSelect(FIND_FILEPATH_BY_DOCID, [doc_id], (err, documents) => {
                 if (err) {
                     console.error(err)
                     return resolve(null)
@@ -130,9 +130,9 @@ class Document {
     }
 
     /*Should only be called when first creating pdf*/
-    static UpdateDocumentFilepath(doc_id, filepath, filename){
+    static UpdateDocumentFilepath(doc_id, filepath, filename) {
         return new Promise((resolve, reject) => {
-            sqlUpdate(UPDATE_FILEPATH, [ doc_id, filepath, filename ], (err, result) => {
+            sqlUpdate(UPDATE_FILEPATH, [doc_id, filepath, filename], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(new Error('Database Error'))
@@ -146,18 +146,41 @@ class Document {
     }
 
     //validate user permitted to save
-    static VaildateDocumentPermission(doc_id, user_id){
+    static VaildateDocumentPermission(doc_id, user_id) {
         return new Promise((resolve, reject) => {
-            sqlSelect(CHECK_USER_PERMISSION_ON_DOC, [doc_id], (err, result) =>{
-                if(err){console.error(err); return reject(err)}
-                if( result[0].user_id != user_id ){
+            sqlSelect(CHECK_USER_PERMISSION_ON_DOC, [doc_id], (err, result) => {
+                if (err) { console.error(err); return reject(err) }
+                if (result[0].user_id != user_id) {
                     return resolve(false)
                 }
-                else{
+                else {
                     return resolve(true)
                 }
             })
         })
+    }
+
+
+    static shareFile(ownerId, doc_id, emails) {
+        const shareQuery = ' INSERT INTO shared_files ( owner_id, user_email, document_id) VALUES ( ?, ?, ?)'
+        let queries = []
+        emails.forEach((email) => {
+            queries.push(
+                new Promise((resolve, reject) => {
+                    sqlInsert(shareQuery, [ownerId, email, doc_id], (err, result) => {
+                        if (err) {
+                            return reject(new Error('Database Error'))
+                        }
+                        if (!result/** || result**/) { // Check valid result ... ?
+                            return reject(new Error('Unknown Error'))
+                        }
+                        return resolve({ docId: doc_id, sent_email: email })
+                    })
+
+                })
+            )
+        })
+        return Promise.all(queries)
     }
 
 }
