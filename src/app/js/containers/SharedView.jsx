@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import ShareBlock from '../components/ShareBlock'
+import Loader from '../components/Loader'
 
 
 class SharedView extends Component {
@@ -14,12 +15,14 @@ class SharedView extends Component {
         }
     }
     componentDidMount() {
-        this.props.dispatchFetchSharedFiles(() => this.setState({ isLoading: false }))
+        this.props.dispatchFetchSharedFiles(() => {
+            this.setState({ isLoading: false })
+        })
     }
 
     renderSharedWith() {
-        const Email = this.props.user.info.userEmail
-        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail !== Email )
+        const email = this.props.user.info.email
+        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail !== email )
         return files.map(({docId, title}, index) => (
             <ShareBlock
                 key={`file-block-shared-with-${index}`}
@@ -30,8 +33,8 @@ class SharedView extends Component {
     }
 
     renderSharedTo() {
-        const Email = this.props.user.info.userEmail
-        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail === Email )
+        const email = this.props.user.info.email
+        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail === email )
         return files.map(({docId, title}, index) => (
             <ShareBlock
                 key={`file-block-shared-to-${index}`}
@@ -42,6 +45,9 @@ class SharedView extends Component {
     }
 
     render() {
+        if (this.state.isLoading) {
+            return <Loader />
+        }
         return (
             <div className="c-shares-view-container">
                 <h2>Files I Shared with People</h2>
@@ -60,7 +66,7 @@ class SharedView extends Component {
 SharedView.propTypes = {
     user: PropTypes.shape({
         info: PropTypes.shape({
-            userEmail: PropTypes.string.isRequired,
+            email: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
     sharedFiles: PropTypes.arrayOf(PropTypes.shape({

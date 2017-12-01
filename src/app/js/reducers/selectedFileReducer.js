@@ -52,6 +52,8 @@ export default (state = initState, action) => {
             return {
                 ...state,
                 isNew: true,
+                id: 'new',
+                title: 'Untitled',
             }
         case types.UPDATE_FILE_SUCCESS:
         case types.CREATE_FILE_SUCCESS:

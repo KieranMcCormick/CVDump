@@ -93,18 +93,20 @@ export const dispatchClearFormMessages = () => ({
     type: types.FORM_MESSAGES_CLEAR,
 })
 
-export const dispatchFetchFiles = () => async (dispatch) => {
+export const dispatchFetchFiles = (callback) => async (dispatch) => {
     try {
         const res = await axios.get('/files')
         dispatch({
             type: types.FETCH_FILES_SUCCESS,
             payload: res.data,
         })
+        callback()
     } catch (error) {
         dispatch({
             type: types.FETCH_FILES_FAILURE,
             payload: error.response.data,
         })
+        callback()
     }
 }
 
@@ -166,7 +168,9 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
 
-        const blocks = await axios.get(`/files/${id}`)
+        const blocks = id === ''
+            ? { data: [] }
+            : await axios.get(`/files/${id}`)
         const availableBlocks = await axios.get('/blocks')
 
         dispatch({
