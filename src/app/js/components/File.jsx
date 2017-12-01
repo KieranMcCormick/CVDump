@@ -175,7 +175,7 @@ class File extends PureComponent {
 }
 
 File.propTypes = {
-    // dispatchSavePdf: PropTypes.func.isRequired,
+    //dispatchSavePdf: PropTypes.func.isRequired,
     dispatchCreateFile: PropTypes.func.isRequired,
     dispatchUpdateFile: PropTypes.func.isRequired,
     dispatchFetchFile: PropTypes.func.isRequired,
@@ -187,7 +187,7 @@ File.propTypes = {
             summary: PropTypes.string.isRequired,
         })).isRequired,
         availableBlocks: PropTypes.arrayOf(PropTypes.shape({
-            block_id: PropTypes.string.isRequired,
+            blockId: PropTypes.string.isRequired,
             summary: PropTypes.string.isRequired,
         })),
         isNew: PropTypes.bool.isRequired,

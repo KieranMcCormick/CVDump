@@ -1,7 +1,19 @@
 const { sqlInsert, sqlSelect } = require('../db')
+const _ = require('lodash')
 
 const CREATE_BLOCK_SQL = 'INSERT INTO document_blocks (document_id, block_id, block_order) VALUES (?, ?, ?)'
-const GET_BLOCKS_BY_DOCID_SQL = 'SELECT b.summary FROM blocks b JOIN document_blocks dbs ON dbs.block_id = b.uuid WHERE dbs.document_id = ? ORDER BY block_order ASC'
+const GET_BLOCKS_BY_USERID = 'SELECT uuid, label, summary, created_at FROM blocks b where user_id = ?'
+
+
+/*This will be visible to public*/
+const ParseBlockSQL = (rows) => {
+    return _.map(rows, function (entries) {
+        return {
+            blockId : entries.uuid,
+            summary  : entries.summary,
+        }
+    })
+}
 
 class Block {
     constructor(props) {
@@ -18,11 +30,9 @@ class Block {
 
     blockJson() {
         return {
-            uuid       : this.uuid,
             label      : this.label,
             type       : this.type,
-            block_id   : this.block_id,
-            user_id    : this.user_id,
+            block_id   : this.uuid,
             updated_at : this.updated_at,
             summary    : this.summary,
         }
@@ -68,21 +78,11 @@ class Block {
         })
     }
 
-    //WIP
-    static GetBlocks(id){
+    static LoadBlocksByUserId(user_id){
         return new Promise((resolve, reject) => {
-            sqlSelect(GET_BLOCKS_BY_DOCID_SQL, [ id ], (err, blocks) => {
-                if (err) { console.error(err); return resolve(null) }
-                let doc = ''
-
-                for ( let b of blocks ){
-                    doc += b.summary
-                }
-                console.log(doc)
-                resolve(doc)
-            }).catch((error) => {
-                console.error(`Failed to compile blocks from document ${id}`)
-                reject(error)
+            sqlSelect(GET_BLOCKS_BY_USERID, [ user_id ], (err, blocks) => {
+                if (err) { console.error(err); return reject(null) }
+                resolve(ParseBlockSQL(blocks))
             })
         })
     }

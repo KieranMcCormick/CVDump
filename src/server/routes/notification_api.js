@@ -57,12 +57,4 @@ router.post('/delete', (req, res) => {
 
 })
 
-function validateJson(reqData) {
-    if (!reqData.email || !reqData.type || !reqData.documentId) {
-        return false
-
-    } else {
-        return true
-    }
-}
 module.exports = router

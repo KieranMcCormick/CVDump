@@ -58,7 +58,7 @@ router.get('/:id', (req, res) => {
         }
         else{
             if ( res ){
-                return DocumentBlock.GetBlocks(doc_id)
+                return DocumentBlock.GetDocumentBlocks(doc_id)
             }
             else{
                 res.status(403).send({ message : 'User does not have permission to view' })

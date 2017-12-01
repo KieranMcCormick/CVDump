@@ -68,7 +68,7 @@ class Notifications {
                     let userId = success[0].uuid
                     let username = success[0].username
 
-                    if(username =! this.sender) {
+                    if(username != this.sender) {
                         //No need to emit your own notification
                         return reject({message:'Cannot create notifcation for yourself'})
 

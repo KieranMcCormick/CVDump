@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { withRouter,Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Badge from 'material-ui/Badge'
 import IconButton from 'material-ui/IconButton'

@@ -170,11 +170,17 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
 
-        const doc = await axios.get(`/files/${id}`)
+        const blocks = await axios.get(`/files/${id}`)
+        const availableBlocks = await axios.get('/blocks')
+
+        //const doc = await axios.get(`/files/${id}`)
         // const availableBlocks = await axios.get(`/blocks`)
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
-            payload: doc.data,
+            payload: {
+                blocks : blocks.data,
+                availableBlocks: availableBlocks.data,
+            },
         })
         callback()
     } catch (error) {
