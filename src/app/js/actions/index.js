@@ -173,7 +173,7 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
         const blocks = await axios.get(`/files/${id}`)
         const availableBlocks = await axios.get('/blocks')
 
-        const doc = await axios.get(`/files/${id}`)
+        //const doc = await axios.get(`/files/${id}`)
         // const availableBlocks = await axios.get(`/blocks`)
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
