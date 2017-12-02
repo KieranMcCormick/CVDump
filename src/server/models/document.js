@@ -162,7 +162,7 @@ class Document {
 
 
     static shareFile(ownerId, doc_id, emails) {
-        const shareQuery = ' INSERT INTO shared_files ( owner_id, user_email, document_id) VALUES ( ?, ?, ?)'
+        const shareQuery = " INSERT INTO shared_files ( owner_id, user_email, document_id) VALUES ( ?, ?, ?)"
         let queries = []
         emails.forEach((email) => {
             queries.push(
@@ -182,7 +182,6 @@ class Document {
         })
         return Promise.all(queries)
     }
-
 }
 
 
