@@ -95,9 +95,11 @@ class Document {
         })
     }
 
+
     static LoadSharedDocumentsByUserEmail(user_email, user_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_SHARED_BY_USEREMAIL, [user_email, user_id], (err, documents) => {
+
                 if (err) { console.error(err); return resolve(null) }
 
                 let userFiles = { 'files': ParseDocSQL(documents) }
