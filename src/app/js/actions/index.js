@@ -420,7 +420,4 @@ export const dispatchShareFile = (docId,emails) => async(dispatch) => {
             payload: error.response.data,
         })
     }
-
-
-
 }

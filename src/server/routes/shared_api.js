@@ -38,11 +38,11 @@ router.get('/', (req, res) => {
 }
 */
 router.post('/share', (req, res) => {
-
+    
     if (!req.body.shareWith) {
-        //if theres no specified user to share with, or it is empty
+        //if theres no specified user to share with, or it is empty 
         res.send({ message: 'There is no one to share with' })
-        // Check if target exists
+        // Check if target exists    
     } else {
         validateUsers(req.body.shareWith).then((success, error) => {
             if (error) {
@@ -51,13 +51,17 @@ router.post('/share', (req, res) => {
             if (success) {
                 success.forEach((check, index) => {
                     if (check == null) {
-                        console.log('no such email ' + req.body.shareWith[index])
-                        res.send({ message: 'no such email ' + req.body.shareWith[index] })
+                        console.log("no such email " + req.body.shareWith[index])
+                        res.send({ message: "no such email " + req.body.shareWith[index] })
                     }
                 })
                 //create share_objects
 
-                Document.shareFile(req.user.uuid,req.body.docId,req.body.shareWith).then((success, err) => {
+                Document.shareFile(
+                    req.user.uuid,
+                    req.body.docId,
+                    req.body.shareWith)
+                    .then((success, err) => {
                     if (err) {
                         res.send({ message: 'THe user does not exists' })
                     }
@@ -65,16 +69,9 @@ router.post('/share', (req, res) => {
                         res.send(success)
                     }
                 })
-
             }
-
         })
-
-
     }
-
-
-
 })
 
 function validateUsers(emailArray) {
