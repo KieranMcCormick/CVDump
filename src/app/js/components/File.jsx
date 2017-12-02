@@ -9,6 +9,10 @@ import { FlatButton, TextField, Snackbar } from 'material-ui'
 import EditableBlock from './EditableBlock'
 import classNames from 'classnames'
 import moment from 'moment'
+import Dialog from 'material-ui/Dialog'
+import Chip from 'material-ui/Chip';
+import {validateEmail} from '../global/common'
+
 
 
 class File extends PureComponent {
@@ -18,6 +22,8 @@ class File extends PureComponent {
         this.state = {
             isLoading: true,
             isEditing: false,
+            modal: false,
+            tags: [],
         }
     }
 
@@ -70,8 +76,11 @@ class File extends PureComponent {
     }
 
     onShare() {
-        this.props.dispatchShareFile(this.getDocumentId(),['user1@email.com','user2@email.com'])
+        this.props.dispatchShareFile(this.getDocumentId(),this.state.tags)
+        this.toggleModal()
     }
+
+
 
     renderFileBlock() {
         const sorted = _.sortBy(this.props.selectedFile.blocks, 'blockOrder')
@@ -111,6 +120,59 @@ class File extends PureComponent {
         }
     }
 
+    toggleModal(){
+        this.setState({modal:!this.state.modal})
+    }
+
+    createTag(event){
+        
+        if(event.key =="Enter" && validateEmail(event.target.value)) {
+            this.setState({tags:[...this.state.tags,event.target.value]})
+            event.target.value =''
+        }  
+    }
+
+    deleteKey(key) {
+        console.log(key)
+        let newState =this.state.tags.filter((tag,index) =>{
+            return index !=key
+        })
+        this.setState({tags:newState})
+    }
+    renderTags(){
+        return this.state.tags.map((tag, index) => {
+            return (
+                <Chip key ={index} onRequestDelete={() => this.deleteKey(index)}> {tag} </Chip>
+            )
+        })
+
+    
+    }
+    renderModal() {
+        return (
+            <div>
+                <Dialog
+                    title="Share File with:"
+                    modal={true}
+                    open={this.state.modal}
+                    onRequestClose = {this.toggleModal}
+                 >
+                 <p> Enter user emails to who you want to share with and hit 'Enter', click the cross to remove emails</p>
+                 {this.renderTags()}
+                 <TextField onKeyDown= {(e)=>this.createTag(e) } className="tag_input" type="text"/>
+                 <FlatButton
+                    label="share"
+                    onClick={() => this.onShare()}
+                />
+                <FlatButton
+                    label="cancel"
+                    onClick={() => this.toggleModal()}
+                />
+                </Dialog>
+            </div>
+        )
+    }
+
     renderButtons() {
         return (
             <div className="c-file-content__button">
@@ -128,7 +190,7 @@ class File extends PureComponent {
                 <FlatButton
                     label="Share file"
                     icon={<i className="material-icons">share</i>}
-                    onClick={() => this.onShare()}
+                    onClick={() => this.toggleModal()}
                 />
             </div>
         )
@@ -153,6 +215,7 @@ class File extends PureComponent {
         })
         return (
             <div className="c-file-container">
+                {this.renderModal()}
                 <div className="c-file-content">
                     {this.renderMessage()}
                     {this.renderButtons()}
