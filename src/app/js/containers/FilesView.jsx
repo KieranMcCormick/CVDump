@@ -4,14 +4,21 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import FileBlock from '../components/FileBlock'
 import * as actions from '../actions'
+import Loader from '../components/Loader'
 
 class Files extends Component {
     constructor(props) {
         super(props)
+
+        this.state = {
+            isLoading: true,
+        }
     }
 
     componentDidMount() {
-        this.props.dispatchFetchFiles()
+        this.props.dispatchFetchFiles(() => {
+            this.setState({ isLoading: false })
+        })
     }
 
     onClickHandler() {
@@ -43,6 +50,9 @@ class Files extends Component {
     }
 
     render() {
+        if (this.state.isLoading) {
+            return <Loader />
+        }
         return (
             <div className="u-flex-row u--wrap u-padding-lg">
                 {this.renderFiles()}

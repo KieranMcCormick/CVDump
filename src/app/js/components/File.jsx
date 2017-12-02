@@ -31,15 +31,21 @@ class File extends PureComponent {
         const { selectedFile, location: { pathname } } = this.props
         const lastIndex = pathname.lastIndexOf('/')
         const isNew = selectedFile.isNew || pathname.substring(lastIndex + 1) === 'new'
-        const id = isNew ? '' : this.getDocumentId()
-        this.props.dispatchFetchFile(id, () => {
+        const callback = () => {
             this.setState({
                 isLoading: false,
                 isNew: isNew,
                 hasMessage: false,
                 message: '',
             })
-        })
+        }
+        const id = isNew ? '' : this.getDocumentId()
+        this.props.dispatchFetchFile(id, callback)
+    }
+
+    componentWillUnmount() {
+        // clears the selected file
+        this.props.dispatchSelectFile()
     }
 
     getDocumentId() {
@@ -242,6 +248,7 @@ File.propTypes = {
     dispatchCreateFile: PropTypes.func.isRequired,
     dispatchUpdateFile: PropTypes.func.isRequired,
     dispatchFetchFile: PropTypes.func.isRequired,
+    dispatchSelectFile: PropTypes.func.isRequired,
     dispatchShareFile: PropTypes.func.isRequired,
     user: PropTypes.shape({
         info: PropTypes.shape({

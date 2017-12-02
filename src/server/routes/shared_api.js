@@ -12,8 +12,8 @@ router.use(requireLogin)
 //`document_id` varchar(36) DEFAULT NULL,
 router.get('/', (req, res) => {
     const user_email = req.user.email_address
-
-    Document.LoadSharedDocumentsByUserEmail(user_email).then((result, err) => {
+    const user_id = req.user.uuid
+    Document.LoadSharedDocumentsByUserEmail(user_email, user_id).then((result, err) => {
         if (err) {
             console.error(err)
             res.send({ message: 'Something went wrong loading shared files' })
@@ -38,11 +38,11 @@ router.get('/', (req, res) => {
 }
 */
 router.post('/share', (req, res) => {
-    
+
     if (!req.body.shareWith) {
-        //if theres no specified user to share with, or it is empty 
+        //if theres no specified user to share with, or it is empty
         res.send({ message: 'There is no one to share with' })
-        // Check if target exists    
+        // Check if target exists
     } else {
         validateUsers(req.body.shareWith).then((success, error) => {
             if (error) {

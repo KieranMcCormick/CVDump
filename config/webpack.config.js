@@ -4,7 +4,10 @@ const webpackDevConfig = require('./webpack.config.dev')
 const webpackProdConfig = require('./webpack.config.prod')
 
 let webpackConfig = {
-    entry: __dirname + '/../src/app/js/app.jsx',
+    entry: {
+        main: __dirname + '/../src/app/js/app.jsx',
+        'pdf.worker': 'pdfjs-dist/build/pdf.worker.entry',
+    },
     output: {
         filename: '[name].js',
         path: __dirname + '/../src/public'
