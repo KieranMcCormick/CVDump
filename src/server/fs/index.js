@@ -5,7 +5,7 @@ const { Document } = require('../models/document')
 const { DocumentBlock } = require('../models/documentblock')
 const fs = require('fs')
 //path to where file system is located
-let fs_path = process.env.FILESYSTEM_PATH || '/home/seleena/Documents/files/'
+let fs_path = process.env.FILESYSTEM_PATH || '/home/ubuntu/files/'
 
 function genFilePath(){
     const options = {
