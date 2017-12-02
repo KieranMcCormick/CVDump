@@ -126,7 +126,7 @@ class File extends PureComponent {
 
     createTag(event){
         
-        if(event.key =="Enter" && validateEmail(event.target.value)) {
+        if(event.key =="Enter" && validateEmail(event.target.value) && this.props.user.info.email!=event.target.value) {
             this.setState({tags:[...this.state.tags,event.target.value]})
             event.target.value =''
         }  
