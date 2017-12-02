@@ -10,8 +10,8 @@ import EditableBlock from './EditableBlock'
 import classNames from 'classnames'
 import moment from 'moment'
 import Dialog from 'material-ui/Dialog'
-import Chip from 'material-ui/Chip';
-import {validateEmail} from '../global/common'
+import Chip from 'material-ui/Chip'
+import { validateEmail } from '../global/common'
 
 
 
@@ -82,7 +82,7 @@ class File extends PureComponent {
     }
 
     onShare() {
-        this.props.dispatchShareFile(this.getDocumentId(),this.state.tags)
+        this.props.dispatchShareFile(this.getDocumentId(), this.state.tags)
         this.toggleModal()
     }
 
@@ -120,60 +120,60 @@ class File extends PureComponent {
                 <FlatButton
                     label="Edit File"
                     icon={<i className="material-icons">mode_edit</i>}
-                    onClick={()=>(this.setState({ isEditing: !this.state.isEditing }))}
+                    onClick={() => (this.setState({ isEditing: !this.state.isEditing }))}
                 />
             )
         }
     }
 
-    toggleModal(){
-        this.setState({modal:!this.state.modal})
+    toggleModal() {
+        this.setState({ modal: !this.state.modal })
     }
 
-    createTag(event){
-        
-        if(event.key =="Enter" && validateEmail(event.target.value) && this.props.user.info.email!=event.target.value) {
-            this.setState({tags:[...this.state.tags,event.target.value]})
-            event.target.value =''
-        }  
+    createTag(event) {
+
+        if (event.key == 'Enter' && validateEmail(event.target.value) && this.props.user.info.email != event.target.value) {
+            this.setState({ tags: [...this.state.tags, event.target.value] })
+            event.target.value = ''
+        }
     }
 
     deleteKey(key) {
-        console.log(key)
-        let newState =this.state.tags.filter((tag,index) =>{
-            return index !=key
+        let newState = this.state.tags.filter((tag, index) => {
+            return index != key
         })
-        this.setState({tags:newState})
+        this.setState({ tags: newState })
     }
-    renderTags(){
+    renderTags() {
         return this.state.tags.map((tag, index) => {
             return (
-                <Chip key ={index} onRequestDelete={() => this.deleteKey(index)}> {tag} </Chip>
+                <Chip key={index} onRequestDelete={() => this.deleteKey(index)}> {tag} </Chip>
             )
         })
 
-    
+
     }
     renderModal() {
+        const prompt = 'Enter user emails to who you want to share with and hit "Enter", click the cross to remove emails'
         return (
             <div>
                 <Dialog
                     title="Share File with:"
                     modal={true}
                     open={this.state.modal}
-                    onRequestClose = {this.toggleModal}
-                 >
-                 <p> Enter user emails to who you want to share with and hit 'Enter', click the cross to remove emails</p>
-                 {this.renderTags()}
-                 <TextField onKeyDown= {(e)=>this.createTag(e) } className="tag_input" type="text"/>
-                 <FlatButton
-                    label="share"
-                    onClick={() => this.onShare()}
-                />
-                <FlatButton
-                    label="cancel"
-                    onClick={() => this.toggleModal()}
-                />
+                    onRequestClose={this.toggleModal}
+                >
+                    <p>{prompt} </p>
+                    {this.renderTags()}
+                    <TextField onKeyDown={(e) => this.createTag(e)} className="tag_input" type="text" />
+                    <FlatButton
+                        label="share"
+                        onClick={() => this.onShare()}
+                    />
+                    <FlatButton
+                        label="cancel"
+                        onClick={() => this.toggleModal()}
+                    />
                 </Dialog>
             </div>
         )
@@ -253,6 +253,7 @@ File.propTypes = {
     user: PropTypes.shape({
         info: PropTypes.shape({
             username: PropTypes.string.isRequired,
+            email: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
     selectedFile: PropTypes.shape({
