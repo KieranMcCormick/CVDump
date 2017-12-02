@@ -440,3 +440,39 @@ export const dispatchEditBlock = (block) => async (dispatch) => {
         })
     }
 }
+
+export const dispatchFetchTracking = (callback) => async(dispatch) => {
+    try {
+        const res = await axios.get('/tracking')
+
+        dispatch({
+            type: types.FETCH_TRACKING_SUCCESS,
+            payload: res.data,
+        })
+        callback()
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_TRACKING_FAILURE,
+            payload: error.response.data.message,
+        })
+        callback()
+    }
+}
+
+export const dispatchSaveTracking = (data, callback)  => async(dispatch) => {
+    try {
+        await axiosWithCSRF.post('/tracking/create', data)
+
+        dispatch({
+            type: types.CREATE_TRACKING_SUCCESS,
+            payload: data,
+        })
+        callback()
+    } catch (error) {
+        dispatch({
+            type: types.CREATE_TRACKING_FAILURE,
+            payload: error.response.data.message,
+        })
+        callback()
+    }
+}

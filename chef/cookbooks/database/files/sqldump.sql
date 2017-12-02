@@ -26,9 +26,7 @@ CREATE TABLE `app_tracker` (
   `uuid` varchar(36) DEFAULT NULL,
   `company_name` varchar(20) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `document_id` varchar(36) DEFAULT NULL,
   `user_id` varchar(36) DEFAULT NULL,
-  `status` text,
   `job_title` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
