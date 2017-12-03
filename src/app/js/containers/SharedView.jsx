@@ -21,8 +21,8 @@ class SharedView extends Component {
     }
 
     renderSharedWith() {
-        const email = this.props.user.info.email
-        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail !== email )
+        const user_id = this.props.user.info.userId
+        const files = this.props.sharedFiles.filter(({ userId }) => userId !== user_id )
         return files.map(({docId, title}, index) => (
             <ShareBlock
                 key={`file-block-shared-with-${index}`}
@@ -33,8 +33,8 @@ class SharedView extends Component {
     }
 
     renderSharedTo() {
-        const email = this.props.user.info.email
-        const files = this.props.sharedFiles.filter(({ userEmail }) => userEmail === email )
+        const user_id = this.props.user.info.userId
+        const files = this.props.sharedFiles.filter(({ userId }) => userId === user_id )
         return files.map(({docId, title}, index) => (
             <ShareBlock
                 key={`file-block-shared-to-${index}`}
@@ -66,11 +66,11 @@ class SharedView extends Component {
 SharedView.propTypes = {
     user: PropTypes.shape({
         info: PropTypes.shape({
-            email: PropTypes.string.isRequired,
+            userId: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
     sharedFiles: PropTypes.arrayOf(PropTypes.shape({
-        userEmail: PropTypes.string.isRequired,
+        ownerId: PropTypes.string.isRequired,
         docId: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
     }).isRequired).isRequired,

@@ -115,22 +115,25 @@ class DocumentBlock {
     static UpdateDocumentBlocks(doc_id, blocks){
         return new Promise((resolve, reject) => {
 
+
             let INSERT_SQL = ''
             let insert_params = []
             let limit = (blocks.length-1) < 10 ? (blocks.length-1) : 10
             let i = 0
 
-            INSERT_SQL += INSERT_BLOCKS_BY_ID_SQL
+            if( blocks.length > 0 ){
+                INSERT_SQL += INSERT_BLOCKS_BY_ID_SQL
 
-            while( i < limit ){
-                INSERT_SQL += ' (?,?,?),'
+                while( i < limit ){
+                    INSERT_SQL += ' (?,?,?),'
+                    insert_params.push(doc_id, blocks[i].id, blocks[i].blockOrder)
+                    i++
+                }
+
                 insert_params.push(doc_id, blocks[i].id, blocks[i].blockOrder)
-                i++
+                INSERT_SQL += ' (?,?,?)'
             }
-
-            insert_params.push(doc_id, blocks[i].id, blocks[i].blockOrder)
-            INSERT_SQL += ' (?,?,?)'
-
+            console.log(DELETE_DOCUMENT_BLOCKS_BY_DOCID_SQL + doc_id)
             sqlDelete(DELETE_DOCUMENT_BLOCKS_BY_DOCID_SQL, [doc_id], (err, result) => {
                 if (err) {
                     console.error(err)

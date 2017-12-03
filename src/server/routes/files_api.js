@@ -35,9 +35,9 @@ router.get('/', (req, res) => {
  * returns file with `id` for the user
  */
 router.get('/:id', (req, res) => {
-    const user_id = req.user.uuid
-    const doc_id  = req.params.id
-    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+    const user_email = req.user.email_address
+    const doc_id     = req.params.id
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if( err ){
             throw(err)
         }
@@ -147,10 +147,10 @@ router.post('/create', (req, res) => {
 
 router.get('/pdf/:id', function(req, res){
 
-    const doc_id  = req.params.id
-    const user_id = req.user.uuid
+    const doc_id     = req.params.id
+    const user_email = req.user.email_address
 
-    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
         }
@@ -174,12 +174,12 @@ router.get('/pdf/:id', function(req, res){
 
 router.post('/savepdf/:id', (req, res) => {
 
-    const user_id = req.user.uuid
+    const user_email = req.user.email_address
     const doc_id  = req.params.id
     const blocks  = req.body.blocks
     const title   = req.body.title != '' ? req.body.title : 'Untitled'
 
-    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
         }
