@@ -106,9 +106,9 @@ class Document {
     }
 
 
-    static LoadSharedDocumentsByUserEmail(user_email, user_id) {
+    static LoadSharedDocumentsByUserEmail(user_email) {
         return new Promise((resolve, reject) => {
-            sqlSelect(FIND_SHARED_TO_USEREMAIL, [ user_email ], (err, documents) => {
+            sqlSelect(FIND_SHARED_BY_USEREMAIL, [ user_email ], (err, documents) => {
                 if (err) {
                     console.error(err)
                     return reject(err)
