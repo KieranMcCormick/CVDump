@@ -378,6 +378,22 @@ export const dispatchGetPdf = (id) => async (dispatch) => {
     }
 }
 
+export const dispatchShareFile = (docId,emails) => async(dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/shared/share',{docId:docId,shareWith:emails})
+        dispatch({
+            type: types.SHARE_FILE_SUCCESS,
+            payload: res.data,
+        })
+
+    } catch (error) {
+        dispatch({
+            type: types.SHARE_FILE_FAILURE,
+            payload: error.response.data,
+        })
+    }
+}
+
 export const dispatchFetchBlocks = () => async (dispatch) => {
     try {
 
