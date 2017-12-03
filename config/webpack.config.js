@@ -47,4 +47,17 @@ if (process.env.NODE_ENV === 'production') {
     webpackConfig = merge(webpackConfig, webpackDevConfig)
 }
 
+if (process.env.WEBPACK_ANALYZER) {
+    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
+    webpackConfig = merge(webpackConfig, {
+        plugins: [
+            new BundleAnalyzerPlugin({
+                analyzerPort: 18888,
+                openAnalyzer: false,
+            })
+        ],
+    })
+}
+
 module.exports = webpackConfig
