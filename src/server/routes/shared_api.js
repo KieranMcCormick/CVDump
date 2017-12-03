@@ -43,19 +43,21 @@ router.post('/share', (req, res) => {
         // Check if target exists
     } else {
         validateUsers(req.body.shareWith).then((success, error) => {
+            let pass = true
             if (error) {
-                res.send({ message: 'There is no one to share with' })
+                throw Error('No such email')
             }
+            
             if (success) {
+
                 success.forEach((check, index) => {
                     if (check == null) {
-                        console.log('no such email ' + req.body.shareWith[index])
-                        res.send({ message: 'no such email ' + req.body.shareWith[index] })
+                        pass=false
                     }
                 })
                 //create share_objects
-
-                Document.shareFile(
+                if(pass){
+                    Document.shareFile(
                     req.user.uuid,
                     req.body.docId,
                     req.body.shareWith)
@@ -67,7 +69,13 @@ router.post('/share', (req, res) => {
                             res.send(success)
                         }
                     })
+                } else {
+                    res.send({message:"no such user"})
+                }
             }
+        })
+        .catch((error) =>{
+            res.sendStatus(500).send({ message:error})
         })
     }
 })
