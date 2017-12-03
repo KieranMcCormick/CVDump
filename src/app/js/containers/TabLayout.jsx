@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PropTypes from 'prop-types'
 import { Tabs, Tab } from '../components/Tabs'
 import NotFound from '../components/NotFound'
-import Home from './Home'
 import File from '../components/File'
 import ShareFile from '../components/ShareFile'
 import FilesView from './FilesView'
@@ -16,12 +15,6 @@ import StatusBar from './StatusBar'
 import * as actions from '../actions'
 
 const routes = [
-    {
-        path: '/',
-        label: 'Home',
-        exact: true,
-        component: Home,
-    },
     {
         path: '/files',
         label: 'Files',
@@ -92,6 +85,7 @@ class TabLayout extends Component {
                     {routes.map(({ path, component, exact, label })=> {
                         return <Route key={`routes-${label}`} path={path} component={component} exact={exact} />
                     })}
+                    <Redirect exact path="/" to="/files" />
                     <Route path="*" component={ NotFound } />
                 </Switch>
             </div>
