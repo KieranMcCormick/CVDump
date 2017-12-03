@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 
 const { check } = require('express-validator/check')
+const validator = require('validator')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 
@@ -14,7 +15,7 @@ const BCRYPT_HASHING_ROUNDS = 10
 const FIND_USER_BY_EMAIL_SQL       = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE email_address = ? LIMIT 1'
 const FIND_USER_BY_USERNAME_SQL    = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE username = ? LIMIT 1'
 const FIND_USER_BY_CAS_ID_SQL      = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE cas_id = ? LIMIT 1'
-const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linked_in = ? LIMIT 1'
+const FIND_USER_BY_LINKEDIN_ID_SQL = 'SELECT uuid, username, cas_id, email_address, firstname, lastname, linkedin_id, password FROM users WHERE linkedin_id = ? LIMIT 1'
 const INSERT_USER_SQL              = 'INSERT INTO users (uuid, password, email_address, firstname, lastname, cas_id, linkedin_id, username) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)'
 //const UPSERT_USER_SQL              = 'UPDATE users SET password = ?, email_address = ?, firstname = ?, lastname = ?, cas_id = ?, linkedin_id = ? WHERE username = ?'
 const UPDATE_PROFILE_SQL           = 'UPDATE users SET email_address = ?, firstname = ?, lastname = ? WHERE uuid = ?'
@@ -103,8 +104,10 @@ class User {
 
     // Not strictly necessary unless we want differing field names in UI.
     static mapFrontEndFieldsToDB(props) {
-        props.email_address = props.email
-        delete props.email
+        if (props.email) {
+            props.email_address = props.email
+            delete props.email
+        }
         return props
     }
 
@@ -250,7 +253,6 @@ class User {
                 if (users.length < 1) { return resolve(null) }
                 if (users.length > 1) {
                     console.error(`[User] DATABASE INCONSISTENCY! Found more than one user for Email ${email_address}`)
-                    return resolve(null)
                 }
                 resolve(new User(users[0]))
             })
@@ -262,9 +264,8 @@ class User {
             sqlSelect(FIND_USER_BY_USERNAME_SQL, [ username ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
                 if (users.length < 1) { return resolve(null) }
-                else if (users.length > 1) {
+                if (users.length > 1) {
                     console.error(`[User] DATABASE INCONSISTENCY! Found more than one user for Username ${username}`)
-                    return resolve(null)
                 }
                 resolve(new User(users[0]))
             })
@@ -276,7 +277,7 @@ class User {
             sqlSelect(FIND_USER_BY_CAS_ID_SQL, [ cas_id ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
                 if (users.length < 1) { return resolve(null) }
-                else if (users.length > 1) {
+                if (users.length > 1) {
                     console.error(`[User] DATABASE INCONSISTENCY! Found more than one user for CAS ID ${cas_id}`)
                     return resolve(null)
                 }
@@ -288,13 +289,13 @@ class User {
     static findOneByLinkedInID(linkedin_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_USER_BY_LINKEDIN_ID_SQL, [ linkedin_id ], (err, users) => {
-                if (err) { console.error(err); return resolve(null) }
-                if (users.length < 1) { return resolve(null) }
-                else if (users.length > 1) {
+                if (err) { console.error(err); return resolve({ user: null }) }
+                if (users.length < 1) { return resolve({ creatable: true }) }
+                if (users.length > 1) {
                     console.error(`[User] DATABASE INCONSISTENCY! Found more than one user for LinkedIn ID ${linkedin_id}`)
-                    return resolve(null)
+                    return resolve({ user: null })
                 }
-                resolve(new User(users[0]))
+                resolve({ user: new User(users[0]) })
             })
         })
     }
@@ -302,6 +303,8 @@ class User {
     static passwordLogin(username, password) {
         return new Promise((resolve, reject) => {
             this.findOneByUsername(username).then((user) => {
+                // User created via LinkedIn, don't let password login
+                // unless set manually.
                 if (!user || user.password.trim() === '') {
                     return resolve(null)
                 }
@@ -335,7 +338,8 @@ class User {
             user.setPassword(props.password).then((passwordSet) => {
                 if (passwordSet) {
                     user.save().then((savedUser) => {
-                        resolve(savedUser)
+                        // Must get UUID
+                        resolve(User.findOneByEmail(savedUser.email_address))
                     }).catch((error) => {
                         console.error(`[User][Error] Failed to create User: ${error.message}`)
                         reject(new Error('Internal Server Error'))
@@ -344,6 +348,46 @@ class User {
                     console.error('[User][Error] Could not create User due to password error')
                     reject(new Error('Internal Server Error'))
                 }
+            })
+        })
+    }
+
+    // Assuming no prior validation
+    static createFromLinkedIn(props) {
+        return new Promise((resolve, reject) => {
+            let { linkedin_id, email_address, firstname, lastname } = props
+            const validParams = (linkedin_id && linkedin_id.length > 0) &&
+                (email_address && validator.isEmail(email_address)) &&
+                (firstname && firstname.length > 0) &&
+                (lastname && lastname.length > 0)
+
+            if (!validParams) {
+                return reject(new Error('Invalid Parameters'))
+            }
+
+            User.findOneByEmail(email_address).then((user) => {
+                if (user) {
+                    return reject(new Error('You already have account with this email'))
+                } else {
+                    const user = new User({
+                        username: email_address.split('@')[0],
+                        email_address: email_address,
+                        linkedin_id: linkedin_id,
+                        firstname: firstname,
+                        lastname: lastname,
+                        password: '',
+                    })
+                    user.save().then((savedUser) => {
+                        // Must get UUID
+                        resolve(User.findOneByEmail(savedUser.email_address))
+                    }).catch((error) => {
+                        console.error(`[User][Error] Failed to create User: ${error.message}`)
+                        reject(new Error('Internal Server Error'))
+                    })
+                }
+            }).catch((err) => {
+                console.error(err)
+                reject(new Error('Internal Server Error'))
             })
         })
     }

@@ -69,13 +69,27 @@ module.exports = (app) => {
             profileFields: ['id', 'first-name', 'last-name', 'email-address'],
         },
         (token, tokenSecret, profile, done) => {
-            console.log(`Received LinkedIn Auth for ${JSON.stringify(profile)}`)
             if (profile.id) {
-                User.findOneByLinkedInID(profile.id).then((user) => {
+                User.findOneByLinkedInID(profile.id).then(({ user, creatable }) => {
                     if (!user) {
-                        return done(null, false, { errorMessage: 'User Not Found'})
+                        if (creatable && profile.emails.length > 0) {
+                            User.createFromLinkedIn({
+                                linkedin_id: profile.id.trim(),
+                                email_address: profile.emails[0].value.trim(),
+                                firstname: profile.name.givenName.trim(),
+                                lastname: profile.name.familyName.trim(),
+                            }).then((user) => {
+                                done(null, user)
+                            }).catch((err) => {
+                                console.error(err)
+                                done(null, false, { errorMessage: 'Error creating your account'})
+                            })
+                        } else {
+                            done(null, false, { errorMessage: 'User Not Found'})
+                        }
+                    } else {
+                        done(null, user)
                     }
-                    done(null, user)
                 })
             } else { // safety
                 done(null, false, { errorMessage: 'Invalid Authentication'})
@@ -86,7 +100,7 @@ module.exports = (app) => {
         {
             consumerKey: keys.linkedinKey,
             consumerSecret: keys.linkedinSecret,
-            callbackURL: `${config.server.fqdn}/auth/linkedin/connect_callback`,
+            callbackURL: `${config.server.fqdn}/connect/linkedin/callback`,
             profileFields: ['id', 'first-name', 'last-name', 'email-address'],
         },
         (token, tokenSecret, profile, done) => {

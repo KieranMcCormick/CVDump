@@ -13,7 +13,7 @@
     "style": "node-sass src/app/styles/styles.scss src/public/styles.css",
     "style:watch": "node-sass --watch src/app/styles/styles.scss src/public/styles.css",
     "lint": "eslint src --ext js,jsx --config .eslintrc.json --fix",
-    "lint:jenkins": "eslint src --ext js,jsx --config .eslintrc.json -f checkstyle -o checkstyle-result.xml"
+    "lint:nofix": "eslint src --ext js,jsx --config .eslintrc.json"
   },
   "repository": {
     "type": "git",
