@@ -87,7 +87,7 @@ router.post('/update/:doc_id', (req, res) => {
 router.post('/create', (req, res) => {
 
     const user_id = req.user.uuid
-    const title   = req.body.title ? req.body.title : 'untitled'
+    const title   = req.body.title != '' ? req.body.title : 'Untitled'
     const blocks  = req.body.blocks
     let   doc_id  = ''
 
@@ -101,7 +101,7 @@ router.post('/create', (req, res) => {
             }
             else{
                 doc_id = result.uuid
-                return Document.create_doc_block({ uuid : doc_id,
+                return Document.create({ uuid : doc_id,
                     title   : title,
                     version : 1,
                     user_id : user_id,
@@ -177,7 +177,7 @@ router.post('/savepdf/:id', (req, res) => {
     const user_id = req.user.uuid
     const doc_id  = req.params.id
     const blocks  = req.body.blocks
-    const title   = req.body.title
+    const title   = req.body.title != '' ? req.body.title : 'Untitled'
 
     Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
         if (err){

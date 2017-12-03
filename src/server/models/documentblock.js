@@ -7,6 +7,10 @@ const GET_BLOCKS_SUMMARY_BY_DOCID_SQL = 'SELECT b.summary FROM blocks b JOIN doc
 //const UPDATE_DOCUMENT_BY_DOCID_SQL = 'UPDATE document_blocks dbs set block_order = ? WHERE document_id = ? AND block_id = ?'
 const DELETE_DOCUMENT_BLOCKS_BY_DOCID_SQL = 'DELETE FROM document_blocks WHERE document_id = ?'
 const INSERT_BLOCKS_BY_ID_SQL = 'INSERT INTO document_blocks (document_id, block_id, block_order) VALUES '
+const GET_BLOCKS_BY_USERID = 'SELECT uuid, label, summary, created_at FROM blocks b where user_id = ?'
+//const CREATE_BLOCK_SQL = 'INSERT INTO document_blocks (document_id, block_id, block_order) VALUES (?, ?, ?)'
+
+
 
 /*This will be visible to public*/
 const ParseDocBlockSQL = (rows) => {
@@ -15,6 +19,16 @@ const ParseDocBlockSQL = (rows) => {
             blockId    : entries.block_id,
             blockOrder : entries.block_order,
             summary    : entries.summary,
+        }
+    })
+}
+
+/*This will be visible to public*/
+const ParseBlockSQL = (rows) => {
+    return _.map(rows, function (entries) {
+        return {
+            blockId : entries.uuid,
+            summary  : entries.summary,
         }
     })
 }
@@ -28,7 +42,6 @@ class DocumentBlock {
             this.document_id = props.document_id
         }
     }
-
 
     SQLValueArray() {
         return [ this.document_id, this.block_id, this.block_order ]
@@ -86,6 +99,15 @@ class DocumentBlock {
             sqlSelect(GET_BLOCKS_SUMMARY_BY_DOCID_SQL, [ doc_id ], (err, blocks) => {
                 if (err) { console.error(err); return reject(null) }
                 resolve(ParseDocBlockSQL(blocks))
+            })
+        })
+    }
+
+    static LoadDocBlocksByUserId(user_id){
+        return new Promise((resolve, reject) => {
+            sqlSelect(GET_BLOCKS_BY_USERID, [ user_id ], (err, blocks) => {
+                if (err) { console.error(err); return reject(null) }
+                resolve(ParseBlockSQL(blocks))
             })
         })
     }

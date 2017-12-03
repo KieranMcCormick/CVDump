@@ -8,10 +8,6 @@ const fs = require('fs')
 let fs_path = process.env.FILESYSTEM_PATH || '/home/ubuntu/files/'
 
 
-if (process.env.NODE_ENV !== 'production') {
-    fs_path = '/home/seleena/Documents/files/'
-}
-
 /* returns file path: append filename to this*/
 function genFilePath(){
     const options = {

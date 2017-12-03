@@ -292,9 +292,7 @@ export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispat
 
         dispatch({
             type: types.UPDATE_FILE_SUCCESS,
-            payload: {
-                title,
-            },
+            payload: title,
         })
         callback('File updated')
     } catch (error) {

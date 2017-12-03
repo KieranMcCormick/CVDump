@@ -121,6 +121,7 @@ class Document {
 
 
     static UpdateTitleByDocid(doc_id, title) {
+
         return new Promise((resolve, reject) => {
             sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [ title, doc_id ], (err, res) => {
                 if (err) {

@@ -132,12 +132,12 @@ class File extends PureComponent {
             <div className="c-file-content__button">
                 {this.renderEditButton()}
                 <FlatButton
-                    label="Save to PDF"
+                    label="Download PDF"
                     icon={<i className="material-icons">save</i>}
                     onClick={() => this.onSave()}
                 />
                 <FlatButton
-                    label="Export to version"
+                    label="Save"
                     icon={<i className="material-icons">save</i>}
                     onClick={() => this.onSave()}
                 />
