@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Switch, Route, Redirect } from 'react-router-dom'
-import { withRouter } from 'react-router'
+import { Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Tabs, Tab } from '../components/Tabs'
 import NotFound from '../components/NotFound'
@@ -10,7 +9,7 @@ import ShareFile from '../components/ShareFile'
 import FilesView from './FilesView'
 import SharedView from './SharedView'
 import BlocksView from './BlocksView'
-import HistoryView from './HistoryView'
+import TrackingView from './TrackingView'
 import StatusBar from './StatusBar'
 import * as actions from '../actions'
 
@@ -31,9 +30,9 @@ const routes = [
         component: BlocksView,
     },
     {
-        path: '/history',
-        label: 'History',
-        component: HistoryView,
+        path: '/tracking',
+        label: 'Tracking',
+        component: TrackingView,
     }
 ]
 

@@ -43,4 +43,8 @@ $flex-directions: (row, column);
     .#{$flex-prefix}-#{$direction}.u--wrap {
         flex-wrap: wrap !important;
     }
+
+    .#{$flex-prefix}-#{$direction}.u--no-shrink {
+        flex-shrink: 0 !important;
+    }
 }
