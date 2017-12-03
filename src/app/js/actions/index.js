@@ -435,21 +435,44 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
             '/notifications/create',
              postParams
         )
+        console.log(success)
         
-        /*SocketHandler.emitEvent(
-            'notifications',
-            'getNotifications',
+        if (data.type =='comment') {
+            SocketHandler.emitEvent(
+                'notifications',
+                'getNotifications',
+    
+                {
+                    target: success.data.target,
+                    type: data.type,
+                    timeStamp: data.createdAt,
+                    sender: data.sender,
+                    documentId: data.docId,
+                    content: data.content,
+                    uuid: success.data.uuid,
+                }
+            )
+        }
 
-            {
-                target: success.data.target,
-                type: data.type,
-                timeStamp: data.createdAt,
-                sender: data.sender,
-                documentId: data.docId,
-                content: data.content,
-                uuid: success.data.uuid,
-            }
-        )*/
+        if(data.type =='share'){
+            success.data.foreach((notice)=>{
+                SocketHandler.emitEvent(
+                    'notifications',
+                    'getNotifications',
+        
+                    {
+                        target: notice.target,
+                        type: data.type,
+                        timeStamp: data.createdAt,
+                        sender: data.sender,
+                        documentId: data.docId,
+                        content: data.content,
+                        uuid: notice.uuid,
+                    }
+                )
+            })
+        }
+      
 
         dispatch({
             type: types.SEND_NOTIFICATION_SUCCESS,

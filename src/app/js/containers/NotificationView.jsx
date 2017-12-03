@@ -39,7 +39,7 @@ class NotificationsView extends PureComponent {
                 //Triggers the state change for notifications
 
                     this.props.dispatchReceiveNotification(notification)
-                    NotificationHandler.createNotification('comment',notification,function(notification){
+                    NotificationHandler.createNotification(notification.type,notification,function(notification){
                         console.log(notification)
                         that.resolveNotification(notification,true)
                     })

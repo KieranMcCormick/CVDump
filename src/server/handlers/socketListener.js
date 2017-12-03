@@ -60,19 +60,11 @@ class SocketListener {
             socket.on('getNotifications', function (msg) {
                 logger('Listen to notifications')
                 //get file Owner from docId
-                let type = msg.type
-                switch(type){
-                    case 'comment':
-                        // socket.to(msg.target).emit('notify',msg)
-                        socket.to(msg.target).emit('notify',msg)
-                        return
-                    default:
-                        console.log('no such notification type')
-                        return
-
-                }
-
-
+                let type = msg.type  
+                // socket.to(msg.target).emit('notify',msg)
+                socket.to(msg.target).emit('notify',msg)
+                return
+                   
             })
 
             //Notifications should be sent to global name space and redirected to specific users

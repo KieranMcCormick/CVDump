@@ -25,6 +25,23 @@ NotificationHandler.createNotification = (type, data, callback) => {
                 }
             })
             break
+        case 'share':
+            options.body = "You can now view" + data.sender +"'s file"
+            title = data.sender + "shared a file with you"
+            Notification.requestPermission(function (permission) {
+                if (permission == 'granted') {
+                    let commentNotify = new Notification(title, options)
+                    commentNotify.onclick = function () {
+                        callback(data)
+                    }
+                    setTimeout(commentNotify.close.bind(commentNotify), 5000)
+                    return
+                } else {
+                    return
+                }
+            })
+            break
+
         //add case for sharing later
 
     }
