@@ -105,7 +105,6 @@ export default (state = initState, action) => {
                 blocks: newBlocks,
             }
         }
-
         // Shares view
         case types.FETCH_SHARE_FILE_SUCCESS:
             return {

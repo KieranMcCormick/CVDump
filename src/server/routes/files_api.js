@@ -172,6 +172,35 @@ router.get('/pdf/:id', function(req, res){
     })
 })
 
+
+router.post('/download/:id', (req, res) => {
+    console.log("HERE")
+    const doc_id     = req.params.id
+    const user_email = req.user.email_address
+    console.log(doc_id)
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+        if (err){
+            throw(err)
+        }
+        else if (result){
+            return accessFS.retrievePDFpath(doc_id)
+        }
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong loading the pdf' })
+        }
+        else{
+            res.type('pdf')
+            console.log(result)
+            res.download(result)
+        }
+    }).catch((exception) => {
+        console.error(exception)
+        res.send({ message : 'Something went wrong loading the pdf' })
+    })
+})
+
 router.post('/savepdf/:id', (req, res) => {
 
     const user_email = req.user.email_address

@@ -256,6 +256,25 @@ export const dispatchOnClickCreateFile = () => ({
     type: types.CREATING_NEW_FILE,
 })
 
+export const dispatchDownloadFile = (doc_id, callback) => async (dispatch) => {
+    try{
+        await axiosWithCSRF.post(`/files/download/${id}`)
+
+        dispatch({
+            type: types.DOWNLOAD_PDF_SUCCESS,
+
+        })
+        callback('Download Started')
+    } catch (error) {
+
+        dispatch({
+            type: types.DOWNLOAD_PDF_FAILURE,
+            payload: error.response.data,
+        })
+        callback('Download Failed')
+    }
+}
+
 export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => async (dispatch) => {
     try {
         // returns the id of the newly created document

@@ -54,6 +54,17 @@ class File extends PureComponent {
         return this.props.selectedFile.id || this.props.location.pathname.substring(lastIndex + 1)
     }
 
+    onDownload(){
+        const callback = (message) => {
+            this.setState({
+                isLoading: false,
+                hasMessage: true,
+                message,
+            })
+        }
+        this.props.dispatchDownloadFile(this.getDocumentId(), callback)
+    }
+
     onSave() {
         this.setState({
             isLoading: true,
@@ -197,7 +208,7 @@ class File extends PureComponent {
                 <FlatButton
                     label="Download PDF"
                     icon={<i className="material-icons">save</i>}
-                    onClick={() => this.onSave()}
+                    onClick={() => this.onDownload()}
                 />
                 <FlatButton
                     label="Save"
