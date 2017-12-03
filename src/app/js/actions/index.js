@@ -72,6 +72,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
 
 export const dispatchSignUp = ({ username, firstname, lastname, email, password, confirmPassword }) => async (dispatch) => {
     try {
+
         const res = await axiosWithCSRF.post('/register', { username, firstname, lastname, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
@@ -197,9 +198,12 @@ export const dispatchSelectFile = (id, title) => ({
     },
 })
 
-export const dispatchAddBlockToSelectedFile = (value) => ({
+export const dispatchAddBlockToSelectedFile = (value, id) => ({
     type: types.ADD_BLOCK_TO_SELECTED_FILE,
-    payload: value,
+    payload: {
+        value,
+        id,
+    },
 })
 
 export const dispatchRemoveBlockFromSelectedFile = (blockOrder) => ({
@@ -255,11 +259,16 @@ export const dispatchOnClickCreateFile = () => ({
 export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => async (dispatch) => {
     try {
         // returns the id of the newly created document
-        const res = await axiosWithCSRF.post('/files/create/', { title, blocks, created_at })
+
+        await axiosWithCSRF.post('/files/create', JSON.stringify({ title, blocks, created_at }), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
 
         dispatch({
             type: types.CREATE_FILE_SUCCESS,
-            payload: res.data,
+            payload: title,
         })
 
         callback('File created')
@@ -274,18 +283,16 @@ export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => 
 
 export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispatch) => {
     try {
-        // const res = await axios.post(`/files/update/${id}`, { title, blocks })
-        // dispatch({
-        //     type: types.UPDATE_FILE_SUCCESS,
-        //     payload: res.data,
-        // })
-        await axiosWithCSRF.post(`/files/savepdf/${id}`, { id, title, blocks })
+
+        await axiosWithCSRF.post(`/files/savepdf/${id}`, JSON.stringify({ id, title, blocks }), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
 
         dispatch({
             type: types.UPDATE_FILE_SUCCESS,
-            payload: {
-                title,
-            },
+            payload: title,
         })
         callback('File updated')
     } catch (error) {
@@ -352,40 +359,6 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
             payload: error.response.data.errorMessage,
         })
         dispatch(push('/profile'))
-    }
-}
-
-
-// export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get(`/files/update/${id}`)
-
-//         dispatch({
-//             type: types.UPDATE_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.UPDATE_FILE_FAILURE,
-//             payload: error.response.data,
-//         })
-//     }
-// }
-
-export const dispatchSavePdf = (id) => async (dispatch) => {
-    try {
-
-        const res = await axios.get(`/files/savepdf/${id}`)
-
-        dispatch({
-            type: types.FETCH_PDF_SUCCESS,
-            payload: res.data,
-        })
-    } catch (error) {
-        dispatch({
-            type: types.FETCH_PDF_FAILURE,
-            payload: error.response.data,
-        })
     }
 }
 

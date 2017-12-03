@@ -1,7 +1,7 @@
 const { sqlInsert, sqlSelect, sqlUpdate } = require('../db')
 const _ = require('lodash')
 
-const CREATE_DOC_SQL = 'INSERT INTO documents (uuid, created_at, title, user_id, version) VALUES (UUID(), NOW(), ?, ?, ?)'
+const CREATE_DOC_SQL = 'INSERT INTO documents (uuid, created_at, title, user_id, version) VALUES (?, NOW(), ?, ?, ?)'
 const FIND_RECENT_BY_USERID = 'SELECT uuid, title, created_at FROM documents where user_id = ?'
 //const FIND_RECENT_BY_USERID_DOCID = 'SELECT uuid, user_id, title, created_at, comments, blocks FROM documents where user_id = ? AND uuid = ? AND version = 1'
 //const FIND_FILEPATH = 'SELECT filepath, filename from documents where uuid = ?'
@@ -12,6 +12,7 @@ const UPDATE_TITLE_BY_DOC_ID = 'UPDATE documents set title = ? WHERE uuid = ?'
 const FIND_SHARED_TO_USEREMAIL = 'SELECT d.uuid, s.owner_id, s.user_email, d.title, d.created_at FROM shared_files s JOIN documents d ON s.document_id = d.uuid WHERE s.user_email = ?'
 const CHECK_USER_PERMISSION_ON_DOC = 'SELECT user_id from documents where uuid = ?'
 
+const SELECT_UUID = 'SELECT UUID() as uuid'
 /*This will be visible to public*/
 const ParseDocSQL = (rows) => {
     return _.map(rows, function (entries) {
@@ -37,18 +38,8 @@ class Document {
         }
     }
 
-    // DocPublicJson() {
-    //     return {
-    //         title    : this.title,
-    //         doc_id   : this.doc_id,
-    //         filename : this.filename,
-    //         filepath : this.filepath,
-    //     }
-    // }
-
-
     SQLValueArray() {
-        return [ this.title, this.user_id, this.filename, this.filepath, this.version ]
+        return [ this.uuid, this.title, this.user_id, this.version ]
     }
 
     save() {
@@ -59,9 +50,10 @@ class Document {
                     console.error(err)
                     return reject(new Error('Database Error'))
                 }
-                if (!result/** || result**/) { // Check valid result ... ?
+                if (!result) {
                     return reject(new Error('Unknown Error'))
                 }
+
                 return resolve(this)
             })
         })
@@ -70,7 +62,8 @@ class Document {
     static create(props) {
 
         return new Promise((resolve, reject) => {
-            const doc = new Document()
+            const doc   = new Document()
+            doc.uuid    = props.uuid
             doc.title   = props.title
             doc.version = props.version
             doc.user_id = props.user_id
@@ -84,10 +77,27 @@ class Document {
     }
 
 
+    /*Needed inorder to get uuid for document blocks insertion at file create time*/
+    static GetNewUuid(){
+        return new Promise((resolve, reject) => {
+            sqlSelect(SELECT_UUID, [] , (err, res) => {
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
+
+                resolve(res[0])
+            })
+        })
+    }
+
     static LoadDocumentsByUserId(user_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_RECENT_BY_USERID, [ user_id ], (err, documents) => {
-                if (err) { console.error(err); return resolve(null) }
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
 
                 let userFiles = { 'files' : ParseDocSQL(documents)}
                 resolve(userFiles)
@@ -98,7 +108,10 @@ class Document {
     static LoadSharedDocumentsByUserEmail(user_email){
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_SHARED_TO_USEREMAIL, [ user_email ], (err, documents) => {
-                if (err) { console.error(err); return resolve(null) }
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
 
                 let userFiles = { 'files' : ParseDocSQL(documents)}
                 resolve(userFiles)
@@ -107,10 +120,15 @@ class Document {
     }
 
 
-    static UpdateTitleByDocid(doc_id) {
+    static UpdateTitleByDocid(doc_id, title) {
+
         return new Promise((resolve, reject) => {
-            sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [ doc_id ], (err, res) => {
-                if (err) { console.error(err); return resolve(null) }
+            sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [ title, doc_id ], (err, res) => {
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
+
                 resolve(res)
             })
         })
@@ -121,10 +139,10 @@ class Document {
             sqlSelect(FIND_FILEPATH_BY_DOCID, [ doc_id ], (err, documents) => {
                 if (err) {
                     console.error(err)
-                    return resolve(null)
+                    return reject(err)
                 }
-                let full_path = documents[0].filepath + documents[0].filename
-                resolve(full_path)
+
+                resolve(documents)
             })
         })
     }
@@ -132,15 +150,13 @@ class Document {
     /*Should only be called when first creating pdf*/
     static UpdateDocumentFilepath(doc_id, filepath, filename){
         return new Promise((resolve, reject) => {
-            sqlUpdate(UPDATE_FILEPATH, [ doc_id, filepath, filename ], (err, result) => {
+            sqlUpdate(UPDATE_FILEPATH, [ filepath, filename, doc_id ], (err, result) => {
                 if (err) {
                     console.error(err)
-                    return reject(new Error('Database Error'))
+                    return reject(err)
                 }
-                if (!result/** || result**/) { // Check valid result ... ?
-                    return reject(new Error('Unknown Error'))
-                }
-                return resolve(this)
+
+                resolve(result)
             })
         })
     }
@@ -149,12 +165,15 @@ class Document {
     static VaildateDocumentPermission(doc_id, user_id){
         return new Promise((resolve, reject) => {
             sqlSelect(CHECK_USER_PERMISSION_ON_DOC, [doc_id], (err, result) =>{
-                if(err){console.error(err); return reject(err)}
-                if( result[0].user_id != user_id ){
-                    return resolve(false)
+                if(err){
+                    console.error(err)
+                    return reject(err)
+                }
+                if( result.length <= 0 || result[0].user_id != user_id ){
+                    resolve(false)
                 }
                 else{
-                    return resolve(true)
+                    resolve(true)
                 }
             })
         })
