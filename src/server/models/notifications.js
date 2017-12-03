@@ -1,6 +1,7 @@
 const { sqlInsert, sqlSelect ,sqlDelete} = require('../db')
 const _ = require('lodash')
-const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
+const { findOneByEmail } = require('./user')
+
 
 class Notifications {
     constructor(props) {
@@ -94,30 +95,24 @@ class Notifications {
                 }
             })
         })
-
-
-
     }
-
-
 
     load() {
         let that = this
         const fetchNotificationQuery = 'SELECT notifications.uuid, notifications.user_id, type, sender, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
-        console.log(this.email)
         return new Promise((resolve, reject) => {
-            sqlSelect(fetchUserQuery, [this.email], (err, success) => {
+            findOneByEmail(this.email).then( (err, success) => {
                 if (err) {
                     console.log(err)
-                    return reject({ message: 'No such user' })
+                    return reject(new Error('Internal Server Error'))
                 }
                 if (success[0]) {
-                    console.log(success[0])
+
                     let uuid = success[0].uuid
                     sqlSelect(fetchNotificationQuery, [uuid], (err, result) => {
                         if(err) {
                             console.log(err)
-                            return reject({message:'fail to fetch notifications'})
+                            return reject(new Error('Internal Server Error'))
                         }
                         if(result){
                             console.log(result)
@@ -143,13 +138,8 @@ class Notifications {
                     console.log(result)
                     return resolve({result})
                 }
-
             })
-
         })
-
-
-
     }
 
     parseOutput(rows) {

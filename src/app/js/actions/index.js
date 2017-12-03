@@ -176,8 +176,6 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
             : await axios.get(`/files/${id}`)
         const availableBlocks = await axios.get('/blocks')
 
-        //const doc = await axios.get(`/files/${id}`)
-        // const availableBlocks = await axios.get(`/blocks`)
         dispatch({
             type: types.FETCH_FILE_SUCCESS,
             payload: {
@@ -310,11 +308,6 @@ export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispat
 export const dispatchLogOut = () => async (dispatch) => {
     try {
         await axiosWithCSRF.post('/logout')
-
-
-        // export const dispatchSavePdf = (id) => async (dispatch) => {
-        //     try {
-        //         const res = await axios.get('/files/savepdf/${id}')
 
         dispatch({
             type: types.LOGOUT,

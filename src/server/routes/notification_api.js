@@ -50,7 +50,7 @@ router.post('/delete', (req, res) => {
 
     new Notifications().delete(req.body.id).then((result, err) => {
         if (err) {
-            res.send({ message: 'cant find comments' })
+            res.sendStatus(500)
         }
         if (result) {
             res.sendStatus(200)
