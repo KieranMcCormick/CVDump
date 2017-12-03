@@ -55,6 +55,7 @@ class NotificationsView extends PureComponent {
         this.props.dispatchResolveNotification(notice.uuid)
         if(route) {
             let routePath = '/shared/' +notice.documentId
+            console.log(routePath)
             this.props.history.push(routePath)
             this.setState({dropdown:false})
         }

@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
         })
     }
     else{
-        res.send([])
+        res.status(403).send({ message : 'User is not authorized'})
     }
 })
 
@@ -50,14 +50,14 @@ router.get('/', (req, res) => {
 // })
 
 router.get('/:id', (req, res) => {
-    const user_id = req.user.uuid
-    const doc_id  = req.params.id
-    Document.VaildateDocumentPermission(doc_id, user_id).then((res, err) => {
+    const user_email = req.user.email_address
+    const doc_id     = req.params.id
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if( err ){
             throw(err)
         }
         else{
-            if ( res ){
+            if ( result ){
                 return DocumentBlock.GetDocumentBlocks(doc_id)
             }
             else{
@@ -100,14 +100,52 @@ router.post('/update/:doc_id', (req, res) => {
 
 
 router.post('/create', (req, res) => {
+
     const user_id = req.user.uuid
-    const version = 1
-    const title = req.params.title
-    if( user_id ){
-        Document.create(user_id, version, title).then((result, err) => {
+    const title   = req.body.title != '' ? req.body.title : 'Untitled'
+    const blocks  = req.body.blocks
+    let   doc_id  = ''
+
+    if( user_id && blocks != undefined ){
+
+        Document.GetNewUuid().then((result, err) => {
+            if ( err || result == undefined || !result.uuid ){
+                console.error(err)
+                res.send({ message : 'Something went wrong creating uuid for file' })
+                throw(err)
+            }
+            else{
+                doc_id = result.uuid
+                return Document.create({ uuid : doc_id,
+                    title   : title,
+                    version : 1,
+                    user_id : user_id,
+                })
+            }
+        }).then((result, err) => {
             if (err){
                 console.error(err)
-                res.send({ message : 'Something went wrong creating files' })
+                res.send({ message : 'Something went wrong creating file' })
+                throw(err)
+            }
+            else{
+                return DocumentBlock.UpdateDocumentBlocks(doc_id, blocks)
+            }
+        }).then((result, err) => {
+            if (err){
+                console.error(err)
+                res.send({ message : 'Something went wrong saving the document' })
+                throw(err)
+            }
+            else{
+
+                return accessFS.generatePDF(doc_id)
+            }
+        }).then((result, err) => {
+            if (err){
+                console.error(err)
+                res.send({ message : 'Something went wrong saving the pdf' })
+                throw(err)
             }
             else{
                 res.send(result)
@@ -118,16 +156,16 @@ router.post('/create', (req, res) => {
         })
     }
     else{
-        res.send([])
+        res.status(403).send({ message : 'User is not authorized to create document'})
     }
 })
 
 router.get('/pdf/:id', function(req, res){
 
-    const doc_id  = req.params.id
-    const user_id = req.user.uuid
+    const doc_id     = req.params.id
+    const user_email = req.user.email_address
 
-    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
         }
@@ -151,39 +189,56 @@ router.get('/pdf/:id', function(req, res){
 
 router.post('/savepdf/:id', (req, res) => {
 
-    const user_id = req.user.uuid
-    const doc_id = req.params.id
+    const user_email = req.user.email_address
+    const doc_id  = req.params.id
+    const blocks  = req.body.blocks
+    const title   = req.body.title != '' ? req.body.title : 'Untitled'
 
-    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
         }
-        else if (result){
-            const blocks = req.params.blocks
-            const title = req.params.title
+        else if (result && blocks != undefined){
 
-            return DocumentBlock.UpdateDocument(doc_id, blocks, title)
-        }
-    }).then((result, err) => {
-        if (err){
-            console.error(err)
-            res.send({ message : 'Something went wrong saving the pdf' })
+            return DocumentBlock.UpdateDocumentBlocks(doc_id, blocks)
         }
         else{
-            return accessFS.generatePDF(user_id)
+            res.send({ message: 'User is not authorized to access this document'})
+            throw(err)
+        }
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong saving the document' })
+            throw(err)
+        }
+        else{
+
+            return Document.UpdateTitleByDocid(doc_id, title)
+        }
+
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong updating the title' })
+            throw(err)
+        }
+        else{
+            return accessFS.generatePDF(doc_id)
         }
 
     }).then((result, err) => {
         if (err){
             console.error(err)
             res.send({ message : 'Something went wrong saving the pdf' })
+            throw(err)
         }
         else{
             res.send(result)
         }
     }).catch((exception) => {
-        console.error(exception.error_message)
-        res.send({ message : 'Something went wrong saving the pdf' })
+        console.error(exception)
+        res.send({ message : 'Something went wrong saving the document' })
     })
 
 })

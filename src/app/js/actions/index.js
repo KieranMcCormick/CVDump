@@ -74,6 +74,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
 
 export const dispatchSignUp = ({ username, firstname, lastname, email, password, confirmPassword }) => async (dispatch) => {
     try {
+
         const res = await axiosWithCSRF.post('/register', { username, firstname, lastname, email, password, confirmPassword })
         dispatch({
             type: types.LOGIN_SUCCESS,
@@ -201,9 +202,12 @@ export const dispatchSelectFile = (id, title) => ({
     },
 })
 
-export const dispatchAddBlockToSelectedFile = (value) => ({
+export const dispatchAddBlockToSelectedFile = (value, id) => ({
     type: types.ADD_BLOCK_TO_SELECTED_FILE,
-    payload: value,
+    payload: {
+        value,
+        id,
+    },
 })
 
 export const dispatchRemoveBlockFromSelectedFile = (blockOrder) => ({
@@ -262,11 +266,16 @@ export const dispatchOnClickCreateFile = () => ({
 export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => async (dispatch) => {
     try {
         // returns the id of the newly created document
-        const res = await axiosWithCSRF.post('/files/create/', { title, blocks, created_at })
+
+        await axiosWithCSRF.post('/files/create', JSON.stringify({ title, blocks, created_at }), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
 
         dispatch({
             type: types.CREATE_FILE_SUCCESS,
-            payload: res.data,
+            payload: title,
         })
 
         callback('File created')
@@ -281,18 +290,16 @@ export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => 
 
 export const dispatchUpdateFile = (id, title, blocks, callback) => async (dispatch) => {
     try {
-        // const res = await axios.post(`/files/update/${id}`, { title, blocks })
-        // dispatch({
-        //     type: types.UPDATE_FILE_SUCCESS,
-        //     payload: res.data,
-        // })
-        await axiosWithCSRF.post(`/files/savepdf/${id}`, { id, title, blocks })
+
+        await axiosWithCSRF.post(`/files/savepdf/${id}`, JSON.stringify({ id, title, blocks }), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
 
         dispatch({
             type: types.UPDATE_FILE_SUCCESS,
-            payload: {
-                title,
-            },
+            payload: title,
         })
         callback('File updated')
     } catch (error) {
@@ -362,35 +369,17 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
     }
 }
 
-
-// export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get(`/files/update/${id}`)
-
-//         dispatch({
-//             type: types.UPDATE_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.UPDATE_FILE_FAILURE,
-//             payload: error.response.data,
-//         })
-//     }
-// }
-
-export const dispatchSavePdf = (id) => async (dispatch) => {
+export const dispatchGetPdf = (id) => async (dispatch) => {
     try {
-
-        const res = await axios.get(`/files/savepdf/${id}`)
+        const res = await axios.get(`/file/pdf/${id}`)
 
         dispatch({
-            type: types.FETCH_PDF_SUCCESS,
+            type: types.FETCH_FILE_SUCCESS,
             payload: res.data,
         })
     } catch (error) {
         dispatch({
-            type: types.FETCH_PDF_FAILURE,
+            type: types.FETCH_FILE_FAILURE,
             payload: error.response.data,
         })
     }
@@ -425,17 +414,29 @@ export const dispatchReceiveNotification = (msg) => ({
 export const dispatchSendNotification = (data) => async (dispatch) => {
     try {
         //Store notification in db
+        
+        let postParams =  {
+            documentId: data.docId,
+            timeStamp: data.createdAt,
+            type: data.type,
+        }
+
+        if(data.type == 'comment') {
+            postParams.sender = data.sender
+            console.log(postParams)
+        }
+        if(data.type =='share') {
+            console.log("share is hit")
+            postParams.targets = data.targets
+            console.log(postParams)
+        }
+
         let success = await axiosWithCSRF.post(
             '/notifications/create',
-            {
-                sender: data.sender,
-                documentId: data.docId,
-                timeStamp: data.createdAt,
-                type: data.type,
-            }
+             postParams
         )
-
-        SocketHandler.emitEvent(
+        
+        /*SocketHandler.emitEvent(
             'notifications',
             'getNotifications',
 
@@ -448,7 +449,7 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
                 content: data.content,
                 uuid: success.data.uuid,
             }
-        )
+        )*/
 
         dispatch({
             type: types.SEND_NOTIFICATION_SUCCESS,
@@ -479,49 +480,17 @@ export const dispatchResolveNotification = (id) => async (dispatch) => {
 
 }
 
-// export const dispatchSavePdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/files/savepdf/${id}')
-
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.data,
-//         })
-//     }
-// }
-
-// export const dispatchGetPdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/file/pdf/${id}')
-
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.response.data,
-//         })
-//     }
-// }
-
-export const dispatchGetPdf = (id) => async (dispatch) => {
+export const dispatchShareFile = (docId,emails) => async(dispatch) => {
     try {
-        const res = await axios.get(`/file/pdf/${id}`)
-
+        const res = await axiosWithCSRF.post('/shared/share',{docId:docId,shareWith:emails})
         dispatch({
-            type: types.FETCH_FILE_SUCCESS,
+            type: types.SHARE_FILE_SUCCESS,
             payload: res.data,
         })
+
     } catch (error) {
         dispatch({
-            type: types.FETCH_FILE_FAILURE,
+            type: types.SHARE_FILE_FAILURE,
             payload: error.response.data,
         })
     }

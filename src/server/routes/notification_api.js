@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Notifications = require('../models/notifications')
 const requireLogin = require('../middlewares/requireLogin')
-
 router.use(requireLogin)
 //Called after login? or along with login?
 router.get('/load', (req, res) => {
@@ -22,18 +21,19 @@ router.get('/load', (req, res) => {
         })
 })
 
-router.post('/create', (req, res) => {
-    let newNotification = {
-        sender: req.body.sender,
-        documentId: req.body.documentId,
-        timeStamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        type: req.body.type,
-    }
+//end point for sharing notifications
 
+
+
+
+router.post('/create', (req, res) => {
+
+
+    newNotification = parseNotificationType(req)
+  
     new Notifications(newNotification).create().then((result, err) => {
         if (err) {
             res.sendStatus(401)
-
         }
 
         if (result) {
@@ -56,7 +56,29 @@ router.post('/delete', (req, res) => {
             res.sendStatus(200)
         }
     })
+    
 
 })
+
+function parseNotificationType(req){
+    if(req.body.type == 'comment') {
+        return  {
+            sender: req.body.sender,
+            documentId: req.body.documentId,
+            timeStamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            type: req.body.type,
+        }
+    } 
+
+    if(req.body.type=='share') {
+        return {
+            documentId: req.body.documentId,
+            timeStamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            type:req.body.type,
+            targets:req.body.targets,
+        }
+    }
+
+}
 
 module.exports = router
