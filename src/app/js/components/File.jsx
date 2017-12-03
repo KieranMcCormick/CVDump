@@ -162,10 +162,11 @@ class File extends PureComponent {
                     modal={true}
                     open={this.state.modal}
                     onRequestClose={this.toggleModal}
+
                 >
                     <p>{prompt} </p>
                     {this.renderTags()}
-                    <TextField onKeyDown={(e) => this.createTag(e)} className="tag_input" type="text" />
+                    <TextField autoFocus onKeyDown={(e) => this.createTag(e)} className="tag_input" type="text" />
                     <FlatButton
                         label="share"
                         onClick={() => this.onShare()}
