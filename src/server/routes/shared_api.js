@@ -7,9 +7,7 @@ const requireLogin = require('../middlewares/requireLogin')
 
 router.use(requireLogin)
 
-// `owner_id` varchar(36) DEFAULT NULL,
-//`user_email` varchar(30) DEFAULT NULL,
-//`document_id` varchar(36) DEFAULT NULL,
+
 router.get('/', (req, res) => {
     const user_email = req.user.email_address
     const user_id = req.user.uuid
