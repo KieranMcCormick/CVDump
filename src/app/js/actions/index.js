@@ -95,18 +95,20 @@ export const dispatchClearFormMessages = () => ({
     type: types.FORM_MESSAGES_CLEAR,
 })
 
-export const dispatchFetchFiles = () => async (dispatch) => {
+export const dispatchFetchFiles = (callback) => async (dispatch) => {
     try {
         const res = await axios.get('/files')
         dispatch({
             type: types.FETCH_FILES_SUCCESS,
             payload: res.data,
         })
+        callback()
     } catch (error) {
         dispatch({
             type: types.FETCH_FILES_FAILURE,
             payload: error.response.data,
         })
+        callback()
     }
 }
 
@@ -145,7 +147,6 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
     try {
 
         const comment = await axios.get(`/comment/${id}`)
-        const pdf = await axios.get(`/files/pdf/${id}`)
 
         dispatch({
             type: types.FETCH_SHARE_FILE_SUCCESS,
@@ -153,7 +154,7 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
                 doc_id: id,
                 version: 1,
                 comments: comment.data,
-                pdf: pdf.data,
+                pdfUrl: `/api/files/pdf/${id}`,
             },
         })
         callback()
@@ -170,7 +171,9 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
 export const dispatchFetchFile = (id, callback) => async (dispatch) => {
     try {
 
-        const blocks = await axios.get(`/files/${id}`)
+        const blocks = id === ''
+            ? { data: [] }
+            : await axios.get(`/files/${id}`)
         const availableBlocks = await axios.get('/blocks')
 
         //const doc = await axios.get(`/files/${id}`)
@@ -527,6 +530,53 @@ export const dispatchGetPdf = (id) => async (dispatch) => {
         dispatch({
             type: types.FETCH_FILE_FAILURE,
             payload: error.response.data,
+        })
+    }
+}
+
+export const dispatchFetchBlocks = () => async (dispatch) => {
+    try {
+
+        const res = await axios.get('/blocksapi')
+        dispatch({
+            type: types.FETCH_BLOCKS_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_BLOCKS_FALURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchCreateBlock = (block) => async (dispatch) => {
+    try {
+        const res = await axiosWithCSRF.post('/blocksapi/create', block)
+        dispatch({
+            type: types.CREATE_BLOCK_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.CREATE_BLOCK_FAILURE,
+            payload: error.data,
+        })
+    }
+}
+
+export const dispatchEditBlock = (block) => async (dispatch) => {
+    console.log('dispatchEditBlock')
+    try {
+        const res = await axiosWithCSRF.post('/blocksapi/edit', block)
+        dispatch({
+            type: types.EDIT_BLOCK_SUCCESS,
+            payload: res.data,
+        })
+    } catch (error) {
+        dispatch({
+            type: types.EDIT_BLOCK_FAILURE,
+            payload: error.data,
         })
     }
 }

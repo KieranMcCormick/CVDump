@@ -16,7 +16,7 @@ const initState = {
     availableBlocks: [],
     blocks: [],
     comments: [],
-    pdf: '',
+    pdfUrl: '',
     isNew: false,
 }
 
@@ -36,7 +36,7 @@ export default (state = initState, action) => {
                 availableBlocks: [],
                 blocks: [],
                 comments: [],
-                pdf: '',
+                pdfUrl: '',
                 isNew: false,
             }
         case types.FETCH_FILE_SUCCESS:
@@ -52,6 +52,8 @@ export default (state = initState, action) => {
             return {
                 ...state,
                 isNew: true,
+                id: 'new',
+                title: 'Untitled',
             }
         case types.UPDATE_FILE_SUCCESS:
         case types.CREATE_FILE_SUCCESS:

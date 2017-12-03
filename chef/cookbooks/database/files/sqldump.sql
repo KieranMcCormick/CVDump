@@ -51,12 +51,12 @@ DROP TABLE IF EXISTS `blocks`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `blocks` (
   `uuid` varchar(36) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `type` enum('headers','skills','jobs','projects','clubs','interests') NOT NULL,
-  `label` varchar(30) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `type` enum('headers','skills','jobs','projects','clubs','interests') DEFAULT NULL,
+  `label` varchar(30) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `user_id` varchar(36) NOT NULL,
-  `summary` text,
+  `user_id` varchar(36) DEFAULT NULL,
+  `summary` longtext CHARACTER SET utf8mb4 DEFAULT NULL,
   PRIMARY KEY (`uuid`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `blocks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`)
@@ -69,7 +69,9 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES ('5915c474-d60c-11e7-9932-000c291b6367','2017-11-30 12:23:38','jobs','sales associate','2017-11-30 12:23:38','7bb327a5-cb4b-11e7-821a-026d4863120d','## SALES ASSOCIATE @PLACE \n ..* make monthly sales goals \n ..* increase company profits by 5% annually with new promotion'),('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d',' ## JOE SMITH \n #### city, state | phone: 111-111-1111 | email: joesmith@email.com\n ==='),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d','## SARAH LEE \n '),('d7d628a9-d60d-11e7-9932-000c291b6367','2017-11-30 12:34:20','headers','extra','2017-11-30 12:34:20','7bb327a5-cb4b-11e7-821a-026d4863120d','-----'),('e457b5cc-d60b-11e7-9932-000c291b6367','2017-11-30 12:20:22','jobs','donut shop job','2017-11-30 12:20:22','7bb327a5-cb4b-11e7-821a-026d4863120d','## DONUT PLACE\n -decorated and baked donuts \n -took customer orders and told them about promotions');
+
+INSERT INTO `blocks` VALUES ('5915c474-d60c-11e7-9932-000c291b6367','2017-11-30 12:23:38','skills','sales associate','2017-11-30 12:23:38','7bb327a5-cb4b-11e7-821a-026d4863120d','## SALES ASSOCIATE @PLACE \n ..* make monthly sales goals \n ..* increase company profits by 5% annually with new promotion'),('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d',' ## JOE SMITH \n #### city, state | phone: 111-111-1111 | email: joesmith@email.com\n ==='),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d','## SARAH LEE \n '),('d7d628a9-d60d-11e7-9932-000c291b6367','2017-11-30 12:34:20','headers','extra','2017-11-30 12:34:20','7bb327a5-cb4b-11e7-821a-026d4863120d','-----'),('e457b5cc-d60b-11e7-9932-000c291b6367','2017-11-30 12:20:22','skills','donut shop job','2017-11-30 12:20:22','7bb327a5-cb4b-11e7-821a-026d4863120d','## DONUT PLACE\n -decorated and baked donuts \n -took customer orders and told them about promotions');
+
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 

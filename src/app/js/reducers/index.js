@@ -7,11 +7,14 @@ import selectedFileReducer from './selectedFileReducer'
 import formReducer from './formReducer'
 import sharedFilesReducer from './sharedFilesReducer'
 import notificationReducer from './notificationReducer'
+import blockReducer from './blockReducer'
+
 
 export const initialState = {}
 
 // define app-level reducer
 const appReducer = combineReducers({
+    blocks: blockReducer,
     files: fileReducer,
     selectedFile: selectedFileReducer,
     form: formReducer,
