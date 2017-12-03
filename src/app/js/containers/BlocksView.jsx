@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import RichTextEditor, { createEmptyValue } from 'react-rte'
 import PropTypes from 'prop-types'
+import * as actions from '../actions'
+import RaisedButton from 'material-ui/RaisedButton'
 
 class TextEditor extends Component {
     constructor(props) {
@@ -30,15 +33,14 @@ class TextEditor extends Component {
                     />
                 </div>
                 <div>
-                    <textarea
+                    <textarea className="fillerup"
                         placeholder="Editor Source"
                         value={value.toString(format)}
                         onChange={this.onChangeSource}
                     />
                 </div>
                 <div>
-                    <span>Save:</span>
-                    <button onClick={this.saveData}>Save</button>
+                    <RaisedButton onClick={this.saveData}>Save</RaisedButton>
                 </div>
             </div>
         )
@@ -60,19 +62,24 @@ class TextEditor extends Component {
         let { value, format } = this.state
         this.currentBlock = block
         this.setState({
-            value: value.setContentFromString(this.currentBlock.data, format),
+            value: value.setContentFromString(this.currentBlock.summary, format),
         })
     }
 
     saveData() {
         let { value, format } = this.state
-        this.currentBlock.data = value.toString(format)
+        this.currentBlock.summary = value.toString(format)
+        this.props.saveBlock(this.currentBlock)
     }
+}
+
+TextEditor.propTypes = {
+    saveBlock: PropTypes.func.isRequired,
 }
 
 const BlockParentComponent = props => (
     <div>
-        <button onClick={props.addChild}>+</button>
+        <RaisedButton className="u-margin-v-md u-full-width" onClick={props.addChild}>+</RaisedButton>
         {props.children}
     </div>
 )
@@ -83,9 +90,9 @@ BlockParentComponent.propTypes = {
 }
 
 const BlockChildComponent = props => (
-    <button onClick={props.onClick.bind(this, props.block)}>
-        {'Edit: ' + props.block.name}
-    </button>
+    <RaisedButton className="u-margin-md padme" onClick={props.onClick.bind(this, props.block)}>
+        {'Edit: ' + props.block.label}
+    </RaisedButton>
 )
 
 
@@ -97,72 +104,121 @@ BlockChildComponent.propTypes = {
 class Blocks extends Component {
     constructor(props) {
         super(props)
-        this.getData = this.getData.bind(this)
-        this.updateData = this.updateData.bind(this)
+
         this.handleClick = this.handleClick.bind(this)
         this.addChild = this.addChild.bind(this)
-
+        this.onChangeSource = this.onChangeSource.bind(this)
+        this.saveBlock = this.saveBlock.bind(this)
         this.state = {
-            blocks: [],
+            oldblocks: [],
+            inputValue: '',
         }
+
+    }
+
+    saveBlock(block){
+        this.props.dispatchEditBlock(block)
     }
     componentDidMount() {
-        this.getData()
+        this.props.dispatchFetchBlocks()
+        //this.setState({oldblocks: this.props.blocks})
     }
 
-    getData() {
-        const block1 = {
-            name: 'name1',
-            data: '~~data1~~ data1 data1 data1',
-        }
-        const block2 = {
-            name: 'name2',
-            data: 'data2 ``data2`` data2 data2',
-        }
-        this.addChild(block1)
-        this.addChild(block2)
-    }
-
-    updateData() {
-        console.log('Implement updataData()')
+    renderFiles() {
+        return this.props.blocks.map(({ uuid, summary }) => {
+            return (
+                <p key={uuid}>
+                    {summary}
+                </p>
+            )
+        })
     }
 
     handleClick(block) {
         this.editorRef.updateData(block)
     }
 
-    addChild(newBlock) {
-        let blocks = this.state.blocks
-        blocks.push(newBlock)
-        this.setState({ blocks: blocks })
+    addChild(newType) {
+        let newName = this.state.inputValue
+        this.props.dispatchCreateBlock({
+            label: newName,
+            type: newType,
+        })
+
+        //this.props.blocks.push(newBlock)
+        //this.forceUpdate()
+    }
+
+    onChangeSource(event) {
+        const source = event.target.value
+        this.setState({
+            inputValue: source,
+        })
     }
 
     render() {
-        const tmpBlock = {
-            name: 'new block',
-            data: '',
-        }
-
-        const children = this.state.blocks.map((block, index) =>
-            (
-                <BlockChildComponent
+        const HeadersChildren = this.props.blocks.map(function (block, index) {
+            if (block.type == 'headers') {
+                return <BlockChildComponent
                     key={index}
                     onClick={this.handleClick}
                     block={block}
                 />
-            )
-        )
+            }
+        }.bind(this))
+
+        const SkillsChildren = this.props.blocks.map(function (block, index) {
+            if (block.type == 'skills') {
+                return <BlockChildComponent
+                    key={index}
+                    onClick={this.handleClick}
+                    block={block}
+                />
+            }
+        }.bind(this))
+
+
 
         return (
             <div>
-                <div>Blocks View</div>
-                <BlockParentComponent addChild={this.addChild.bind(this, tmpBlock)}>
-                    {children}
-                </BlockParentComponent>
-                <TextEditor ref={(editor) => { this.editorRef = editor }} />
+                <br />
+                <p className="padme" >Name of new block:
+                    <input
+                        value={this.state.inputValue}
+                        onChange={this.onChangeSource}
+                    />
+                </p>
+
+                <div className="my_trow">
+                    <div className="my_celll">
+                        <div>Headers</div>
+                        <BlockParentComponent addChild={this.addChild.bind(this, 'headers')}>
+                            {HeadersChildren}
+                        </BlockParentComponent>
+                        <hr/>
+                        <div>Skills</div>
+                        <BlockParentComponent addChild={this.addChild.bind(this, 'skills')}>
+                            {SkillsChildren}
+                        </BlockParentComponent>
+                    </div>
+                    <div className="my_cellr">
+                        <TextEditor saveBlock={this.saveBlock.bind(this)} ref={(editor) => { this.editorRef = editor }} />
+                    </div>
+                </div>
             </div>
         )
     }
 }
 
-export default Blocks
+Blocks.propTypes = {
+    blocks: PropTypes.array.isRequired,
+    dispatchCreateBlock: PropTypes.func.isRequired,
+    dispatchEditBlock: PropTypes.func.isRequired,
+    dispatchFetchBlocks: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = ({ app }) => ({
+    blocks: app.blocks,
+})
+
+export default connect(mapStateToProps, actions)(Blocks)

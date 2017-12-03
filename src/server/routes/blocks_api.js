@@ -21,22 +21,36 @@ router.get('/', (req, res) => {
         console.error(exception)
         res.send({ message: 'Something went wrong loading blocks' })
     })
-
-
 })
 
 router.post('/create', (req, res) => {
     let newBlock = new Block({
         user_id: req.user.uuid,
+        label: req.body.label,
+        type: req.body.type,
     })
-    console.log(newBlock)
     newBlock.create().then((err, newBlock) => {
         if (err) {
             res.send(err)
         }
-        console.log('created block')
         res.send(newBlock)
     })
 })
 
+
+router.post('/edit', (req, res) => {
+    Block.edit(req.body).then((editedBlock, err) => {
+        if (err) {
+            console.log('err: '+err)
+            res.send(err)
+            throw(err)
+        } else {
+            res.send(editedBlock)
+        }
+
+    }).catch((exception) => {
+        console.error(exception)
+        res.send({ message: 'Something went wrong loading blocks' })
+    })
+})
 module.exports = router

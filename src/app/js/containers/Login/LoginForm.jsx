@@ -56,7 +56,7 @@ LoginForm.propTypes = {
 }
 
 LoginField.defaultProps = {
-    onLoginSubmit: () => {},
+    onLoginSubmit: () => { },
 }
 
 const validate = (values) => {
