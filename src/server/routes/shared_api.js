@@ -48,7 +48,7 @@ router.post('/share', (req, res) => {
                 throw Error('No such email')
             }
             if (success) {
-                success.forEach((check, index) => {
+                success.forEach((check) => {
                     if (check == null) {
                         pass=false
                     }
