@@ -414,7 +414,7 @@ export const dispatchShareFile = (docId,emails) => async(dispatch) => {
         })
 
     } catch (error) {
-        dispatch({  
+        dispatch({
             type: types.SHARE_FILE_FAILURE,
             payload: error.response.data,
         })

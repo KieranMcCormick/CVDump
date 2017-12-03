@@ -46,7 +46,7 @@ router.post('/share', (req, res) => {
             let pass = true
             if (error) {
                 throw Error('No such email')
-            }  
+            }
             if (success) {
                 success.forEach((check, index) => {
                     if (check == null) {
@@ -56,25 +56,25 @@ router.post('/share', (req, res) => {
                 //create share_objects
                 if(pass){
                     Document.shareFile(
-                    req.user.uuid,
-                    req.body.docId,
-                    req.body.shareWith)
-                    .then((success, err) => {
-                        if (err) {
-                            res.send({ message: 'THe user does not exists' })
-                        }
-                        if (success) {
-                            res.send(success)
-                        }
-                    })
+                        req.user.uuid,
+                        req.body.docId,
+                        req.body.shareWith)
+                        .then((success, err) => {
+                            if (err) {
+                                res.send({ message: 'THe user does not exists' })
+                            }
+                            if (success) {
+                                res.send(success)
+                            }
+                        })
                 } else {
-                    res.send({message:"no such user"})
+                    res.send({message:'no such user'})
                 }
             }
         })
-        .catch((error) =>{
-            res.sendStatus(500).send({ message:error})
-        })
+            .catch((error) =>{
+                res.sendStatus(500).send({ message:error})
+            })
     }
 })
 
