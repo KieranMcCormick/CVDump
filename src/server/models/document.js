@@ -39,7 +39,7 @@ class Document {
     }
 
     SQLValueArray() {
-        return [ this.uuid, this.title, this.user_id, this.version ]
+        return [this.uuid, this.title, this.user_id, this.version]
     }
 
     save() {
@@ -62,9 +62,9 @@ class Document {
     static create(props) {
 
         return new Promise((resolve, reject) => {
-            const doc   = new Document()
-            doc.uuid    = props.uuid
-            doc.title   = props.title
+            const doc = new Document()
+            doc.uuid = props.uuid
+            doc.title = props.title
             doc.version = props.version
             doc.user_id = props.user_id
             doc.save().then((savedDoc) => {
@@ -78,9 +78,9 @@ class Document {
 
 
     /*Needed inorder to get uuid for document blocks insertion at file create time*/
-    static GetNewUuid(){
+    static GetNewUuid() {
         return new Promise((resolve, reject) => {
-            sqlSelect(SELECT_UUID, [] , (err, res) => {
+            sqlSelect(SELECT_UUID, [], (err, res) => {
                 if (err) {
                     console.error(err)
                     return reject(err)
@@ -93,7 +93,7 @@ class Document {
 
     static LoadDocumentsByUserId(user_id) {
         return new Promise((resolve, reject) => {
-            sqlSelect(FIND_RECENT_BY_USERID, [ user_id ], (err, documents) => {
+            sqlSelect(FIND_RECENT_BY_USERID, [user_id], (err, documents) => {
                 if (err) {
                     console.error(err)
                     return reject(err)
@@ -108,7 +108,7 @@ class Document {
 
     static LoadSharedDocumentsByUserEmail(user_email, user_id) {
         return new Promise((resolve, reject) => {
-            sqlSelect(FIND_SHARED_BY_USEREMAIL, [ user_email, user_id ], (err, documents) => {
+            sqlSelect(FIND_SHARED_BY_USEREMAIL, [user_email, user_id], (err, documents) => {
                 if (err) {
                     console.error(err)
                     return reject(err)
@@ -124,7 +124,7 @@ class Document {
     static UpdateTitleByDocid(doc_id, title) {
 
         return new Promise((resolve, reject) => {
-            sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [ title, doc_id ], (err, res) => {
+            sqlUpdate(UPDATE_TITLE_BY_DOC_ID, [title, doc_id], (err, res) => {
                 if (err) {
                     console.error(err)
                     return reject(err)
@@ -151,7 +151,7 @@ class Document {
     /*Should only be called when first creating pdf*/
     static UpdateDocumentFilepath(doc_id, filepath, filename) {
         return new Promise((resolve, reject) => {
-            sqlUpdate(UPDATE_FILEPATH, [ filepath, filename, doc_id ], (err, result) => {
+            sqlUpdate(UPDATE_FILEPATH, [filepath, filename, doc_id], (err, result) => {
                 if (err) {
                     console.error(err)
                     return reject(err)
@@ -166,14 +166,14 @@ class Document {
     static VaildateDocumentPermission(doc_id, user_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(CHECK_USER_PERMISSION_ON_DOC, [doc_id], (err, result) => {
-                if(err){
+                if (err) {
                     console.error(err)
                     return reject(err)
                 }
-                if( result.length <= 0 || result[0].user_id  != user_id  ){
+                if (result.length <= 0 || result[0].user_id != user_id) {
                     resolve(false)
                 }
-                else{
+                else {
                     resolve(true)
                 }
             })
@@ -183,45 +183,65 @@ class Document {
     static VaildateSharedDocumentPermission(doc_id, user_email) {
         return new Promise((resolve, reject) => {
             sqlSelect(CHECK_USER_PERMISSION_ON_SHARED_DOC, [doc_id], (err, result) => {
-                if(err){
+                if (err) {
                     console.error(err)
                     return reject(err)
                 }
 
-                let vals = result.map(email => email.email_address === user_email || email.user_email === user_email )
+                let vals = result.map(email => email.email_address === user_email || email.user_email === user_email)
 
-                if( result.length <= 0 ||  vals.find(val => val == true ) == undefined ){
+                if (result.length <= 0 || vals.find(val => val == true) == undefined) {
                     resolve(false)
                 }
-                else{
+                else {
                     resolve(true)
                 }
             })
         })
     }
 
+
+
+    // removes emails that are already shared with a certain file
     static shareFile(ownerId, doc_id, emails) {
+        console.log('FILTERING')
         const shareQuery = ' INSERT INTO shared_files ( owner_id, user_email, document_id) VALUES ( ?, ?, ?)'
-        let queries = []
-        emails.forEach((email) => {
-            queries.push(
-                new Promise((resolve, reject) => {
-                    sqlInsert(shareQuery, [ownerId, email, doc_id], (err, result) => {
-                        if (err) {
-                            return reject(new Error('Database Error'))
-                        }
-                        if (!result/** || result**/) { // Check valid result ... ?
-                            return reject(new Error('Unknown Error'))
-                        }
-                        return resolve({ docId: doc_id, sent_email: email })
-                    })
+        const filterQuery = ' SELECT user_email FROM shared_files WHERE user_email = ? and document_id = ?'
+        let filtered = emails.map((email) => {
+            return new Promise((resolve, reject) => {
+                sqlSelect(filterQuery, [email, doc_id], (err, result) => {
+                    console.log(result.length)
+                    if (err) {
+                        console.log(err)
+                        return reject(new Error('SOmething went terribly wrong'))
+                    }
+                    //found duplicate, handle it
+                    if (result.length > 0) {
+                        console.log('found ducplicate')
+                        return
+                    } else {
+                        console.log('found no ducplicate')
+                        sqlInsert(shareQuery, [ownerId, email, doc_id], (err, result) => {
+                            if (err) {
+                                console.log(err)
+                                return reject(new Error('fail to create'))
+                            }
+                            if (!result/** || result**/) { // Check valid result ... ?
+                                return reject(new Error('Unknown Error'))
+                            }
+                            console.log(result)
+                            return resolve({ docId: doc_id, sent_email: email })
+                        })
+                    }
 
                 })
-            )
+            })
         })
-        return Promise.all(queries)
+        return Promise.all(filtered)
+
     }
 }
+
 
 
 module.exports = { Document }

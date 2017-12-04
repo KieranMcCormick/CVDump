@@ -51,8 +51,9 @@ class NotificationsView extends PureComponent {
     resolveNotification(notice, route) {
         //fixes bug where user directly routes to file page before client fetchesFiles
         this.props.dispatchResolveNotification(notice.uuid)
+        console.log(notice)
         if (route) {
-            let routePath = '/shared/' + notice.documentId
+            let routePath = '/shared/' + notice.document_id
             console.log(routePath)
             this.props.history.push(routePath)
             this.setState({ dropdown: false })
