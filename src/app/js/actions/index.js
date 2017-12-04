@@ -464,7 +464,7 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
                     type: data.type,
                     timeStamp: data.createdAt,
                     sender: data.sender,
-                    documentId: data.docId,
+                    document_id: data.docId,
                     content: data.content,
                     uuid: success.data.uuid,
                 }
@@ -482,7 +482,7 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
                         type: data.type,
                         timeStamp: data.createdAt,
                         sender: data.sender,
-                        documentId: data.docId,
+                        document_id: data.docId,
                         content: data.content,
                         uuid: notice.uuid,
                     }
