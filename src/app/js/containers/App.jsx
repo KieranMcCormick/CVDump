@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Switch, Route, Redirect } from 'react-router-dom'
-import { withRouter } from 'react-router'
+import { Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { MuiThemeProvider, getMuiTheme } from 'material-ui/styles'
 import * as MuiThemeOverrides from '../global/theme'

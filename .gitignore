@@ -128,7 +128,9 @@ typings/
 # End of https://www.gitignore.io/api/node,sass,linux,macos,vagrant,visualstudiocode
 
 config/tmp/*
-src/public/main.js
+src/public/**/*.js
+!src/public/sw.js
+!src/public/vendor/sw-toolbox.js
 src/public/styles.*
 
 package-lock.json

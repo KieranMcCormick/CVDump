@@ -15,3 +15,4 @@ execute 'add_nodesource' do
 end
 
 package 'nodejs'
+package 'libfontconfig'

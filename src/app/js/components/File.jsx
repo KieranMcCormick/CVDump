@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router'
+import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import * as actions from '../actions'
 import _ from 'lodash'
@@ -60,7 +60,7 @@ class File extends PureComponent {
             hasMessage: false,
             message: '',
         })
-        const title = this.titleNode.getValue()
+        const title = this.titleNode.getValue().trim()
         const blocks = this.props.selectedFile.blocks.map(item => {
             return {
                 id: item.blockId,
@@ -78,7 +78,7 @@ class File extends PureComponent {
             const data = {
                 title,
                 blocks,
-                created_at: new moment().format('YYYY-MM-DD hh:mm:ss'),
+                created_at: moment().format('YYYY-MM-DD hh:mm:ss'),
             }
             this.props.dispatchCreateFile(data, callback)
         } else {
@@ -227,6 +227,7 @@ class File extends PureComponent {
                 open={this.state.hasMessage}
                 message={this.state.message}
                 autoHideDuration={2000}
+                bodyStyle={{ width: '100%' }}
             />
         )
     }

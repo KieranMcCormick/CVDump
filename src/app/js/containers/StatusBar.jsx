@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { withRouter } from 'react-router'
+import { Link, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Logo, Avatar } from '../global/icon'
 import * as actions from '../actions'
