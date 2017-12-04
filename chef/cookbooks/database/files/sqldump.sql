@@ -54,7 +54,7 @@ CREATE TABLE `blocks` (
   `label` varchar(30) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `user_id` varchar(36) DEFAULT NULL,
-  `summary` longtext CHARACTER SET utf8mb4 DEFAULT NULL,
+  `summary` longtext CHARACTER SET utf8mb4,
   PRIMARY KEY (`uuid`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `blocks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`)
@@ -67,9 +67,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-
 INSERT INTO `blocks` VALUES ('5915c474-d60c-11e7-9932-000c291b6367','2017-11-30 12:23:38','skills','sales associate','2017-11-30 12:23:38','7bb327a5-cb4b-11e7-821a-026d4863120d','## SALES ASSOCIATE @PLACE \n ..* make monthly sales goals \n ..* increase company profits by 5% annually with new promotion'),('c297e95b-cf3d-11e7-a173-000c291b6367','2017-11-21 20:29:42','headers','block 1','2017-11-21 20:29:42','7bb327a5-cb4b-11e7-821a-026d4863120d',' ## JOE SMITH \n #### city, state | phone: 111-111-1111 | email: joesmith@email.com\n ==='),('cef2510c-cf3d-11e7-a173-000c291b6367','2017-11-21 20:30:03','headers','block 2','2017-11-21 20:30:03','7bb327a5-cb4b-11e7-821a-026d4863120d','## SARAH LEE \n '),('d7d628a9-d60d-11e7-9932-000c291b6367','2017-11-30 12:34:20','headers','extra','2017-11-30 12:34:20','7bb327a5-cb4b-11e7-821a-026d4863120d','-----'),('e457b5cc-d60b-11e7-9932-000c291b6367','2017-11-30 12:20:22','skills','donut shop job','2017-11-30 12:20:22','7bb327a5-cb4b-11e7-821a-026d4863120d','## DONUT PLACE\n -decorated and baked donuts \n -took customer orders and told them about promotions');
-
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,7 +160,7 @@ CREATE TABLE `documents` (
 
 LOCK TABLES `documents` WRITE;
 /*!40000 ALTER TABLE `documents` DISABLE KEYS */;
-INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-18 20:58:48','first document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,'1/3/3/','EipjRV.pdf'),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-18 20:59:59','second document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,NULL,NULL),('861cf54c-cce6-11e7-810c-000c291b6367','2017-11-18 21:00:12','Resume 1','99d3ced7-cb4b-11e7-821a-026d4863120d',1,NULL,NULL);
+INSERT INTO `documents` VALUES ('5479dcaf-cce6-11e7-810c-000c291b6367','2017-11-18 20:58:48','first document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,'1/3/3/','EipjRV.pdf'),('58a5bbb4-ce45-11e7-a4f8-000c291b6367','2017-11-18 20:59:59','Second Document','7bb327a5-cb4b-11e7-821a-026d4863120d',1,'1/1/3/','HmYibh.pdf');
 /*!40000 ALTER TABLE `documents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -192,43 +190,13 @@ CREATE TABLE `shared_files` (
 
 LOCK TABLES `shared_files` WRITE;
 /*!40000 ALTER TABLE `shared_files` DISABLE KEYS */;
-INSERT INTO `shared_files` VALUES ('7bb327a5-cb4b-11e7-821a-026d4863120d','user1@email.com','5479dcaf-cce6-11e7-810c-000c291b6367');
+INSERT INTO `shared_files` VALUES ('7bb327a5-cb4b-11e7-821a-026d4863120d','user2@email.com','58a5bbb4-ce45-11e7-a4f8-000c291b6367');
 /*!40000 ALTER TABLE `shared_files` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
 --
-DROP TABLE IF EXISTS `notifications`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `notifications` (
-  `uuid` varchar(36) NOT NULL,
-  `type` varchar(36),
-  `user_id` varchar(36) NOT NULL,
-  `sender` varchar(36)  NOT NULL,
-  `document_id` varchar(36),
-  `created_at` datetime NOT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`uuid`),
-  UNIQUE KEY `uuid` (`uuid`),
-  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`),
-  CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`document_id`) REFERENCES `documents` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `notifications` WRITE;
-/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-
-
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -267,6 +235,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-
--- Dump completed on 2017-11-30 16:34:03
-
+-- Dump completed on 2017-12-04 10:09:04
