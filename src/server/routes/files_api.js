@@ -35,9 +35,9 @@ router.get('/', (req, res) => {
  * returns file with `id` for the user
  */
 router.get('/:id', (req, res) => {
-    const user_email = req.user.email_address
+    const user_id = req.user.uuid
     const doc_id     = req.params.id
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
         if( err ){
             throw(err)
         }
@@ -150,7 +150,7 @@ router.get('/pdf/:id', function(req, res){
     const doc_id     = req.params.id
     const user_email = req.user.email_address
 
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    Document.VaildateSharedDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
         }
@@ -175,8 +175,8 @@ router.get('/pdf/:id', function(req, res){
 
 router.get('/download/:id', (req, res) => {
     const doc_id     = req.params.id
-    const user_email = req.user.email_address
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    const user_id = req.user.uuid
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
         if (err){
             throw(err)
         }
@@ -200,12 +200,12 @@ router.get('/download/:id', (req, res) => {
 
 router.post('/savepdf/:id', (req, res) => {
 
-    const user_email = req.user.email_address
+    const user_id = req.user.uuid
     const doc_id  = req.params.id
     const blocks  = req.body.blocks
     const title   = req.body.title != '' ? req.body.title : 'Untitled'
 
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
         if (err){
             throw(err)
         }
