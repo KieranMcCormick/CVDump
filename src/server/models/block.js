@@ -1,13 +1,14 @@
 const { sqlInsert, sqlSelect } = require('../db')
 
 const EDIT_BLOCK_SQL = 'UPDATE blocks SET summary=? WHERE uuid=?'
-const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, label, type, summary) VALUES (UUID(), ?, ?, ?, ?)'
+const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, label, type, summary) VALUES (?, ?, ?, ?, ?)'
 const GET_BLOCKS_SQL = 'SELECT * FROM blocks WHERE user_id = ?'
+const SELECT_UUID = 'SELECT UUID() as uuid'
 
 class Block {
     constructor(props) {
         if (props) {
-            this.block_id   = props.uuid
+            this.uuid   = props.uuid
             this.label      = props.label ? props.label : 'untitled'
             this.type       = props.type
             this.user_id    = props.user_id
@@ -18,7 +19,8 @@ class Block {
     }
 
     SQLValueArray() {
-        return [this.user_id, this.label, this.type, this.summary]
+        console.log("this.uuid: "+this.uuid)
+        return [this.uuid, this.user_id, this.label, this.type, this.summary]
     }
 
     save() {
@@ -49,6 +51,8 @@ class Block {
     }
 
     static edit(props) {
+        console.log("editing")
+        console.log(props)
         return new Promise((resolve, reject) => {
             sqlInsert(EDIT_BLOCK_SQL, [props.summary, props.uuid], (err, result) => {
                 if (err) {
@@ -60,6 +64,19 @@ class Block {
                     return resolve(props)
                 }
 
+            })
+        })
+    }
+
+    static GetNewUuid(){
+        console.log("in GetNewUuid()!!!!")
+        return new Promise((resolve, reject) => {
+            sqlSelect(SELECT_UUID, [], (err, res) => {
+                if (err) {
+                    console.error(err)
+                }
+                console.log("res[0]: "+res[0])
+                resolve(res[0]) 
             })
         })
     }

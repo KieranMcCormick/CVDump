@@ -206,7 +206,7 @@ DROP TABLE IF EXISTS `notifications`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notifications` (
   `uuid` varchar(36) NOT NULL,
-  `type` varchar(36),
+  `type` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   `sender` varchar(36)  NOT NULL,
   `document_id` varchar(36),

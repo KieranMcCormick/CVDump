@@ -24,16 +24,29 @@ router.get('/', (req, res) => {
 })
 
 router.post('/create', (req, res) => {
-    let newBlock = new Block({
-        user_id: req.user.uuid,
-        label: req.body.label,
-        type: req.body.type,
-    })
-    newBlock.create().then((err, newBlock) => {
-        if (err) {
-            res.send(err)
+    Block.GetNewUuid().then((result, err) => {
+        if (err || result == undefined || !result.uuid ){
+            console.error(err)
+            res.send({message : 'Something went wrong creating uuid for file' })
+            throw(err)
         }
-        res.send(newBlock)
+        else {
+            
+            new_id = result.uuid
+            console.log("new_id: "+new_id)
+            let newBlock = new Block({
+                uuid: new_id,
+                user_id: req.user.uuid,
+                label: req.body.label,
+                type: req.body.type,
+            })
+            newBlock.create().then((err, newBlock) => {
+                if (err) {
+                    res.send(err)
+                }
+                res.send(newBlock)
+            })
+        }
     })
 })
 
@@ -42,7 +55,6 @@ router.post('/edit', (req, res) => {
     Block.edit(req.body).then((editedBlock, err) => {
         if (err) {
             console.log('err: '+err)
-            res.send(err)
             throw(err)
         } else {
             res.send(editedBlock)

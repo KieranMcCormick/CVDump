@@ -7,7 +7,6 @@ const fs = require('fs')
 //path to where file system is located
 let fs_path = process.env.FILESYSTEM_PATH || '/home/ubuntu/files/'
 
-
 function genFilePath(){
     const options = {
         length: 1,
@@ -19,7 +18,6 @@ function genFilePath(){
                rand.generate(options) + '/'
     return path
 }
-
 
 module.exports = {
 
@@ -77,7 +75,6 @@ module.exports = {
             })
         })
     },
-
 
     //WIP
     retrievePDF: function(doc_id) {

@@ -1,7 +1,6 @@
 const { sqlInsert, sqlSelect ,sqlDelete} = require('../db')
 const _ = require('lodash')
-const { findOneByEmail } = require('./user')
-
+const fetchUserQuery = 'SELECT uuid FROM users WHERE email_address = ?'
 
 class Notifications {
     constructor(props) {
@@ -11,13 +10,8 @@ class Notifications {
             this.type = props.type ? props.type : 'system'
             this.sender = props.sender ? props.sender: ''
             this.email = props.email ? props.email : ''
-
         }
-    //checks if document exists
-
-    //checks if user exists ,returns iD
     }
-
 
     create() {
         // might query using username instead ?
@@ -57,7 +51,7 @@ class Notifications {
         return new Promise((resolve, reject) => {
             // notifications has to have userid, docid and a type of notification
             if( !this.documentId || !this.type) {
-                return reject({message:'Missing userID and docID'})
+                return reject({message:'Missing docID'})
             }
 
             this.getDocOwner(this.documentId).then ((success, err) => {
@@ -66,8 +60,8 @@ class Notifications {
                 }
                 if (success) {
 
-                    let userId = success[0].uuid
-                    let username = success[0].username
+                    const userId = success[0].uuid
+                    const username = success[0].username
 
                     if(username != this.sender) {
                         //No need to emit your own notification
@@ -83,7 +77,7 @@ class Notifications {
                             if(result){
                                 return resolve({
                                     uuid:uuid,
-                                    target: success[0].username,
+                                    target: username,
                                     type:this.type,
                                     sender:this.sender,
                                     documentId: this.documentId,
@@ -101,7 +95,7 @@ class Notifications {
         let that = this
         const fetchNotificationQuery = 'SELECT notifications.uuid, notifications.user_id, type, sender, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
         return new Promise((resolve, reject) => {
-            findOneByEmail(this.email).then( (err, success) => {
+            sqlSelect(fetchUserQuery, [this.email], (err, success) => {
                 if (err) {
                     console.log(err)
                     return reject(new Error('Internal Server Error'))

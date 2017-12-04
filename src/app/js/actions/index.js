@@ -112,15 +112,6 @@ export const dispatchFetchFiles = (callback) => async (dispatch) => {
     }
 }
 
-
-// export const dispatchFetchFileWithVersion = () => async(dispatch) => {
-//     try {
-
-//     } catch (error) {
-
-//     }
-// }
-
 // collections
 export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
     try {
@@ -246,7 +237,6 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
     }
 }
 
-
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
     payload: {
@@ -363,22 +353,6 @@ export const dispatchUpdatePassword = ({ currentPassword, password, confirmPassw
 }
 
 
-// export const dispatchUpdateDocTitle = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get(`/files/update/${id}`)
-
-//         dispatch({
-//             type: types.UPDATE_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.UPDATE_FILE_FAILURE,
-//             payload: error.response.data,
-//         })
-//     }
-// }
-
 export const dispatchSavePdf = (id) => async (dispatch) => {
     try {
 
@@ -478,38 +452,6 @@ export const dispatchResolveNotification = (id) => async (dispatch) => {
     }
 
 }
-
-// export const dispatchSavePdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/files/savepdf/${id}')
-
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.data,
-//         })
-//     }
-// }
-
-// export const dispatchGetPdf = (id) => async (dispatch) => {
-//     try {
-//         const res = await axios.get('/file/pdf/${id}')
-
-//         dispatch({
-//             type: types.FETCH_FILE_SUCCESS,
-//             payload: res.data,
-//         })
-//     } catch (error) {
-//         dispatch({
-//             type: types.FETCH_FILE_FAILURE,
-//             payload: error.response.data,
-//         })
-//     }
-// }
 
 export const dispatchGetPdf = (id) => async (dispatch) => {
     try {

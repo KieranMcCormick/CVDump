@@ -26,14 +26,7 @@ NotificationHandler.createNotification = (type, data, callback) => {
             })
             break
         //add case for sharing later
-
     }
-
 }
-
-
-
-
-
 
 export default NotificationHandler
