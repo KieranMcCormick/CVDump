@@ -210,6 +210,7 @@ class Notifications {
     load() {
         let that = this
         const fetchNotificationQuery = 'SELECT notifications.uuid, notifications.user_id, type, sender, notifications.created_at, document_id, title FROM notifications  LEFT JOIN documents ON notifications.document_id = documents.uuid WHERE notifications.user_id = ? ORDER BY notifications.created_at DESC'
+        console.log("loading")
         return new Promise((resolve, reject) => {
             User.findOneByEmail(this.email).then( (err, success) => {
                 if (err) {
@@ -217,7 +218,7 @@ class Notifications {
                     return reject(new Error('Internal Server Error'))
                 }
                 if (success[0]) {
-
+                    console.log(success)
                     let uuid = success[0].uuid
                     sqlSelect(fetchNotificationQuery, [uuid], (err, result) => {
                         if(err) {

@@ -59,6 +59,7 @@ class SocketListener {
 
             socket.on('getNotifications', function (msg) {
                 logger('Listen to notifications')
+                logger(msg)
                 //get file Owner from docId
                 let type = msg.type  
                 // socket.to(msg.target).emit('notify',msg)

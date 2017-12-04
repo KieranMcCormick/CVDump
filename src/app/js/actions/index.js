@@ -455,7 +455,9 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
         }
 
         if(data.type =='share'){
-            success.data.foreach((notice)=>{
+            console.log("emitting share event")
+            console.log(success.data)
+            success.data.forEach((notice)=>{
                 SocketHandler.emitEvent(
                     'notifications',
                     'getNotifications',

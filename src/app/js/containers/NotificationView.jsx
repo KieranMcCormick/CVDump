@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import Badge from 'material-ui/Badge'
 import IconButton from 'material-ui/IconButton'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Menu from 'material-ui/Menu'
 import Drawer from 'material-ui/Drawer'
 import FlatButton from 'material-ui/FlatButton'
@@ -14,16 +14,16 @@ import SocketHandler from '../global/socketsHandler'
 import NotificationHandler from '../global/notificationHandler'
 
 class NotificationsView extends PureComponent {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
             dropdown: false,
             dropdownAnchor: null,
         }
     }
-    componentDidMount(){
+    componentDidMount() {
         let that = this
-        if(this.props.user.isAuthenticated) {
+        if (this.props.user.isAuthenticated) {
 
             this.props.dispatchFetchNotifications(this.props.user.info.email)
 
@@ -36,12 +36,12 @@ class NotificationsView extends PureComponent {
                 'notifications',
                 'notify',
                 (notification) => {
-                //Triggers the state change for notifications
-
+                    //Triggers the state change for notifications
+                    console.log("received notification")
                     this.props.dispatchReceiveNotification(notification)
-                    NotificationHandler.createNotification(notification.type,notification,function(notification){
+                    NotificationHandler.createNotification(notification.type, notification, function (notification) {
                         console.log(notification)
-                        that.resolveNotification(notification,true)
+                        that.resolveNotification(notification, true)
                     })
 
                 }
@@ -50,53 +50,61 @@ class NotificationsView extends PureComponent {
     }
 
     //Links to relevant page and deletes notification
-    resolveNotification(notice,route) {
+    resolveNotification(notice, route) {
         //fixes bug where user directly routes to file page before client fetchesFiles
         this.props.dispatchResolveNotification(notice.uuid)
-        if(route) {
-            let routePath = '/shared/' +notice.documentId
+        if (route) {
+            let routePath = '/shared/' + notice.documentId
             console.log(routePath)
             this.props.history.push(routePath)
-            this.setState({dropdown:false})
+            this.setState({ dropdown: false })
         }
 
     }
 
 
     renderNotificationCards() {
-        if(this.props.notifications.length >0){
+        
+        if (this.props.notifications.length > 0) {
             return this.props.notifications.map((notice, index) => {
+                console.log(this.props.notifications)
+                if (notice.type == 'comment') {
+                    let caption = notice.file ? 'New comment on ' + notice.file : 'New comment from ' + notice.sender
 
-                if (notice.type =='comment'){
-
-                    let caption = notice.file ? 'New comment on '  + notice.file : 'New comment from ' +notice.sender
-                    let subtitle = notice.timeStamp.substring(0,10)
-                    return <Card key={'notification-' +index}>
-                        <CardHeader
-                            title={caption}
-                            subtitle={subtitle}
-                            actAsExpander={true}
-                        />
-                        <CardText>
-                            {notice.content}
-                        </CardText>
-                        <CardActions>
-                            <FlatButton onClick={()=>this.resolveNotification(notice,true)} label="View"/>
-                            <FlatButton onClick={()=>this.resolveNotification(notice,false)}label="Remove"/>
-                        </CardActions>
-
-
-                    </Card>
                 }
+                if (notice.type == 'share') {
+                    let caption = notice.sender + " shared a file with you"
+                }
+
+                let subtitle = notice.timeStamp.substring(0, 10)
+                return <Card key={'notification-' + index}>
+                    <CardHeader
+                        title={caption}
+                        subtitle={subtitle}
+                        actAsExpander={true}
+                    />
+                    <CardText>
+                        {notice.content}
+                    </CardText>
+                    <CardActions>
+                        <FlatButton onClick={() => this.resolveNotification(notice, true)} label="View" />
+                        <FlatButton onClick={() => this.resolveNotification(notice, false)} label="Remove" />
+                    </CardActions>
+
+
+                </Card>
+
 
             })
         }
 
     }
 
-    showNotifications = (event)=> {
-        this.setState({dropdown:!this.state.dropdown,
-            dropdownAnchor:event.currentTarget})
+    showNotifications = (event) => {
+        this.setState({
+            dropdown: !this.state.dropdown,
+            dropdownAnchor: event.currentTarget
+        })
     }
 
     renderNotificationCount() {
@@ -105,9 +113,9 @@ class NotificationsView extends PureComponent {
                 <Badge
                     badgeContent={this.props.notifications.length}
                     secondary={true}
-                    badgeStyle={{top: 20, right: 20}}
+                    badgeStyle={{ top: 20, right: 20 }}
                 >
-                    <IconButton tooltip="Notifications" onClick ={(event)=>this.showNotifications(event)}>
+                    <IconButton tooltip="Notifications" onClick={(event) => this.showNotifications(event)}>
                         <NotificationsIcon />
                     </IconButton>
                 </Badge>
@@ -115,7 +123,7 @@ class NotificationsView extends PureComponent {
                     open={this.state.dropdown}
                     docked={false}
                     openSecondary={true}
-                    onRequestChange={(dropdown) => this.setState({dropdown})}
+                    onRequestChange={(dropdown) => this.setState({ dropdown })}
                 >
 
                     <Menu>
@@ -148,15 +156,15 @@ NotificationsView.propTypes = {
     history: PropTypes.any.isRequired,
     notifications: PropTypes.any.isRequired,
     dispatchReceiveNotification: PropTypes.func.isRequired,
-    dispatchResolveNotification:PropTypes.func.isRequired,
+    dispatchResolveNotification: PropTypes.func.isRequired,
     dispatchFetchNotifications: PropTypes.func.isRequired,
 }
 
 
-const mapStateToProps = ({ user,app }) => ({
+const mapStateToProps = ({ user, app }) => ({
     user,
     notifications: app.notifications,
 })
 
 
-export default withRouter(connect(mapStateToProps,actions)(NotificationsView))
+export default withRouter(connect(mapStateToProps, actions)(NotificationsView))
