@@ -67,13 +67,14 @@ class NotificationsView extends PureComponent {
         
         if (this.props.notifications.length > 0) {
             return this.props.notifications.map((notice, index) => {
-                console.log(this.props.notifications)
+                let caption = ''
                 if (notice.type == 'comment') {
-                    let caption = notice.file ? 'New comment on ' + notice.file : 'New comment from ' + notice.sender
+                    caption = notice.file ? 'New comment on ' + notice.file : 'New comment from ' + notice.sender
 
                 }
                 if (notice.type == 'share') {
-                    let caption = notice.sender + " shared a file with you"
+                    console.log(this.props.notifications)
+                    caption = notice.sender + " shared a file with you"
                 }
 
                 let subtitle = notice.timeStamp.substring(0, 10)

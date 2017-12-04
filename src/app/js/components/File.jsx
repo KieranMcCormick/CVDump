@@ -90,7 +90,7 @@ class File extends PureComponent {
         this.props.dispatchShareFile(this.getDocumentId(), this.state.tags)
         this.props.dispatchSendNotification({
             type:'share',
-            content: "You can now view" + this.props.selectedFile.title,
+            content: "You can now view " + this.props.selectedFile.title,
             createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
             sender: this.props.user.info.username,
             docId: this.getDocumentId(),

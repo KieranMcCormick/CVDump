@@ -244,6 +244,7 @@ class User {
     }
 
     static findOneByEmail(email_address) {
+        console.log(email_address)
         return new Promise((resolve, reject) => {
             sqlSelect(FIND_USER_BY_EMAIL_SQL, [ email_address ], (err, users) => {
                 if (err) { console.error(err); return resolve(null) }
