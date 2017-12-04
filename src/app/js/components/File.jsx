@@ -99,6 +99,10 @@ class File extends PureComponent {
     }
 
     onShare() {
+        if(this.state.tags.length < 1) {
+            this.setState({errorInput:"enter a email address to share with"})
+            return
+        }
         this.props.dispatchShareFile(this.getDocumentId(), this.state.tags)
         this.props.dispatchSendNotification({
             type: 'share',
