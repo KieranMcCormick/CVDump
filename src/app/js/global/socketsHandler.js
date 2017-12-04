@@ -65,8 +65,8 @@ SocketHandler.emitEvent = (namespace, event, data) => {
             SocketHandler.commentSocket.emit(event, data)
             break
         case 'notifications':
-            console.log("socket handler")
-            
+            console.log('socket handler')
+
             SocketHandler.notificationSocket.emit(event, data)
             break
         default:

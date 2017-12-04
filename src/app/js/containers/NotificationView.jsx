@@ -37,7 +37,6 @@ class NotificationsView extends PureComponent {
                 'notify',
                 (notification) => {
                     //Triggers the state change for notifications
-                    console.log("received notification")
                     this.props.dispatchReceiveNotification(notification)
                     NotificationHandler.createNotification(notification.type, notification, function (notification) {
                         console.log(notification)
@@ -64,7 +63,7 @@ class NotificationsView extends PureComponent {
 
 
     renderNotificationCards() {
-        
+
         if (this.props.notifications.length > 0) {
             return this.props.notifications.map((notice, index) => {
                 let caption = ''
@@ -74,7 +73,7 @@ class NotificationsView extends PureComponent {
                 }
                 if (notice.type == 'share') {
                     console.log(this.props.notifications)
-                    caption = notice.sender + " shared a file with you"
+                    caption = notice.sender + ' shared a file with you'
                 }
 
                 let subtitle = notice.timeStamp.substring(0, 10)
@@ -104,7 +103,7 @@ class NotificationsView extends PureComponent {
     showNotifications = (event) => {
         this.setState({
             dropdown: !this.state.dropdown,
-            dropdownAnchor: event.currentTarget
+            dropdownAnchor: event.currentTarget,
         })
     }
 

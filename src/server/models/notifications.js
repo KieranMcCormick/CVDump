@@ -27,7 +27,6 @@ class Notifications {
             //because we are spawning multiple notifications for sharing, we need to iterate a list of targets
 
             if(this.type =='share') {
-                console.log("sharing")
                 return resolve(this.createShareNotification())
             }
 
@@ -35,7 +34,7 @@ class Notifications {
 
                 this.getUUid().then((success,err)=>{
                     if(success){
-                        return resolve(this.createCommentNotification(success)) 
+                        return resolve(this.createCommentNotification(success))
                     }
                     if(err){
                         reject(null)
@@ -43,7 +42,7 @@ class Notifications {
                 })
 
             }
-            
+
         })
     }
 
@@ -71,8 +70,8 @@ class Notifications {
             this.getDocOwner(this.documentId).then((docOwner,err) => {
                 if (err) {
                     return resolve({ message: err })
-                } 
-    
+                }
+
                 if(docOwner){
                     //set the sender as doc owner
                     this.sender = docOwner[0].username
@@ -80,30 +79,27 @@ class Notifications {
                     this.parseTargets().then( (sendTo,err) =>{
                         //should get an array of users
                         if(err){
-                            reject(new Error("fail to get users"))
+                            reject(new Error('fail to get users'))
                         }
-    
+
                         if(sendTo){
-                            console.log(sendTo)
                             //list of users to notify
                             //we want a uuid for each new user
                             this.bulkCreateUUIds(sendTo).then((uuidArray,error) =>{
-                                if(err) {
-                                   return reject (new Error(err))
+                                if(error) {
+                                    return reject (new Error(error))
                                 }
 
                                 if(uuidArray){
-                                   console.log(uuidArray)
-                                   let results = this.bulkCreateNotifications(sendTo,uuidArray).then((shareNotifications,err)=>{
-                                       if(shareNotifications){
-                                           console.log(shareNotifications)
-                                           return resolve(shareNotifications)
-                                       }
-                                       if(err){
-                                           return reject(new Error(err))
-                                       }
-                                   })
-                                   return results
+                                    let results = this.bulkCreateNotifications(sendTo,uuidArray).then((shareNotifications,err)=>{
+                                        if(shareNotifications){
+                                            return resolve(shareNotifications)
+                                        }
+                                        if(err){
+                                            return reject(new Error(err))
+                                        }
+                                    })
+                                    return results
                                 }
 
                             })
@@ -112,7 +108,7 @@ class Notifications {
                 }
             })
         })
-      
+
     }
 
 
@@ -126,36 +122,36 @@ class Notifications {
 
     bulkCreateUUIds(emails){
         return Promise.all(
-            emails.map((email) =>{
+            emails.map(() => {
                 return this.getUUid()
-        }))
+            }))
     }
 
     bulkCreateNotifications(sendTo,uuidArray){
-       return Promise.all( 
-           sendTo.map((newShare,index) => {
-            if(newShare !=null ) {
-               return  new Promise ((resolve,reject) => {
-                sqlInsert(createQuery, [uuidArray[index],newShare.uuid, this.documentId,this.sender, this.type,this.timeStamp], (err, result) => {
-                    if (err) {
-                        console.log(err)
-                        return reject(new Error(err))
-                    }
-                    if(result){
-                        return resolve({
-                            uuid:uuidArray[index],
-                            target: newShare.username,
-                            type:this.type,
-                            sender:this.sender,
-                            documentId: this.documentId,
-                            timeStamp:this.timeStamp,
+        return Promise.all(
+            sendTo.map((newShare,index) => {
+                if(newShare !=null ) {
+                    return  new Promise ((resolve,reject) => {
+                        sqlInsert(createQuery, [uuidArray[index],newShare.uuid, this.documentId,this.sender, this.type,this.timeStamp], (err, result) => {
+                            if (err) {
+                                console.log(err)
+                                return reject(new Error(err))
+                            }
+                            if(result){
+                                return resolve({
+                                    uuid:uuidArray[index],
+                                    target: newShare.username,
+                                    type:this.type,
+                                    sender:this.sender,
+                                    documentId: this.documentId,
+                                    timeStamp:this.timeStamp,
+                                })
+                            }
                         })
-                    }
-                })
-                   
-               }) 
-            }
-        })
+
+                    })
+                }
+            })
         )
 
     }
@@ -285,7 +281,7 @@ class Notifications {
     }
 
 
-  
+
 }
 
 module.exports = Notifications

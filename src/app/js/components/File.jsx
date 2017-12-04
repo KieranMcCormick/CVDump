@@ -89,13 +89,13 @@ class File extends PureComponent {
     onShare() {
         this.props.dispatchShareFile(this.getDocumentId(), this.state.tags)
         this.props.dispatchSendNotification({
-            type:'share',
-            content: "You can now view " + this.props.selectedFile.title,
-            createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
+            type: 'share',
+            content: 'You can now view ' + this.props.selectedFile.title,
+            createdAt: new moment().format('YYYY-MM-DD hh:mm:ss'),
             sender: this.props.user.info.username,
             docId: this.getDocumentId(),
             targets: this.state.tags,
-            })
+        })
         this.toggleModal()
     }
 
@@ -268,7 +268,7 @@ File.propTypes = {
     dispatchFetchFile: PropTypes.func.isRequired,
     dispatchSelectFile: PropTypes.func.isRequired,
     dispatchShareFile: PropTypes.func.isRequired,
-    dispatchSendNotification:PropTypes.func.isRequired,
+    dispatchSendNotification: PropTypes.func.isRequired,
     user: PropTypes.shape({
         info: PropTypes.shape({
             username: PropTypes.string.isRequired,

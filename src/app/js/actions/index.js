@@ -414,7 +414,7 @@ export const dispatchReceiveNotification = (msg) => ({
 export const dispatchSendNotification = (data) => async (dispatch) => {
     try {
         //Store notification in db
-        
+
         let postParams =  {
             documentId: data.docId,
             timeStamp: data.createdAt,
@@ -426,22 +426,21 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
             console.log(postParams)
         }
         if(data.type =='share') {
-            console.log("share is hit")
             postParams.targets = data.targets
             console.log(postParams)
         }
 
         let success = await axiosWithCSRF.post(
             '/notifications/create',
-             postParams
+            postParams
         )
         console.log(success)
-        
+
         if (data.type =='comment') {
             SocketHandler.emitEvent(
                 'notifications',
                 'getNotifications',
-    
+
                 {
                     target: success.data.target,
                     type: data.type,
@@ -454,14 +453,12 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
             )
         }
 
-        if(data.type =='share'){
-            console.log("emitting share event")
-            console.log(success.data)
+        if(data.type =='share') {
             success.data.forEach((notice)=>{
                 SocketHandler.emitEvent(
                     'notifications',
                     'getNotifications',
-        
+
                     {
                         target: notice.target,
                         type: data.type,
@@ -474,7 +471,7 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
                 )
             })
         }
-      
+
 
         dispatch({
             type: types.SEND_NOTIFICATION_SUCCESS,

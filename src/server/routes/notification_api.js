@@ -5,7 +5,7 @@ const requireLogin = require('../middlewares/requireLogin')
 router.use(requireLogin)
 //Called after login? or along with login?
 router.get('/load', (req, res) => {
-   
+
     new Notifications({ email: req.user.email_address }).load().then((result, err) => {
         if (result) {
             res.send(result)
@@ -29,8 +29,8 @@ router.get('/load', (req, res) => {
 router.post('/create', (req, res) => {
 
 
-    newNotification = parseNotificationType(req)
-  
+    let newNotification = parseNotificationType(req)
+
     new Notifications(newNotification).create().then((result, err) => {
         if (err) {
             res.sendStatus(401)
@@ -56,26 +56,26 @@ router.post('/delete', (req, res) => {
             res.sendStatus(200)
         }
     })
-    
+
 
 })
 
-function parseNotificationType(req){
-    if(req.body.type == 'comment') {
-        return  {
+function parseNotificationType(req) {
+    if (req.body.type == 'comment') {
+        return {
             sender: req.body.sender,
             documentId: req.body.documentId,
             timeStamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
             type: req.body.type,
         }
-    } 
+    }
 
-    if(req.body.type=='share') {
+    if (req.body.type == 'share') {
         return {
             documentId: req.body.documentId,
             timeStamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
-            type:req.body.type,
-            targets:req.body.targets,
+            type: req.body.type,
+            targets: req.body.targets,
         }
     }
 
