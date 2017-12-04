@@ -24,7 +24,7 @@
 .c-status-bar .c-status-bar__user {
     display: flex;
     align-items: center;
-
+    
     &:hover,
     label:hover {
         cursor: pointer;
@@ -33,4 +33,10 @@
     * {
         margin: 0 map-get($spacing__map, xs);
     }
+}
+
+.c-status-bar .c-status-bar__notification {
+    display: flex;
+    align-items: center;
+  
 }

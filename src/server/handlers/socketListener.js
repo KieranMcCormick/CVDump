@@ -1,5 +1,4 @@
 const logger = (message) => {console.log(`[Socket] ${message}`)}
-
 class SocketListener {
     constructor(server) {
         this.io = require('socket.io')(server)
@@ -17,10 +16,13 @@ class SocketListener {
 
     comments_listener() {
         this.commentSpace.on('connection', function (socket) {
-            logger('Connect to comments space')
+
             socket.on('joinRoom', function (room) {
-                logger(`Join room event room id: ${room}`)
-                socket.join(room)
+                logger(`join room event room id: ${room}`)
+                if(room) {
+                    logger('Connect to comments space')
+                    socket.join(room)
+                }
             })
 
             socket.on('leaveRoom', function (room) {
@@ -45,16 +47,20 @@ class SocketListener {
         this.notificationSpace.on('connection', function (socket) {
             //users subscribe to this channel when they log on the first time
             //room names will be their userIds
-            socket.on('getNotifications', function (user) {
-                logger('Listen to notifications')
-                socket.join(user)
+            socket.on('joinRoom', function (room) {
+                if(room) {
+                    logger('Connect to notification space')
+                    socket.join(room)
+                }
+            })
+            socket.on('leaveRoom', function (room) {
+                socket.leave(room)
             })
 
-            //Notifications should be sent to global name space and redirected to specific users
-            //fired by comment creation
-            socket.on('onReceiveNotification', function (msg) {
-                //get target userId from msg, reply message to specific room
-                socket.to(msg.toUser).emit('notify', msg)
+            socket.on('getNotifications', function (msg) {
+                logger('Listen to notifications')
+                socket.to(msg.target).emit('notify',msg)
+                return
             })
         })
     }

@@ -53,6 +53,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
                 info: res.data,
             },
         })
+
         dispatch(push('/'))
     } catch (error) {
         dispatch({
@@ -60,6 +61,7 @@ export const dispatchLogin = ({ username, password }) => async (dispatch) => {
             payload: {
                 isFetching: false,
                 isAuthenticated: false,
+                errorMessage: error.response.data.errorMessage || 'Unknown Error',
             },
         })
         dispatch({
@@ -150,6 +152,7 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
         dispatch({
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
+                doc_id: id,
                 comments: comment.data,
                 pdfUrl: `/api/files/pdf/${id}`,
             },
@@ -239,10 +242,13 @@ export const dispatchCreateComment = (comment) => async (dispatch) => {
                 comment,
             }
         )
+        //if target user is inside the room, we dont need to create notification
+
     } catch (error) {
         console.error(error)
     }
 }
+
 
 export const dispatchReceiveComment = (comment) => ({
     type: types.RECEIVE_COMMENT,
@@ -395,6 +401,123 @@ export const dispatchGetPdf = (id) => async (dispatch) => {
             payload: error.response.data,
         })
     }
+}
+
+export const dispatchFetchNotifications = () => async (dispatch) => {
+    try {
+        let path = '/notifications/load'
+        const newAlerts = await axios.get(path)
+        console.log(newAlerts)
+        dispatch({
+            type: types.FETCH_NOTIFICATION_SUCCESS,
+            payload: newAlerts.data.notifications,
+        })
+
+    } catch (error) {
+        dispatch({
+            type: types.FETCH_FILE_FAILURE,
+            payload: [],
+        })
+    }
+}
+
+//Fired when user receives a notification
+export const dispatchReceiveNotification = (msg) => ({
+    type: types.RECEIVE_NOTIFICATION,
+    payload: {
+        newNotice: msg,
+    },
+})
+
+export const dispatchSendNotification = (data) => async (dispatch) => {
+    try {
+        //Store notification in db
+
+        let postParams =  {
+            documentId: data.docId,
+            timeStamp: data.createdAt,
+            type: data.type,
+        }
+
+        if(data.type == 'comment') {
+            postParams.sender = data.sender
+            console.log(postParams)
+        }
+        if(data.type =='share') {
+            postParams.targets = data.targets
+            console.log(postParams)
+        }
+
+        let success = await axiosWithCSRF.post(
+            '/notifications/create',
+            postParams
+        )
+        console.log(success)
+
+        if (data.type =='comment') {
+            SocketHandler.emitEvent(
+                'notifications',
+                'getNotifications',
+
+                {
+                    target: success.data.target,
+                    type: data.type,
+                    timeStamp: data.createdAt,
+                    sender: data.sender,
+                    documentId: data.docId,
+                    content: data.content,
+                    uuid: success.data.uuid,
+                }
+            )
+        }
+
+        if(data.type =='share') {
+            success.data.forEach((notice)=>{
+                SocketHandler.emitEvent(
+                    'notifications',
+                    'getNotifications',
+
+                    {
+                        target: notice.target,
+                        type: data.type,
+                        timeStamp: data.createdAt,
+                        sender: data.sender,
+                        documentId: data.docId,
+                        content: data.content,
+                        uuid: notice.uuid,
+                    }
+                )
+            })
+        }
+
+
+        dispatch({
+            type: types.SEND_NOTIFICATION_SUCCESS,
+            payload: {
+                newNotice: 'msg',
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+//Deletes notification from db
+export const dispatchResolveNotification = (id) => async (dispatch) => {
+    try {
+        //call delete on server
+        await axiosWithCSRF.post('/notifications/delete', { id: id })
+        //update state by removing notification from old state
+        dispatch({
+            type: types.RESOLVE_NOTIFICATION,
+            payload: {
+                removed: id,
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
+
 }
 
 export const dispatchShareFile = (docId,emails) => async(dispatch) => {

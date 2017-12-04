@@ -20,7 +20,7 @@ SocketHandler.joinRoom = (namespace, roomId) => {
     SocketHandler.log(`[${namespace}] Joining room: ${roomId}`)
     switch (namespace) {
         case 'comments':
-            SocketHandler.commentSocket.emit('joinRoom', roomId)
+            SocketHandler.commentSocket.emit('joinRoom',  roomId)
             break
         case 'notifications':
             SocketHandler.notificationSocket.emit('joinRoom', roomId)
@@ -62,6 +62,8 @@ SocketHandler.emitEvent = (namespace, event, data) => {
             SocketHandler.commentSocket.emit(event, data)
             break
         case 'notifications':
+            console.log('socket handler')
+
             SocketHandler.notificationSocket.emit(event, data)
             break
         default:

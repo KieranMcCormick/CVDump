@@ -7,6 +7,7 @@ import * as actions from '../actions'
 import PathLink from '../components/PathLink'
 import { Paper, Menu, MenuItem } from 'material-ui'
 import { getDisplayName } from '../global/common'
+import NotificationView from './NotificationView'
 
 
 class StatusBar extends PureComponent {
@@ -74,7 +75,11 @@ class StatusBar extends PureComponent {
             <div className="c-status-bar">
                 <PathLink pathname={this.props.location.pathname}/>
                 {this.renderLogo()}
-                {this.renderUser()}
+                <div className="c-status-bar__notification">
+                    <NotificationView />
+                    {this.renderUser()}
+                </div>
+
             </div>
         )
     }

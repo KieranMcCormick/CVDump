@@ -34,6 +34,7 @@ router.get('/', (req, res) => {
 /**
  * returns file with `id` for the user
  */
+
 router.get('/:id', (req, res) => {
     const user_id = req.user.uuid
     const doc_id     = req.params.id
