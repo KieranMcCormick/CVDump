@@ -200,11 +200,11 @@ class Document {
         })
     }
 
- 
-    
+
+
     // removes emails that are already shared with a certain file
     static shareFile(ownerId, doc_id, emails) {
-        console.log("FILTERING")
+        console.log('FILTERING')
         const shareQuery = ' INSERT INTO shared_files ( owner_id, user_email, document_id) VALUES ( ?, ?, ?)'
         const filterQuery = ' SELECT user_email FROM shared_files WHERE user_email = ? and document_id = ?'
         let filtered = emails.map((email) => {
@@ -213,14 +213,14 @@ class Document {
                     console.log(result.length)
                     if (err) {
                         console.log(err)
-                        return reject(new Error("SOmething went terribly wrong"))
+                        return reject(new Error('SOmething went terribly wrong'))
                     }
                     //found duplicate, handle it
                     if (result.length > 0) {
-                        console.log("found ducplicate")
+                        console.log('found ducplicate')
                         return
                     } else {
-                        console.log("found no ducplicate")
+                        console.log('found no ducplicate')
                         sqlInsert(shareQuery, [ownerId, email, doc_id], (err, result) => {
                             if (err) {
                                 console.log(err)
@@ -237,8 +237,8 @@ class Document {
                 })
             })
         })
-       return Promise.all(filtered)
-        
+        return Promise.all(filtered)
+
     }
 }
 
