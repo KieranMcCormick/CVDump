@@ -5,7 +5,7 @@ const { Document } = require('../models/document')
 const { DocumentBlock } = require('../models/documentblock')
 const fs = require('fs')
 //path to where file system is located
-let fs_path = process.env.FILESYSTEM_PATH || '/home/ubuntu/files/'
+let fs_path = process.env.FILESYSTEM_PATH || '/home/seleena/Documents/files/'
 
 
 /* returns file path: append filename to this*/
@@ -107,6 +107,28 @@ module.exports = {
                                 resolve(result)
                             }
                         })
+                    }
+                }
+            }).catch((error) => {
+                console.error(error)
+                reject({ error_message : 'Error retrieving pdf file'})
+            })
+        })
+    },
+
+    retrievePDFpath: function(doc_id) {
+        return new Promise((resolve, reject) => {
+            Document.FindFilepathByDocid(doc_id).then((filepath, err) => {
+                if (err){
+                    throw(err)
+                }
+                else{
+                    if ( filepath != undefined || filepath.length > 0 ){ //test this when pdf render works
+                        let full_path_pdf = fs_path + filepath[0].filepath + filepath[0].filename
+                        return resolve(full_path_pdf)
+                    }
+                    else{
+                        return reject(null)
                     }
                 }
             }).catch((error) => {

@@ -256,6 +256,25 @@ export const dispatchOnClickCreateFile = () => ({
     type: types.CREATING_NEW_FILE,
 })
 
+export const dispatchDownloadFile = (doc_id, callback) => async (dispatch) => {
+    try {
+        const link = document.createElement('a')
+        link.href = `/api/files/download/${doc_id}`
+        link.click()
+
+        dispatch({
+            type: types.DOWNLOAD_PDF_SUCCESS,
+        })
+        callback('Download Finished')
+    } catch (error) {
+        dispatch({
+            type: types.DOWNLOAD_PDF_FAILURE,
+            payload: error.response.data,
+        })
+        callback('Download Failed')
+    }
+}
+
 export const dispatchCreateFile = ({ title , blocks, created_at }, callback) => async (dispatch) => {
     try {
         // returns the id of the newly created document

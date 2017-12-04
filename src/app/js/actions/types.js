@@ -34,6 +34,10 @@ export default {
     FETCH_PDF_SUCCESS: '@@file/FETCH_FILE_SUCCESS',
     FETCH_PDF_FAILURE: '@@file/FETCH_FILE_FAILURE',
 
+    DOWNLOAD_PDF_SUCCESS: '@@file/DOWNLOAD_PDF_SUCCESS',
+    DOWNLOAD_PDF_FAILURE: '@@file/DOWNLOAD_PDF_FAILURE',
+
+
     // selected file
     SELECT_FILE: '@@selected_file/SELECT_FILE',
     SAVE_FILE: '@@selected_file/SAVE_FILE',
