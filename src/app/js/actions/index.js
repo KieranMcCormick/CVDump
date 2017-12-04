@@ -153,7 +153,6 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
             type: types.FETCH_SHARE_FILE_SUCCESS,
             payload: {
                 doc_id: id,
-                version: 1,
                 comments: comment.data,
                 pdfUrl: `/api/files/pdf/${id}`,
             },
@@ -385,9 +384,9 @@ export const dispatchGetPdf = (id) => async (dispatch) => {
     }
 }
 
-export const dispatchFetchNotifications = (userEmail) => async (dispatch) => {
+export const dispatchFetchNotifications = () => async (dispatch) => {
     try {
-        let path = '/notifications/load?email=' + userEmail
+        let path = '/notifications/load'
         const newAlerts = await axios.get(path)
         console.log(newAlerts)
         dispatch({

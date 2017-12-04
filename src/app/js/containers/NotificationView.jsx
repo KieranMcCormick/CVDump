@@ -25,7 +25,7 @@ class NotificationsView extends PureComponent {
         let that = this
         if (this.props.user.isAuthenticated) {
 
-            this.props.dispatchFetchNotifications(this.props.user.info.email)
+            this.props.dispatchFetchNotifications()
 
             SocketHandler.joinRoom(
                 'notifications',
@@ -63,8 +63,6 @@ class NotificationsView extends PureComponent {
 
 
     renderNotificationCards() {
-
-        if (this.props.notifications.length > 0) {
             return this.props.notifications.map((notice, index) => {
                 let caption = ''
                 if (notice.type == 'comment') {
@@ -90,14 +88,9 @@ class NotificationsView extends PureComponent {
                         <FlatButton onClick={() => this.resolveNotification(notice, true)} label="View" />
                         <FlatButton onClick={() => this.resolveNotification(notice, false)} label="Remove" />
                     </CardActions>
-
-
                 </Card>
-
-
             })
-        }
-
+       
     }
 
     showNotifications = (event) => {

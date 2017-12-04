@@ -34,20 +34,6 @@ router.get('/', (req, res) => {
 /**
  * returns file with `id` for the user
  */
-// router.get('/:id', (req, res) => {
-//     const user_id = req.user.uuid
-//     DocumentBlock.GetBlocks(id).then((result, err) => {
-//         if (err){
-//             console.error(err)
-//             res.send({ message : 'Something went wrong loading files' })
-//         } else {
-//             res.send(result)
-//         }
-//     }).catch((exception) => {
-//         console.error(exception)
-//         res.send({ message : 'Something went wrong loading files' })
-//     })
-// })
 
 router.get('/:id', (req, res) => {
     const user_email = req.user.email_address

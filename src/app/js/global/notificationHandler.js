@@ -1,5 +1,5 @@
 const NotificationHandler = {}
-const defaultTitle = ' New notification'
+const defaultTitle = 'New notification'
 //type classifies whether it is a comemnt ,share, file upload notifcaiont
 //data determins logic for onClick events, ie link to comment
 NotificationHandler.createNotification = (type, data, callback) => {
@@ -41,16 +41,7 @@ NotificationHandler.createNotification = (type, data, callback) => {
                 }
             })
             break
-
-        //add case for sharing later
-
     }
-
 }
-
-
-
-
-
 
 export default NotificationHandler

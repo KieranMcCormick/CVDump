@@ -53,10 +53,6 @@ class ShareFile extends PureComponent {
         }
     }
 
-
-
-    /*
-    */
     render() {
         if (this.state.isLoading) {
             return <Loader />
