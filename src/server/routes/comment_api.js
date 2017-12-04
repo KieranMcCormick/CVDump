@@ -1,24 +1,46 @@
 const express = require('express')
 const router = express.Router()
 const Comments = require('../models/comments')
+const { Document } = require('../models/document')
 const requireLogin = require('../middlewares/requireLogin')
 
 router.use(requireLogin)
 
 router.get('/:docId', (req, res) => {
     const docId = req.params.docId
-    Comments.loadComments(docId).then((result, err) => {
+    console.log("Checking permissions")
+    //Just validate first, if it checkouts , carry on loading comments, else load error
+    Document.VaildateSharedDocumentPermission(docId, req.user.email_address).then((result, err) => {
         if (err) {
-            res.send({ message: 'cant find comments' })
+            res.status(500).send({ message: "you do not have permission to view this file" })
         }
         if (result) {
-            res.send(result)
+            console.log("You have permission")
+            Comments.loadComments(docId).then((result, err) => {
+                if (err) {
+                    res.sendStatus(500).send({ message: 'cant find comments' })
+                    return
+                }
+                if (result) {
+                    res.send(result)
+                    return
+                }
+            })
+                .catch((exception) => {
+                    console.log(exception)
+                    res.status(500).send({ message: 'something went wrong fetching comments' })
+                })
+
+        } else {
+            console.log("You dont have permission")
+            res.status(500).send({ message: "you do not have permission to view this file" })
         }
     })
         .catch((exception) => {
             console.log(exception)
-            res.send({ message: 'something went wrong fetching comments' })
+            res.status(500).send({ message: 'something went wrong fetching comments' })
         })
+
 })
 
 router.post('/create', (req, res) => {
@@ -31,24 +53,35 @@ router.post('/create', (req, res) => {
             content: req.body.content,
             timeStamp: req.body.createdAt,
         })
-        newComment.validateDocument().then((result, err) => {
-            if (err) {
-                res.send({ message: 'there is no such document' })
-            }
-            else {
-                newComment.create().then((err, result) => {
-                    if (err) {
-                        res.send(err)
-                    }
-                    console.log('created comments')
-                    res.send({ createdAt: 'comment created', data: result })
-                })
-            }
-        })
-            .catch((exception) => {
-                res.send({ error: exception })
-            })
 
+        Document.VaildateSharedDocumentPermission(newComment.documentId, req.user.email_address)
+            .then((valid, err) => {
+                if(err){
+                    res.status(500).send({message:"Error commenting"})
+                }
+
+                if (valid) {
+                    newComment.validateDocument().then((result, err) => {
+                        if (err) {
+                            res.send({ message: 'there is no such document' })
+                        }
+                        else {
+                            newComment.create().then((err, result) => {
+                                if (err) {
+                                    res.send(err)
+                                }
+                                console.log('created comments')
+                                res.send({ createdAt: 'comment created', data: result })
+                            })
+                        }
+                    })
+                     .catch((exception) => {
+                         res.send({ error: exception })
+                     })
+                } else {
+                    res.status(500).send(null)
+                }
+            })
     } else {
         res.send({ message: 'Not valid comment' })
     }
