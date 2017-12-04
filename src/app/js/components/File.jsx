@@ -100,7 +100,7 @@ class File extends PureComponent {
 
     onShare() {
         if(this.state.tags.length < 1) {
-            this.setState({errorInput:"enter a email address to share with"})
+            this.setState({errorInput:'enter a email address to share with'})
             return
         }
         this.props.dispatchShareFile(this.getDocumentId(), this.state.tags)
@@ -168,13 +168,13 @@ class File extends PureComponent {
         this.setState({errorInput:''})
         if (event.key == 'Enter') {
             if( !validateEmail(event.target.value)){
-                this.setState({errorInput:"Must be a email Address!"})
+                this.setState({errorInput:'Must be a email Address!'})
                 return
 
-            }   
+            }
 
             if(this.props.user.info.email == event.target.value){
-                this.setState({errorInput:"Cant share with yourself"})
+                this.setState({errorInput:'Cant share with yourself'})
                 return
             }
             this.setState({ tags: [...this.state.tags, event.target.value] })
@@ -199,7 +199,7 @@ class File extends PureComponent {
     }
     renderModal() {
         const prompt = 'Enter user emails to who you want to share with and hit "Enter", click the cross to remove emails'
-        
+
         return (
             <div>
                 <Dialog
@@ -211,19 +211,18 @@ class File extends PureComponent {
                 >
                     <p>{prompt} </p>
                     {this.renderTags()}
-                    <TextField autoFocus 
-                    onKeyDown={(e) => this.createTag(e)} 
-                    className="tag_input" 
-                    type="text" 
-                    errorText={this.state.errorInput}
-                    hintText="Hit Enter to create Tag" />
+                    <TextField autoFocus
+                        onKeyDown={(e) => this.createTag(e)}
+                        className="tag_input"
+                        type="text"
+                        errorText={this.state.errorInput}
+                        hintText="Hit Enter to create Tag" />
                     <FlatButton
                         label="share"
                         onClick={() => this.onShare()}
                     />
                     <FlatButton
                         label="cancel"
-                        disabled= {true ? (this.state.tags.length < 0): false}
                         onClick={() => this.toggleModal()}
                     />
                 </Dialog>
