@@ -568,7 +568,6 @@ export const dispatchCreateBlock = (block) => async (dispatch) => {
 }
 
 export const dispatchEditBlock = (block) => async (dispatch) => {
-    console.log('dispatchEditBlock')
     try {
         const res = await axiosWithCSRF.post('/blocksapi/edit', block)
         dispatch({

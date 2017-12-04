@@ -61,7 +61,8 @@ class CommentBox extends Component {
                     />
                     <RaisedButton
                         label="Send"
-                        primary
+                        labelColor="#fff"
+                        backgroundColor="#2286c3"
                         onClick={this.onClickHandler}
                     />
                 </div>

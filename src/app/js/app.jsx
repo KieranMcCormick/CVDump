@@ -5,7 +5,6 @@ import { Router } from 'react-router-dom'
 import { store, history } from './store'
 import SocketHandler from './global/socketsHandler'
 import App from './containers/App'
-import 'material-design-icons/iconfont/material-icons.css'
 
 SocketHandler.start()
 

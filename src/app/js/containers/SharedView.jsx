@@ -49,13 +49,13 @@ class SharedView extends Component {
             return <Loader />
         }
         return (
-            <div className="c-shares-view-container">
+            <div className="t-view-container">
                 <h2>Files I Shared with People</h2>
-                <div className="c-shares-view__files-list">
+                <div className="c-files-list">
                     {this.renderSharedTo()}
                 </div>
                 <h2>Files Shared with Me</h2>
-                <div className="c-shares-view__files-list">
+                <div className="c-files-list">
                     {this.renderSharedWith()}
                 </div>
             </div>
@@ -70,7 +70,7 @@ SharedView.propTypes = {
         }).isRequired,
     }).isRequired,
     sharedFiles: PropTypes.arrayOf(PropTypes.shape({
-        ownerId: PropTypes.string.isRequired,
+        userId: PropTypes.string.isRequired,
         docId: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
     }).isRequired).isRequired,

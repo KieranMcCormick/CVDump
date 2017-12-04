@@ -236,16 +236,19 @@ class File extends PureComponent {
                 {this.renderEditButton()}
                 <FlatButton
                     label="Download PDF"
-                    icon={<i className="material-icons">save</i>}
+                    disabled={this.state.isEditing}
+                    icon={<i className="material-icons">cloud_download</i>}
                     onClick={() => this.onDownload()}
                 />
                 <FlatButton
                     label="Save"
+                    disabled={this.state.isEditing}
                     icon={<i className="material-icons">save</i>}
                     onClick={() => this.onSave()}
                 />
                 <FlatButton
                     label="Share file"
+                    disabled={this.state.isEditing}
                     icon={<i className="material-icons">share</i>}
                     onClick={() => this.toggleModal()}
                 />
