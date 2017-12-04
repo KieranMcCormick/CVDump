@@ -53,13 +53,6 @@ class ShareFile extends PureComponent {
         }
     }
 
-    /* <Document
-                        file={{ url: this.props.selectedFile.pdfUrl }}
-                        onLoadSuccess={this.onDocumentLoad.bind(this)}
-                        onLoadError={this.onLoadError.bind(this)}
-                    >
-                        <Page pageNumber={pageNumber} />
-                    </Document>*/
     render() {
         if (this.state.isLoading) {
             return <Loader />
@@ -68,7 +61,13 @@ class ShareFile extends PureComponent {
         return (
             <div className="c-file-container">
                 <div className="c-file-content">
-                   
+                    <Document
+                        file={{ url: this.props.selectedFile.pdfUrl }}
+                        onLoadSuccess={this.onDocumentLoad.bind(this)}
+                        onLoadError={this.onLoadError.bind(this)}
+                    >
+                        <Page pageNumber={pageNumber} />
+                    </Document>
                     <p>Page {pageNumber} of {numPages}</p>
                 </div>
                 <div className="c-file-comments">

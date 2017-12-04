@@ -8,14 +8,14 @@ router.use(requireLogin)
 
 router.get('/:docId', (req, res) => {
     const docId = req.params.docId
-    console.log("Checking permissions")
+    console.log('Checking permissions')
     //Just validate first, if it checkouts , carry on loading comments, else load error
     Document.VaildateSharedDocumentPermission(docId, req.user.email_address).then((result, err) => {
         if (err) {
-            res.status(500).send({ message: "you do not have permission to view this file" })
+            res.status(500).send({ message: 'you do not have permission to view this file' })
         }
         if (result) {
-            console.log("You have permission")
+            console.log('You have permission')
             Comments.loadComments(docId).then((result, err) => {
                 if (err) {
                     res.sendStatus(500).send({ message: 'cant find comments' })
@@ -32,8 +32,8 @@ router.get('/:docId', (req, res) => {
                 })
 
         } else {
-            console.log("You dont have permission")
-            res.status(500).send({ message: "you do not have permission to view this file" })
+            console.log('You dont have permission')
+            res.status(500).send({ message: 'you do not have permission to view this file' })
         }
     })
         .catch((exception) => {
@@ -57,7 +57,7 @@ router.post('/create', (req, res) => {
         Document.VaildateSharedDocumentPermission(newComment.documentId, req.user.email_address)
             .then((valid, err) => {
                 if(err){
-                    res.status(500).send({message:"Error commenting"})
+                    res.status(500).send({message:'Error commenting'})
                 }
 
                 if (valid) {
@@ -75,9 +75,9 @@ router.post('/create', (req, res) => {
                             })
                         }
                     })
-                     .catch((exception) => {
-                         res.send({ error: exception })
-                     })
+                        .catch((exception) => {
+                            res.send({ error: exception })
+                        })
                 } else {
                     res.status(500).send(null)
                 }
