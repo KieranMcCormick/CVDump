@@ -1,29 +1,28 @@
 const { sqlInsert, sqlSelect } = require('../db')
-
 const EDIT_BLOCK_SQL = 'UPDATE blocks SET summary=? WHERE uuid=?'
-const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, label, type, summary) VALUES (UUID(), ?, ?, ?, ?)'
+const CREATE_BLOCK_SQL = 'INSERT INTO blocks (uuid, user_id, label, type, summary) VALUES (?, ?, ?, ?, ?)'
 const GET_BLOCKS_SQL = 'SELECT * FROM blocks WHERE user_id = ?'
+const SELECT_UUID = 'SELECT UUID() as uuid'
 
 class Block {
     constructor(props) {
         if (props) {
-            this.block_id   = props.uuid
-            this.label      = props.label ? props.label : 'untitled'
-            this.type       = props.type
-            this.user_id    = props.user_id
-            this.summary    = props.summary ? props.summary : ''
+            this.uuid = props.uuid
+            this.label = props.label ? props.label : 'untitled'
+            this.type = props.type
+            this.user_id = props.user_id
+            this.summary = props.summary ? props.summary : ''
             this.updated_at = props.updated_at
             this.created_at = props.created_at
         }
     }
 
     SQLValueArray() {
-        return [this.user_id, this.label, this.type, this.summary]
+        return [this.uuid, this.user_id, this.label, this.type, this.summary]
     }
 
     save() {
         return new Promise((resolve, reject) => {
-
             sqlInsert(CREATE_BLOCK_SQL, this.SQLValueArray(), (err, result) => {
                 if (err) {
                     console.error(err)
@@ -56,10 +55,20 @@ class Block {
                     console.error(`[block][Error] Failed to create Block: ${err.message}`)
                     return reject(null)
                 }
-                if(result) {
+                if (result) {
                     return resolve(props)
                 }
+            })
+        })
+    }
 
+    static GetNewUuid() {
+        return new Promise((resolve, reject) => {
+            sqlSelect(SELECT_UUID, [], (err, res) => {
+                if (err) {
+                    console.error(err)
+                }
+                resolve(res[0])
             })
         })
     }
@@ -77,7 +86,6 @@ class Block {
             })
         })
     }
-
 }
 
 module.exports = { Block }
