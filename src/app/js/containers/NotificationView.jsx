@@ -6,7 +6,6 @@ import Badge from 'material-ui/Badge'
 import IconButton from 'material-ui/IconButton'
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import Menu from 'material-ui/Menu'
 import Drawer from 'material-ui/Drawer'
 import FlatButton from 'material-ui/FlatButton'
 import * as actions from '../actions'
@@ -53,7 +52,7 @@ class NotificationsView extends PureComponent {
         //fixes bug where user directly routes to file page before client fetchesFiles
         this.props.dispatchResolveNotification(notice.uuid)
         if (route) {
-            let routePath = '/shared/' + notice.document_id
+            let routePath = '/shared/' + notice.documentId
             console.log(routePath)
             this.props.history.push(routePath)
             this.setState({ dropdown: false })
@@ -63,34 +62,34 @@ class NotificationsView extends PureComponent {
 
 
     renderNotificationCards() {
-            return this.props.notifications.map((notice, index) => {
-                let caption = ''
-                if (notice.type == 'comment') {
-                    caption = notice.file ? 'New comment on ' + notice.file : 'New comment from ' + notice.sender
+        return this.props.notifications.map((notice, index) => {
+            let caption = ''
+            if (notice.type == 'comment') {
+                caption = notice.file ? 'New comment on ' + notice.file : 'New comment from ' + notice.sender
 
-                }
-                if (notice.type == 'share') {
-                    console.log(this.props.notifications)
-                    caption = notice.sender + ' shared a file with you'
-                }
+            }
+            if (notice.type == 'share') {
+                console.log(this.props.notifications)
+                caption = notice.sender + ' shared a file with you'
+            }
 
-                let subtitle = notice.timeStamp.substring(0, 10)
-                return <Card key={'notification-' + index}>
-                    <CardHeader
-                        title={caption}
-                        subtitle={subtitle}
-                        actAsExpander={true}
-                    />
-                    <CardText>
-                        {notice.content}
-                    </CardText>
-                    <CardActions>
-                        <FlatButton onClick={() => this.resolveNotification(notice, true)} label="View" />
-                        <FlatButton onClick={() => this.resolveNotification(notice, false)} label="Remove" />
-                    </CardActions>
-                </Card>
-            })
-       
+            let subtitle = notice.timeStamp.substring(0, 10)
+            return <Card key={'notification-' + index}>
+                <CardHeader
+                    title={caption}
+                    subtitle={subtitle}
+                    actAsExpander={true}
+                />
+                <CardText>
+                    {notice.content}
+                </CardText>
+                <CardActions>
+                    <FlatButton onClick={() => this.resolveNotification(notice, true)} label="View" />
+                    <FlatButton onClick={() => this.resolveNotification(notice, false)} label="Remove" />
+                </CardActions>
+            </Card>
+        })
+
     }
 
     showNotifications = (event) => {
@@ -118,13 +117,8 @@ class NotificationsView extends PureComponent {
                     openSecondary={true}
                     onRequestChange={(dropdown) => this.setState({ dropdown })}
                 >
-
-                    <Menu>
-                        {this.renderNotificationCards()}
-                    </Menu>
+                    {this.renderNotificationCards()}
                 </Drawer>
-
-
             </div>
         )
     }
