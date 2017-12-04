@@ -115,4 +115,26 @@ module.exports = {
             })
         })
     },
+
+    retrievePDFpath: function(doc_id) {
+        return new Promise((resolve, reject) => {
+            Document.FindFilepathByDocid(doc_id).then((filepath, err) => {
+                if (err){
+                    throw(err)
+                }
+                else{
+                    if ( filepath != undefined || filepath.length > 0 ){ //test this when pdf render works
+                        let full_path_pdf = fs_path + filepath[0].filepath + filepath[0].filename
+                        return resolve(full_path_pdf)
+                    }
+                    else{
+                        return reject(null)
+                    }
+                }
+            }).catch((error) => {
+                console.error(error)
+                reject({ error_message : 'Error retrieving pdf file'})
+            })
+        })
+    },
 }

@@ -36,9 +36,9 @@ router.get('/', (req, res) => {
  */
 
 router.get('/:id', (req, res) => {
-    const user_email = req.user.email_address
+    const user_id = req.user.uuid
     const doc_id     = req.params.id
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
         if( err ){
             throw(err)
         }
@@ -151,7 +151,7 @@ router.get('/pdf/:id', function(req, res){
     const doc_id     = req.params.id
     const user_email = req.user.email_address
 
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    Document.VaildateSharedDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
         }
@@ -173,14 +173,40 @@ router.get('/pdf/:id', function(req, res){
     })
 })
 
+
+router.get('/download/:id', (req, res) => {
+    const doc_id     = req.params.id
+    const user_id = req.user.uuid
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
+        if (err){
+            throw(err)
+        }
+        else if (result){
+            return accessFS.retrievePDFpath(doc_id)
+        }
+    }).then((result, err) => {
+        if (err){
+            console.error(err)
+            res.send({ message : 'Something went wrong loading the pdf' })
+        }
+        else{
+            console.log(result)
+            res.status(200).download(result, 'Resume.pdf')
+        }
+    }).catch((exception) => {
+        console.error(exception)
+        res.send({ message : 'Something went wrong loading the pdf' })
+    })
+})
+
 router.post('/savepdf/:id', (req, res) => {
 
-    const user_email = req.user.email_address
+    const user_id = req.user.uuid
     const doc_id  = req.params.id
     const blocks  = req.body.blocks
     const title   = req.body.title != '' ? req.body.title : 'Untitled'
 
-    Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
+    Document.VaildateDocumentPermission(doc_id, user_id).then((result, err) => {
         if (err){
             throw(err)
         }

@@ -10,8 +10,8 @@ const FIND_FILEPATH_BY_DOCID = 'SELECT filepath, filename from documents where u
 const UPDATE_FILEPATH = 'UPDATE documents SET filepath = ?, filename = ? WHERE uuid = ?'
 const UPDATE_TITLE_BY_DOC_ID = 'UPDATE documents set title = ? WHERE uuid = ?'
 const FIND_SHARED_BY_USEREMAIL = 'SELECT d.uuid, s.owner_id, s.user_email, d.title, d.created_at FROM shared_files s JOIN documents d ON s.document_id = d.uuid WHERE s.user_email = ? OR s.owner_id = ?'
-const CHECK_USER_PERMISSION_ON_DOC = 'SELECT user_email from documents join shared_files where uuid = ?'
-
+const CHECK_USER_PERMISSION_ON_DOC = 'SELECT user_id from documents where uuid = ?'
+const CHECK_USER_PERMISSION_ON_SHARED_DOC = 'SELECT u.email_address, s.user_email from shared_files s join users u on u.uuid = s.owner_id WHERE document_id = ? '
 const SELECT_UUID = 'SELECT UUID() as uuid'
 /*This will be visible to public*/
 const ParseDocSQL = (rows) => {
@@ -163,14 +163,14 @@ class Document {
     }
 
     //validate user permitted to save
-    static VaildateDocumentPermission(doc_id, user_email) {
+    static VaildateDocumentPermission(doc_id, user_id) {
         return new Promise((resolve, reject) => {
             sqlSelect(CHECK_USER_PERMISSION_ON_DOC, [doc_id], (err, result) => {
                 if(err){
                     console.error(err)
                     return reject(err)
                 }
-                if( result.length <= 0 || result.find(email => email === user_email ) === -1  ){
+                if( result.length <= 0 || result[0].user_id  != user_id  ){
                     resolve(false)
                 }
                 else{
@@ -180,6 +180,25 @@ class Document {
         })
     }
 
+    static VaildateSharedDocumentPermission(doc_id, user_email) {
+        return new Promise((resolve, reject) => {
+            sqlSelect(CHECK_USER_PERMISSION_ON_SHARED_DOC, [doc_id], (err, result) => {
+                if(err){
+                    console.error(err)
+                    return reject(err)
+                }
+
+                let vals = result.map(email => email.email_address === user_email || email.user_email === user_email )
+
+                if( result.length <= 0 ||  vals.find(val => val == true ) == undefined ){
+                    resolve(false)
+                }
+                else{
+                    resolve(true)
+                }
+            })
+        })
+    }
 
     static shareFile(ownerId, doc_id, emails) {
         const shareQuery = ' INSERT INTO shared_files ( owner_id, user_email, document_id) VALUES ( ?, ?, ?)'
