@@ -8,7 +8,7 @@ router.use(requireLogin)
 router.get('/', (req, res) => {
 
     const user_id = req.user.uuid
-    
+
 
     Block.LoadBlocksByUserId(user_id).then((result, err) => {
         if (err) {
