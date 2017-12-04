@@ -37,6 +37,7 @@ class File extends PureComponent {
                 isNew: isNew,
                 hasMessage: false,
                 message: '',
+                errorInput:'',
             })
         }
         const id = isNew ? '' : this.getDocumentId()
@@ -160,8 +161,18 @@ class File extends PureComponent {
     }
 
     createTag(event) {
+        this.setState({errorInput:''})
+        if (event.key == 'Enter') {
+            if( !validateEmail(event.target.value)){
+                this.setState({errorInput:"Must be a email Address!"})
+                return
 
-        if (event.key == 'Enter' && validateEmail(event.target.value) && this.props.user.info.email != event.target.value) {
+            }   
+
+            if(this.props.user.info.email == event.target.value){
+                this.setState({errorInput:"Cant share with yourself"})
+                return
+            }
             this.setState({ tags: [...this.state.tags, event.target.value] })
             event.target.value = ''
         }
@@ -184,6 +195,7 @@ class File extends PureComponent {
     }
     renderModal() {
         const prompt = 'Enter user emails to who you want to share with and hit "Enter", click the cross to remove emails'
+        
         return (
             <div>
                 <Dialog
@@ -195,13 +207,19 @@ class File extends PureComponent {
                 >
                     <p>{prompt} </p>
                     {this.renderTags()}
-                    <TextField autoFocus onKeyDown={(e) => this.createTag(e)} className="tag_input" type="text" />
+                    <TextField autoFocus 
+                    onKeyDown={(e) => this.createTag(e)} 
+                    className="tag_input" 
+                    type="text" 
+                    errorText={this.state.errorInput}
+                    hintText="Hit Enter to create Tag" />
                     <FlatButton
                         label="share"
                         onClick={() => this.onShare()}
                     />
                     <FlatButton
                         label="cancel"
+                        disabled= {true ? (this.state.tags.length < 0): false}
                         onClick={() => this.toggleModal()}
                     />
                 </Dialog>
