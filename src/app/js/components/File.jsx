@@ -272,6 +272,7 @@ File.propTypes = {
     dispatchFetchFile: PropTypes.func.isRequired,
     dispatchSelectFile: PropTypes.func.isRequired,
     dispatchShareFile: PropTypes.func.isRequired,
+    dispatchDownloadFile: PropTypes.func.isRequired,
     user: PropTypes.shape({
         info: PropTypes.shape({
             username: PropTypes.string.isRequired,

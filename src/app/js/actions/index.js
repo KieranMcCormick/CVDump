@@ -257,16 +257,16 @@ export const dispatchOnClickCreateFile = () => ({
 })
 
 export const dispatchDownloadFile = (doc_id, callback) => async (dispatch) => {
-    try{
-        await axiosWithCSRF.post(`/files/download/${id}`)
+    try {
+        const link = document.createElement('a')
+        link.href = `/api/files/download/${doc_id}`
+        link.click()
 
         dispatch({
             type: types.DOWNLOAD_PDF_SUCCESS,
-
         })
-        callback('Download Started')
+        callback('Download Finished')
     } catch (error) {
-
         dispatch({
             type: types.DOWNLOAD_PDF_FAILURE,
             payload: error.response.data,

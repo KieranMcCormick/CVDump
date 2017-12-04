@@ -173,11 +173,9 @@ router.get('/pdf/:id', function(req, res){
 })
 
 
-router.post('/download/:id', (req, res) => {
-    console.log("HERE")
+router.get('/download/:id', (req, res) => {
     const doc_id     = req.params.id
     const user_email = req.user.email_address
-    console.log(doc_id)
     Document.VaildateDocumentPermission(doc_id, user_email).then((result, err) => {
         if (err){
             throw(err)
@@ -191,9 +189,8 @@ router.post('/download/:id', (req, res) => {
             res.send({ message : 'Something went wrong loading the pdf' })
         }
         else{
-            res.type('pdf')
             console.log(result)
-            res.download(result)
+            res.status(200).download(result, 'Resume.pdf')
         }
     }).catch((exception) => {
         console.error(exception)
