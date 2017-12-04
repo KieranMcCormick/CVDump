@@ -54,7 +54,7 @@ CREATE TABLE `blocks` (
   `label` varchar(30) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `user_id` varchar(36) DEFAULT NULL,
-  `summary` longtext CHARACTER SET utf8mb4,
+  `summary` longtext CHARACTER SET utf8mb4 DEFAULT NULL,
   PRIMARY KEY (`uuid`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `blocks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`)
@@ -194,9 +194,40 @@ INSERT INTO `shared_files` VALUES ('7bb327a5-cb4b-11e7-821a-026d4863120d','user2
 /*!40000 ALTER TABLE `shared_files` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
 --
 -- Table structure for table `users`
 --
+
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications` (
+  `uuid` varchar(36) NOT NULL,
+  `type` varchar(36),
+  `user_id` varchar(36) NOT NULL,
+  `sender` varchar(36)  NOT NULL,
+  `document_id` varchar(36),
+  `created_at` datetime NOT NULL,
+  `is_deleted` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`uuid`),
+  UNIQUE KEY `uuid` (`uuid`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`),
+  CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`document_id`) REFERENCES `documents` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
+	
+
+
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
