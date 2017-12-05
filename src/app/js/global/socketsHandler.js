@@ -39,9 +39,7 @@ SocketHandler.leaveRoom = (namespace, roomId) => {
 
     switch (namespace) {
         case 'comments':
-            SocketHandler.commentSocket.off('update',() => {
-                console.log('Unsubscribed from room')
-            })
+            SocketHandler.commentSocket.off('update')
             SocketHandler.commentSocket.emit('leaveRoom', `${roomId}`)
             break
         case 'notifications':
