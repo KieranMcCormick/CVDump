@@ -26,7 +26,7 @@ router.post('/login', (req, res, next) => {
                     req.session.source = 'pw'
                     res.cookie('JWT', user.generateJWT(), {
                         httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
+                        secure: process.env.NODE_ENV === 'production' && !process.env.FAKE_PROD,
                         sameSite: 'lax',
                     })
                     res.json(_.merge(req.user.publicJson(), {
@@ -62,7 +62,7 @@ router.post('/register', UserCreationValidation, (req, res, next) => {
                 req.session.source = 'pw'
                 res.cookie('JWT', user.generateJWT(), {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: process.env.NODE_ENV === 'production' && !process.env.FAKE_PROD,
                     sameSite: 'lax',
                 })
                 res.json(_.merge(req.user.publicJson(), {
