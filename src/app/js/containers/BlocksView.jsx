@@ -101,7 +101,7 @@ TextEditor.propTypes = {
 const BlockParentComponent = props => (
     <div>
         <RaisedButton
-            label="+"
+            label="Add"
             labelColor="#fff"
             backgroundColor="#2286c3"
             className="u-margin-v-md"
@@ -196,7 +196,7 @@ class Blocks extends Component {
         return (
             <div className="c-file-container">
                 <div className="c-blocks-list">
-                    <h3>Please Press + to Add a New Block</h3>
+                    <h3>All Your Blocks</h3>
                     {/* <div>Headers</div>
                     <BlockParentComponent addChild={this.addChild.bind(this, 'headers')}>
                         {HeadersChildren}

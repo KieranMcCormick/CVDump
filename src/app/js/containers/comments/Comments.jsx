@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 
 class Comment extends Component {
     // UI representation of a Comment box, takes in a comment object and displays the date,data, and author and length of reply thread
@@ -12,7 +13,7 @@ class Comment extends Component {
             <div className="c-comment">
                 <div className ="c-comment__header">
                     <p className="c-comment__author"> {this.props.comment.username} </p>
-                    <p className="c-comment__date"> {this.props.comment.createdAt} </p>
+                    <p className="c-comment__date"> {moment(this.props.comment.createdAt).format('YYYY-MM-DD hh:mm:ss')} </p>
                 </div>
                 <p className="c-comment__data">{this.props.comment.content} </p>
             </div>

@@ -21,7 +21,7 @@ class File extends PureComponent {
 
         this.state = {
             isLoading: true,
-            isEditing: false,
+            isEditing: true,
             modal: false,
             tags: [],
         }
@@ -263,6 +263,10 @@ class File extends PureComponent {
                 message={this.state.message}
                 autoHideDuration={2000}
                 bodyStyle={{ width: '100%' }}
+                onRequestClose={()=> { this.setState({
+                    hasMessage: false,
+                    message: '',
+                })}}
             />
         )
     }
