@@ -11,6 +11,7 @@ import SharedView from './SharedView'
 import BlocksView from './BlocksView'
 import TrackingView from './TrackingView'
 import StatusBar from './StatusBar'
+import NoPermission from '../components/NoPermission'
 import * as actions from '../actions'
 
 const routes = [
@@ -28,11 +29,13 @@ const routes = [
         path: '/blocks',
         label: 'Blocks',
         component: BlocksView,
+        exact: true,
     },
     {
         path: '/tracking',
         label: 'Tracking',
         component: TrackingView,
+        exact: true,
     }
 ]
 
@@ -85,6 +88,7 @@ class TabLayout extends Component {
                         return <Route key={`routes-${label}`} path={path} component={component} exact={exact} />
                     })}
                     <Redirect exact path="/" to="/files" />
+                    <Route exact path="/403" component={NoPermission} />
                     <Route path="*" component={ NotFound } />
                 </Switch>
             </div>

@@ -10,8 +10,8 @@ import TextField from 'material-ui/TextField'
  * @param {string} type: input element's type
  * @param {string} autoComplete: input element's attribute
  * @param {object} meta: meta info of the input field from redux-form
- * @param {object} style: meta info of the input field from redux-form
- * @param {string} className: meta info of the input field from redux-form
+ * @param {object} style: in-line style of the field
+ * @param {string} className: classname of the field
  */
 class Field extends PureComponent {
     render() {

@@ -74,7 +74,7 @@ router.post('/share', (req, res) => {
         })
             .catch((error) =>{
                 console.log(error)
-                res.sendStatus(500).send({ message:error})
+                res.sendStatus(403).send({ message:error})
             })
     }
 })

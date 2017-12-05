@@ -16,6 +16,9 @@ class CommentBox extends Component {
 
         this.createComment = this.createComment.bind(this)
         this.onClickHandler = this.onClickHandler.bind(this)
+        this.state = {
+            errorMessage: '',
+        }
     }
 
     componentDidMount() {
@@ -46,9 +49,11 @@ class CommentBox extends Component {
     }
 
     render() {
+        const { errorMessage } = this.state
         return (
             <div className="c-comment__container">
                 <h5> Comments ({this.props.selectedFile.comments.length}) </h5>
+                {errorMessage && <p className="u-fail-text">{errorMessage}</p>}
                 <div className="c-comment__comment-list">
                     {this.displayComments()}
                     <div ref={ref => this.commentsNode = ref}> </div>
@@ -77,20 +82,29 @@ class CommentBox extends Component {
     }
 
     createComment() {
-        this.props.dispatchCreateComment({
-            content: this.textArea.value,
-            createdAt: new moment().format('YYYY-MM-DD hh:mm:ss'),
-            username: this.props.user.info.username,
-            docId: this.props.docId,
-        })
+        if (this.textArea.value.trim() === '') {
+            this.setState({
+                errorMessage: 'You need to enter something before comment',
+            })
+        } else {
+            this.props.dispatchCreateComment({
+                content: this.textArea.value,
+                createdAt: new moment().format('YYYY-MM-DD hh:mm:ss'),
+                username: this.props.user.info.username,
+                docId: this.props.docId,
+            })
 
-        this.props.dispatchSendNotification({
-            type:'comment',
-            content: this.textArea.value,
-            createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
-            sender: this.props.user.info.username,
-            docId: this.props.docId,
-        })
+            this.props.dispatchSendNotification({
+                type:'comment',
+                content: this.textArea.value,
+                createdAt: new moment ().format('YYYY-MM-DD hh:mm:ss'),
+                sender: this.props.user.info.username,
+                docId: this.props.docId,
+            })
+            this.setState({
+                errorMessage: '',
+            })
+        }
     }
 }
 

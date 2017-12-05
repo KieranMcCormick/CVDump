@@ -12,13 +12,13 @@ router.get('/:docId', (req, res) => {
     //Just validate first, if it checkouts , carry on loading comments, else load error
     Document.VaildateSharedDocumentPermission(docId, req.user.email_address).then((result, err) => {
         if (err) {
-            res.status(500).send({ message: 'you do not have permission to view this file' })
+            res.status(403).send({ message: 'you do not have permission to view this file' })
         }
         if (result) {
             console.log('You have permission')
             Comments.loadComments(docId).then((result, err) => {
                 if (err) {
-                    res.sendStatus(500).send({ message: 'cant find comments' })
+                    res.status(400).send({ message: 'cant find comments' })
                     return
                 }
                 if (result) {
@@ -33,7 +33,7 @@ router.get('/:docId', (req, res) => {
 
         } else {
             console.log('You dont have permission')
-            res.status(500).send({ message: 'you do not have permission to view this file' })
+            res.status(403).send({ message: 'you do not have permission to view this file' })
         }
     })
         .catch((exception) => {
@@ -79,7 +79,7 @@ router.post('/create', (req, res) => {
                             res.send({ error: exception })
                         })
                 } else {
-                    res.status(500).send(null)
+                    res.status(403).send({message: 'You don\'t have permission'})
                 }
             })
     } else {

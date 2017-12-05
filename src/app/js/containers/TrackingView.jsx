@@ -79,7 +79,13 @@ class Tracking extends Component {
                 isLoading: false,
             })
         } else {
-            this.props.dispatchSaveTracking({ companyName, jobTitle }, () => this.setState({ isLoading: false }))
+            this.props.dispatchSaveTracking({ companyName, jobTitle }, () =>
+                this.setState({
+                    isLoading: false,
+                    companyErrorMessage: '',
+                    titleErrorMessage: '',
+                })
+            )
         }
     }
 
@@ -119,7 +125,7 @@ class Tracking extends Component {
                         errorText={this.state.titleErrorMessage}
                     />
                     <RaisedButton
-                        label="Create a new one"
+                        label="Add"
                         labelColor="#fff"
                         backgroundColor="#2286c3"
                         onClick={this.onSave.bind(this)}

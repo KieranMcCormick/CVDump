@@ -70,7 +70,6 @@ class NotificationsView extends PureComponent {
 
             }
             if (notice.type == 'share') {
-                console.log(this.props.notifications)
                 caption = notice.sender + ' shared a file with you'
             }
 
