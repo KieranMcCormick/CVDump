@@ -79,6 +79,7 @@ export const dispatchSignUp = ({ username, firstname, lastname, email, password,
         dispatch({
             type: types.LOGIN_SUCCESS,
             payload: {
+                isAuthenticated: true,
                 info: res.data,
             },
         })
