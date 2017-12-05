@@ -31,7 +31,7 @@ module.exports = (app) => {
             if (cas_id) {
                 User.findOneByCASID(cas_id).then((user) => {
                     if (!user) {
-                        done(null, false, { errorMessage: 'User Not Found' })
+                        done(null, false, { errorMessage: 'User Not Found. Please connect your CV Dump account to CAS via your Profile page.' })
                     } else {
                         done(null, user)
                     }
