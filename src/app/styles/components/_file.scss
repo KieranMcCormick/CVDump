@@ -21,6 +21,10 @@
 .c-file-content .c-file-content__button {
     display: flex;
     justify-content: space-around;
+
+    button {
+        width: 20%;
+    }
 }
 
 .c-file-container .c-file-blocks {

@@ -56,8 +56,8 @@ class Files extends Component {
         return (
             <div className="t-view-container">
                 <div className="c-files-list">
-                    {this.renderFiles()}
                     {this.renderAddButton()}
+                    {this.renderFiles()}
                 </div>
             </div>
         )
