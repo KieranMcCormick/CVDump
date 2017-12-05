@@ -122,8 +122,6 @@ typings/
 
 config/tmp/*
 src/public/**/*.js
-!src/public/sw.js
-!src/public/vendor/sw-toolbox.js
 src/public/styles.*
 
 package-lock.json

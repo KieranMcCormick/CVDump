@@ -102,7 +102,9 @@ const BlockParentComponent = props => (
     <div>
         <RaisedButton
             label="+"
-            className="u-margin-v-md u-full-width"
+            labelColor="#fff"
+            backgroundColor="#2286c3"
+            className="u-margin-v-md"
             onClick={props.addChild}
         />
         {props.children}
@@ -194,7 +196,7 @@ class Blocks extends Component {
         return (
             <div className="c-file-container">
                 <div className="c-blocks-list">
-                    <h3>Please press + to add a new block</h3>
+                    <h3>Please Press + to Add a New Block</h3>
                     {/* <div>Headers</div>
                     <BlockParentComponent addChild={this.addChild.bind(this, 'headers')}>
                         {HeadersChildren}
@@ -223,5 +225,6 @@ Blocks.propTypes = {
 const mapStateToProps = ({ app }) => ({
     blocks: app.blocks,
 })
+
 
 export default connect(mapStateToProps, actions)(Blocks)

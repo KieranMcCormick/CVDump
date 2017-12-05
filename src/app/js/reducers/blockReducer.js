@@ -3,9 +3,7 @@ import types from '../actions/types'
 const initState = []
 
 export default (state = initState, action) => {
-
     switch (action.type) {
-
         case types.FETCH_BLOCKS_SUCCESS: {
             const blocks = [
                 /* ...state, */
@@ -24,7 +22,6 @@ export default (state = initState, action) => {
         }
         case types.FETCH_BLOCK_FALURE:
             return []
-
         default:
             return state
     }

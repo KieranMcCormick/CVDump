@@ -9,6 +9,12 @@ const axiosWithCSRF = axios.create({
     xsrfCookieName: '_csrfToken',
 })
 
+const redirect403 = (error, dispatch) => {
+    if (error.response.status === 403) {
+        dispatch(push('/403'))
+    }
+}
+
 export const dispatchFetchUser = (redirectPath, originalPath) => async (dispatch) => {
     try {
         dispatch({
@@ -111,17 +117,9 @@ export const dispatchFetchFiles = (callback) => async (dispatch) => {
             payload: error.response.data,
         })
         callback()
+        redirect403(error, dispatch)
     }
 }
-
-
-// export const dispatchFetchFileWithVersion = () => async(dispatch) => {
-//     try {
-
-//     } catch (error) {
-
-//     }
-// }
 
 // collections
 export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
@@ -140,6 +138,7 @@ export const dispatchFetchSharedFiles = (callback) => async (dispatch) => {
             payload: error.response.data,
         })
         callback()
+        redirect403(error, dispatch)
     }
 }
 
@@ -165,6 +164,7 @@ export const dispatchFetchSharedFile = (id, callback) => async (dispatch) => {
             payload: error.response.data,
         })
         callback()
+        redirect403(error, dispatch)
     }
 }
 
@@ -191,6 +191,7 @@ export const dispatchFetchFile = (id, callback) => async (dispatch) => {
             payload: error.response.data,
         })
         callback()
+        redirect403(error, dispatch)
     }
 }
 
@@ -453,7 +454,6 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
             '/notifications/create',
             postParams
         )
-        console.log(success)
 
         if (data.type =='comment') {
             SocketHandler.emitEvent(
@@ -491,7 +491,6 @@ export const dispatchSendNotification = (data) => async (dispatch) => {
             })
         }
 
-
         dispatch({
             type: types.SEND_NOTIFICATION_SUCCESS,
             payload: {
@@ -518,7 +517,6 @@ export const dispatchResolveNotification = (id) => async (dispatch) => {
     } catch (error) {
         console.error(error)
     }
-
 }
 
 export const dispatchShareFile = (docId,emails) => async(dispatch) => {

@@ -25,7 +25,7 @@ router.post('/create', (req, res) => {
         if (err || !result || !result.uuid) {
             console.error(err)
             res.send(err)
-            res.status(500).send()
+            res.status(400).send()
             throw (err)
         }
         else {

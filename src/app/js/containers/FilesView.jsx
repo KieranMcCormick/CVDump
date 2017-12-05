@@ -39,7 +39,6 @@ class Files extends Component {
 
     renderFiles() {
         return this.props.files.map(({ title, docId }, index) => {
-            console.log(title)
             return (
                 <FileBlock
                     key={`file-block-${title}-${index}`}
