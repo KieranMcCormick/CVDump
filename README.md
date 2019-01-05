@@ -1,7 +1,5 @@
 # Team Poopnado
 
-# Main Project
-
 ## What's working
 
 All main features are working.
